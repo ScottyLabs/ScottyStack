@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+set -e
+editorconfig-checker --exclude '^LICENSE'
+bun run syncpack
+bun run check
