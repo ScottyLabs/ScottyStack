@@ -6,6 +6,7 @@ import process from "node:process";
 import cors, { type CorsOptions } from "cors";
 // import type { ErrorRequestHandler } from "express";
 import express from "express";
+import { RegisterRoutes } from "../build/routes.ts";
 // import swaggerUi, { type JsonObject } from "swagger-ui-express";
 import { env } from "./env.ts";
 // import { auth } from "./lib/auth.ts";
@@ -45,7 +46,7 @@ const server = http.createServer(app);
 // });
 
 // Routes
-// RegisterRoutes(app);
+RegisterRoutes(app);
 app.get("/", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });

@@ -34,6 +34,7 @@
     "secrets:push": "PROJECT=scottystack APPS='web server' ENVS='local dev staging prod' ./scripts/secrets/multi/push.sh",
     "secrets:setup": "./scripts/secrets/setup.sh",
     "start": "turbo start",
+    "sync": "cd apps/server && bun run tsoa && bun run openapi",
     "syncpack": "syncpack lint",
     "syncpack:fix": "syncpack format && syncpack fix-mismatches",
     "syncpack:update": "syncpack update",

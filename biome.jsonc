@@ -25,5 +25,10 @@
     "parser": {
       "tailwindDirectives": true
     }
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
   }
 }
