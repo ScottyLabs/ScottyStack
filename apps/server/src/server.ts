@@ -1,16 +1,16 @@
 // import fs from "node:fs";
 import http from "node:http";
 import process from "node:process";
-// import { toNodeHandler } from "better-auth/node";
+import { toNodeHandler } from "better-auth/node";
 // import { YAML } from "bun";
 import cors, { type CorsOptions } from "cors";
-// import type { ErrorRequestHandler } from "express";
+import type { ErrorRequestHandler } from "express";
 import express from "express";
 import { RegisterRoutes } from "../build/routes.ts";
 // import swaggerUi, { type JsonObject } from "swagger-ui-express";
 import { env } from "./env.ts";
-// import { auth } from "./lib/auth.ts";
-// import { errorHandler } from "./middleware/errorHandler.ts";
+import { auth } from "./lib/auth.ts";
+import { errorHandler } from "./middlewares/errorHandler.ts";
 import { notFoundHandler } from "./middlewares/notFoundHandler.ts";
 
 const app = express();
@@ -28,9 +28,8 @@ app.use(cors(corsOptions));
 // Create HTTP server with Express app attached
 const server = http.createServer(app);
 
-// Setup Authentication
 // Setup Authentication: https://www.better-auth.com/docs/integrations/express
-// app.all("/api/auth/*splat", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 // Swagger and OpenAPI JSON
 // const swaggerYaml = fs.readFileSync("./build/swagger.yaml", "utf8");
@@ -52,7 +51,7 @@ app.get("/", (_req, res) => {
 });
 
 // Error Handling and Not Found Handlers
-// app.use(errorHandler as ErrorRequestHandler);
+app.use(errorHandler as ErrorRequestHandler);
 app.use(notFoundHandler);
 
 const port = env.SERVER_PORT;

@@ -16,8 +16,13 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        // Conflicts with tsc noPropertyAccessFromIndexSignature
-        "useLiteralKeys": "off"
+        "useLiteralKeys": "off" // Conflicts with tsc noPropertyAccessFromIndexSignature
+      },
+      "style": {
+        "noDefaultExport": "error" // Enforce named exports for easier refactoring
+      },
+      "correctness": {
+        "useImportExtensions": "error" // Enforce consistent use of .ts extensions for imports
       }
     }
   },

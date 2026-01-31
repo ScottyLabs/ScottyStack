@@ -21,6 +21,7 @@
     "yaml": true
   },
   "routes": {
-    "routesDir": "build"
+    "routesDir": "build",
+    "authenticationModule": "./src/lib/authentication.ts"
   }
 }
