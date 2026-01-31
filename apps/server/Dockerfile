@@ -16,7 +16,7 @@ RUN bun install --frozen-lockfile
 RUN cd apps/server && bun run tsoa && bun run openapi
 
 # Build the project
-RUN bun run build --filter=@graph/server...
+RUN bun run build --filter=@scottystack/server...
 
 # Final runtime image
 FROM base AS runner

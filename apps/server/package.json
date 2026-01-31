@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "@scottystack/server",
   "version": "0.0.0",
   "dependencies": {
     "@tsoa/runtime": "^7.0.0-alpha.0",
