@@ -14,58 +14,5 @@
       "installOhMyZshConfig": true,
       "configureZshAsDefaultShell": true
     }
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "biomejs.biome",
-        "bradlc.vscode-tailwindcss",
-        "vscode-icons-team.vscode-icons",
-        "mkhl.shfmt",
-        "davidanson.vscode-markdownlint",
-        "redhat.vscode-yaml"
-      ],
-      "settings": {
-        "terminal.integrated.defaultProfile.linux": "zsh",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-          "source.fixAll": "explicit"
-        },
-        "editor.defaultFormatter": "biomejs.biome",
-        "[typescript]": {
-          "editor.defaultFormatter": "biomejs.biome"
-        },
-        "[typescriptreact]": {
-          "editor.defaultFormatter": "biomejs.biome"
-        },
-        "[json]": {
-          "editor.defaultFormatter": "biomejs.biome"
-        },
-        "[jsonc]": {
-          "editor.defaultFormatter": "biomejs.biome"
-        },
-        "[css]": {
-          "editor.defaultFormatter": "biomejs.biome"
-        },
-        "[shellscript]": {
-          "editor.defaultFormatter": "mkhl.shfmt"
-        },
-        "[yaml]": {
-          "editor.defaultFormatter": "redhat.vscode-yaml"
-        },
-        "files.associations": {
-          ".env.*": "properties"
-        },
-        "files.watcherExclude": {
-          "**/routeTree.gen.ts": true
-        },
-        "search.exclude": {
-          "**/routeTree.gen.ts": true
-        },
-        "files.readonlyInclude": {
-          "**/routeTree.gen.ts": true
-        }
-      }
-    }
   }
 }
