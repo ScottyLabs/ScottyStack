@@ -29,6 +29,7 @@ USER server
 
 # Copy swagger UI
 COPY --from=builder --chown=server:server /app/apps/server/build/swagger.yaml ./build/swagger.yaml
+COPY --from=builder --chown=server:server /app/apps/server/node_modules/swagger-ui-dist /app/apps/server/node_modules/swagger-ui-dist
 
 # Copy only what's needed to run the server
 COPY --from=builder --chown=server:server /app/apps/server/dist ./apps/server/dist
