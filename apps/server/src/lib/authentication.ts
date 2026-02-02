@@ -22,21 +22,19 @@ export const MEMBER_SCOPE = "stack-devs";
 declare module "express" {
   interface Request {
     authErrors?: HttpError[];
-    user?: User;
+    // TSAO `resolve` will attach the user object to the request object
+    user?: Express.User;
   }
 }
 
-// TSOA `resolve` will attach the user object to the request object
-interface User {
-  sub: string;
-  email?: string;
-  given_name?: string;
-  groups?: string[];
-}
-
-// TSOA `resolve` will attach the user object to the request object
 declare global {
   namespace Express {
+    /**
+     * Express.User interface
+     *
+     * Interface of the user object that is attached to the request object,
+     * used by the server's controller methods.
+     */
     interface User {
       sub: string;
       email?: string;
