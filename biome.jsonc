@@ -30,7 +30,6 @@
         "useLiteralKeys": "off" // Conflicts with tsc noPropertyAccessFromIndexSignature.
       },
       "correctness": {
-        "useImageSize": "error", // Enforces that <img> elements have both width and height attributes.
         "useImportExtensions": "error" // Enforce file extensions for relative imports.
       },
       "nursery": {
