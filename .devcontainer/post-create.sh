@@ -29,7 +29,7 @@ fi
 bun install
 
 # Generate dependencies
-bun run sync
+bun run generate
 
 # Set up environment variables
 bun run secrets:setup
