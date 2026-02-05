@@ -11,7 +11,7 @@ const authClient = createAuthClient({
   plugins: [customSessionClient<typeof auth>()],
 });
 
-export const signIn = () => {
+export function signIn() {
   authClient.signIn
     .social({
       provider: "keycloak",
@@ -23,14 +23,14 @@ export const signIn = () => {
         console.error(result.error);
       }
     });
-};
+}
 
-export const signOut = () => {
+export function signOut() {
   authClient.signOut().then((result) => {
     if (result.error) {
       console.error(result.error);
     }
   });
-};
+}
 
 export const { useSession } = authClient;

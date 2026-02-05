@@ -69,12 +69,12 @@ export function expressAuthentication(
 }
 
 // Verify OpenID Connect Authentication by checking the user object and scopes
-const validateOidc = async (
+async function validateOidc(
   request: express.Request,
   reject: (value: unknown) => void,
   resolve: (value: unknown) => void,
   scopes?: string[],
-) => {
+) {
   // Check if the user is authenticated
   try {
     // https://www.better-auth.com/docs/integrations/express
@@ -118,16 +118,16 @@ const validateOidc = async (
     request.authErrors?.push(err);
     return reject(err);
   }
-};
+}
 
 // Verify Bearer Authentication by verifying the token and checking the scopes
 const client = jwksClient({ jwksUri: env.AUTH_JWKS_URI });
-const verifyBearerAuth = (
+function verifyBearerAuth(
   request: express.Request,
   reject: (value: unknown) => void,
   resolve: (value: unknown) => void,
   scopes?: string[],
-) => {
+) {
   const token = request.headers.authorization?.split(" ")[1];
   if (!token) {
     const err = new AuthenticationError();
@@ -175,7 +175,7 @@ const verifyBearerAuth = (
       return resolve(decodedTokenToUser(decoded));
     },
   );
-};
+}
 
 // Verify if the groups contain ANY of the required scopes
 const hasAnyScope = (groups?: string[], scopes?: string[]) => {
@@ -193,22 +193,22 @@ const hasAnyScope = (groups?: string[], scopes?: string[]) => {
   return groups.some((group) => scopes.includes(group));
 };
 
-const scopeValidationError = (
+function scopeValidationError(
   request: express.Request,
   reject: (value: unknown) => void,
-) => {
+) {
   const err = new AuthorizationError(
     "Insufficient permissions to access this resource.",
   );
   request.authErrors?.push(err);
   return reject(err);
-};
+}
 
-const decodedTokenToUser = (decoded: jwt.JwtPayload) => {
+function decodedTokenToUser(decoded: jwt.JwtPayload) {
   return {
     sub: decoded.sub,
     email: decoded["email"],
     givenName: decoded["given_name"],
     groups: decoded["groups"],
   };
-};
+}

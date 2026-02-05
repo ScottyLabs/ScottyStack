@@ -1,6 +1,6 @@
 import { $api } from "@/lib/api/client.ts";
 
-const Hello = () => {
+export function Hello() {
   const {
     data: hello,
     isLoading,
@@ -18,6 +18,4 @@ const Hello = () => {
   }
 
   return <div>Authenticated Message: {hello?.message}</div>;
-};
-
-export { Hello };
+}

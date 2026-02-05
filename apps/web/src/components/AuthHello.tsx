@@ -1,6 +1,6 @@
 import { $api } from "@/lib/api/client.ts";
 
-const AuthHello = () => {
+export function AuthHello() {
   const {
     data: helloAuthenticated,
     isLoading: isLoadingAuthenticated,
@@ -18,6 +18,4 @@ const AuthHello = () => {
   }
 
   return <div>Admin Message: {helloAuthenticated?.message}</div>;
-};
-
-export { AuthHello };
+}
