@@ -7,6 +7,17 @@ curl -fsSL https://bun.sh/install | bash
 export PATH="$HOME/.bun/bin:$PATH"
 echo 'export PATH="$HOME/.bun/bin:$PATH"' >>~/.zshrc
 
+# Activate Bun completions in zsh on startup
+if ! grep -q 'source <(SHELL=zsh bun completions)' ~/.zshrc; then
+  echo 'source <(SHELL=zsh bun completions)' >>~/.zshrc
+fi
+
+# Install Bun dependencies
+bun install
+
+# Generate dependencies
+bun run generate
+
 # Install shfmt for shell script formatting
 # https://formulae.brew.sh/formula/shfmt
 brew install shfmt
@@ -19,17 +30,6 @@ brew install editorconfig-checker
 # https://developer.hashicorp.com/vault/install
 brew tap hashicorp/tap
 brew install hashicorp/tap/vault
-
-# Activate Bun completions in zsh on startup
-if ! grep -q 'source <(SHELL=zsh bun completions)' ~/.zshrc; then
-  echo 'source <(SHELL=zsh bun completions)' >>~/.zshrc
-fi
-
-# Install Bun dependencies
-bun install
-
-# Generate dependencies
-bun run generate
 
 # Set up environment variables
 bun run secrets:setup
