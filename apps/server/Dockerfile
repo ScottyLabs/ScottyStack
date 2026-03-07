@@ -46,6 +46,15 @@ COPY --from=builder --chown=server:server \
   /app/apps/server/dist \
   /app/apps/server/dist
 
+# Copy db folder and Drizzle config to enable migrations
+COPY --from=builder --chown=server:server \
+  /app/apps/server/drizzle \
+  /app/apps/server/drizzle
+
+COPY --from=builder --chown=server:server \
+  /app/apps/server/drizzle.config.ts \
+  /app/apps/server/drizzle.config.ts
+
 EXPOSE 3000
 WORKDIR /app/apps/server
 CMD ["bun", "dist/server.js"]
