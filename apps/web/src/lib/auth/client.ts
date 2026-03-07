@@ -5,7 +5,6 @@ import { env } from "@/env.ts";
 
 // https://www.better-auth.com/docs/installation#create-client-instance
 const authClient = createAuthClient({
-  // biome-ignore lint/style/useNamingConvention: defined by better-auth
   baseURL: env.VITE_SERVER_URL,
   // https://www.better-auth.com/docs/concepts/session-management#customizing-session-response
   plugins: [customSessionClient<typeof auth>()],
@@ -15,7 +14,6 @@ export function signIn() {
   authClient.signIn
     .social({
       provider: "keycloak",
-      // biome-ignore lint/style/useNamingConvention: defined by better-auth
       callbackURL: window.location.href,
     })
     .then((result) => {
