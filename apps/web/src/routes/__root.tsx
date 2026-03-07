@@ -3,12 +3,14 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { Header } from "@/components/Header.tsx";
+import { MyToastContainer } from "@/components/ToastContainer";
 
 export const Route = createRootRoute({
   component: () => (
     <>
       <Header />
       <Outlet />
+      <MyToastContainer />
       <TanStackDevtools
         config={{
           position: "bottom-right",
