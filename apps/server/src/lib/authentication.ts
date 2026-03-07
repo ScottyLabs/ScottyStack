@@ -21,7 +21,14 @@ export const MEMBER_SCOPE = "stack-devs";
 
 declare module "express" {
   interface Request {
+    // Authentication errors are stored in the request object
+    // so we can return the most relevant error to the client in errorHandler
     authErrors?: HttpError[];
+
+    // Whether the request successfully authenticated.
+    // Used in errorHandler to determine if we should show authErrors.
+    authenticated?: boolean;
+
     // TSAO `resolve` will attach the user object to the request object
     user?: Express.User;
   }
@@ -111,6 +118,7 @@ async function validateOidc(
       return scopeValidationError(request, reject);
     }
 
+    request.authenticated = true;
     return resolve(decodedTokenToUser(decoded));
   } catch (error) {
     console.error("Authentication error:", error);
@@ -172,6 +180,7 @@ function verifyBearerAuth(
         return scopeValidationError(request, reject);
       }
 
+      request.authenticated = true;
       return resolve(decodedTokenToUser(decoded));
     },
   );
