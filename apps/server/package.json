@@ -37,6 +37,9 @@
   "scripts": {
     "build": "bun build src/server.ts --outdir=dist --target=bun --sourcemap",
     "check": "tsc && biome check",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
     "dev": "concurrently 'bun run server' 'bun run tsoa:watch' 'bun run openapi:watch'",
     "format": "biome format",
     "generate": "bun run tsoa && bun run openapi",
