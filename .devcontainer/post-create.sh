@@ -18,6 +18,9 @@ bun install
 # Generate dependencies
 bun run generate
 
+# Run db migrations
+cd apps/server && bun run db:migrate
+
 # Install shfmt for shell script formatting
 # https://formulae.brew.sh/formula/shfmt
 brew install shfmt
