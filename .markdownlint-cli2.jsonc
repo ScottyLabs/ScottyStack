@@ -15,7 +15,10 @@
     // Allows duplicate headings in different sections but flags duplicates at the same level.
     "MD024": { "siblings_only": true },
 
-    // Use asterisk for emphasis
-    "MD049": { "style": "asterisk" }
+    // Use asterisk for emphasis style
+    "MD049": { "style": "underscore" },
+
+    // Use asterisk for strong style
+    "MD050": { "style": "asterisk" }
   }
 }
