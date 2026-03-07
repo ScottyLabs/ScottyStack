@@ -1,3 +1,4 @@
+// https://orm.drizzle.team/docs/get-started/postgresql-new#step-5---setup-drizzle-config-file
 import { defineConfig } from "drizzle-kit";
 import { env } from "./src/env.ts";
 

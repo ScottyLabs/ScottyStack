@@ -1,7 +1,9 @@
 import type { Session, User } from "better-auth";
 import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession, genericOAuth, keycloak } from "better-auth/plugins";
 import jwt from "jsonwebtoken";
+import { db } from "../db/index.ts";
 import { env } from "../env.ts";
 
 /**
@@ -16,6 +18,8 @@ interface Auth {
 
 // https://www.better-auth.com/docs/installation#create-a-better-auth-instance
 export const auth = betterAuth({
+  database: drizzleAdapter(db, { provider: "pg" }),
+
   baseURL: env.SERVER_URL,
   trustedOrigins: [env.BETTER_AUTH_URL],
 
