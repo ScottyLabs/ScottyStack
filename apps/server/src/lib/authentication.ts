@@ -16,8 +16,10 @@ import { auth } from "./auth.ts";
 
 export const OIDC_AUTH = "oidc";
 export const BEARER_AUTH = "bearerAuth";
-export const ADMIN_SCOPE = "stack-admins";
-export const MEMBER_SCOPE = "stack-devs";
+
+// You can change this to scottystack-members if you are not an admin but
+// need to test as an admin in development.
+export const ADMIN_GROUP = "scottystack-admins";
 
 declare module "express" {
   interface Request {

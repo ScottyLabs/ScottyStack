@@ -6,7 +6,7 @@ export function AuthHello() {
     isLoading: isLoadingAuthenticated,
     error: errorAuthenticated,
     isError: isErrorAuthenticated,
-  } = $api.useQuery("get", "/hello/authenticated");
+  } = $api.useQuery("get", "/hello/admin");
 
   if (isLoadingAuthenticated) {
     return <div>Loading authenticated hello...</div>;

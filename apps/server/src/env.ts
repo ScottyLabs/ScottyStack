@@ -5,7 +5,6 @@ import { z } from "zod";
 const envSchema = z.object({
   SERVER_URL: z.url(),
   SERVER_PORT: z.number().default(80),
-  DATABASE_URL: z.string(),
 
   ALLOWED_ORIGINS_REGEX: z.string(),
   AUTH_ISSUER: z.url(),
@@ -13,6 +12,7 @@ const envSchema = z.object({
   AUTH_CLIENT_SECRET: z.string(),
   AUTH_JWKS_URI: z.url(),
   BETTER_AUTH_URL: z.url(), // https://www.better-auth.com/docs/installation#set-environment-variables
+  DATABASE_URL: z.string(),
 });
 
 // Validate `process.env` against our schema and return the result
