@@ -9,6 +9,7 @@ export function NewPostForm() {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
 
   const createPost = $api.useMutation("post", "/posts", {
     onSuccess: () => {
@@ -24,6 +25,7 @@ export function NewPostForm() {
       body: {
         title: title.trim(),
         content: content.trim(),
+        anonymous,
       },
     });
   };
@@ -62,17 +64,28 @@ export function NewPostForm() {
         />
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => navigate({ to: "/" })}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" disabled={createPost.isPending}>
-          {createPost.isPending ? "Posting..." : "Post"}
-        </Button>
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={anonymous}
+            onChange={(e) => setAnonymous(e.target.checked)}
+            className="rounded border-input"
+          />
+          Post anonymously
+        </label>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate({ to: "/" })}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={createPost.isPending}>
+            {createPost.isPending ? "Posting..." : "Post"}
+          </Button>
+        </div>
       </div>
     </form>
   );

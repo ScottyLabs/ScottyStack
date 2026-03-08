@@ -16,6 +16,7 @@ import { isAdminFromRequest } from "../utils.ts";
 export interface CreatePostRequest {
   title: string;
   content: string;
+  anonymous?: boolean;
 }
 
 export interface CreateReplyRequest {
@@ -48,7 +49,12 @@ export class PostController {
     @Body() body: CreatePostRequest,
   ) {
     const user = req.user as Express.User;
-    return postService.createPost(user.sub, body.title, body.content);
+    return postService.createPost(
+      user.sub,
+      body.title,
+      body.content,
+      body.anonymous ?? false,
+    );
   }
 
   @Post("{postId}/replies")

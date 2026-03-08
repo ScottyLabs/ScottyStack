@@ -91,9 +91,14 @@ export const postService = {
     }));
   },
 
-  createPost: async (providerId: string, title: string, content: string) => {
-    const user = await userService.getUserByAccountId(providerId);
-    if (!user) {
+  createPost: async (
+    providerId: string,
+    title: string,
+    content: string,
+    anonymous: boolean = false,
+  ) => {
+    const userRecord = await userService.getUserByAccountId(providerId);
+    if (!userRecord) {
       throw new HttpError(404, "User not found");
     }
 
@@ -101,9 +106,10 @@ export const postService = {
     const [created] = await db
       .insert(post)
       .values({
-        userId: user.id,
+        userId: userRecord.id,
         title,
         content,
+        anonymous,
         createdAt: now,
         updatedAt: now,
       })
