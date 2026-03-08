@@ -31,26 +31,6 @@ declare module "express" {
     // Whether the request successfully authenticated.
     // Used in errorHandler to determine if we should show authErrors.
     authenticated?: boolean;
-
-    // TSAO `resolve` will attach the user object to the request object
-    user?: Express.User;
-  }
-}
-
-declare global {
-  namespace Express {
-    /**
-     * Express.User interface
-     *
-     * Interface of the user object that is attached to the request object,
-     * used by the server's controller methods.
-     */
-    interface User {
-      sub: string;
-      email?: string;
-      givenName?: string;
-      isAdmin: boolean;
-    }
   }
 }
 
@@ -65,27 +45,27 @@ export function expressAuthentication(
 
   return new Promise((resolve, reject) => {
     if (securityName === OIDC_AUTH) {
-      return validateOidc(request, reject, resolve, scopes);
+      return verifyOidc(request).then((decoded) =>
+        verifyScope(request, decoded, resolve, reject, scopes),
+      );
     }
 
     if (securityName === BEARER_AUTH) {
-      return verifyBearerAuth(request, reject, resolve, scopes);
+      return verifyBearer(request).then((decoded) =>
+        verifyScope(request, decoded, resolve, reject, scopes),
+      );
     }
 
     const err = new InternalServerError("Invalid security name");
     request.authErrors?.push(err);
-    return reject(err);
+    return reject({});
   });
 }
 
-// Verify OpenID Connect Authentication by checking the user object and scopes
-async function validateOidc(
+// Return the decoded token if successful, otherwise return null
+async function verifyOidc(
   request: express.Request,
-  reject: (value: unknown) => void,
-  resolve: (value: unknown) => void,
-  scopes?: string[],
-) {
-  // Check if the user is authenticated
+): Promise<jwt.JwtPayload | null> {
   try {
     // https://www.better-auth.com/docs/integrations/express
     const session = await auth.api.getSession({
@@ -96,10 +76,10 @@ async function validateOidc(
     if (!session?.user) {
       const err = new AuthenticationError();
       request.authErrors?.push(err);
-      return reject(err);
+      return null;
     }
 
-    // Get the group from the user access token
+    // Get the decoded token from the user access token
     const decoded = await auth.api
       .getAccessToken({
         body: { providerId: "keycloak" },
@@ -110,84 +90,92 @@ async function validateOidc(
       });
 
     // Check if the decoded token is valid
-    if (decoded === null || typeof decoded !== "object") {
+    if (typeof decoded !== "object") {
       const err = new AuthenticationError();
       request.authErrors?.push(err);
-      return reject(err);
+      return null;
     }
 
-    // Check if the user has any of the required scopes
-    if (!hasAnyScope(decoded["groups"] ?? [], scopes)) {
-      return scopeValidationError(request, reject);
-    }
-
-    request.authenticated = true;
-    return resolve(decodedTokenToUser(decoded));
+    return decoded;
   } catch (error) {
     console.error("Authentication error:", error);
     const err = new AuthenticationError();
     request.authErrors?.push(err);
-    return reject(err);
+    return null;
   }
 }
 
-// Verify Bearer Authentication by verifying the token and checking the scopes
 const client = jwksClient({ jwksUri: env.AUTH_JWKS_URI });
-function verifyBearerAuth(
+function verifyBearer(
   request: express.Request,
-  reject: (value: unknown) => void,
-  resolve: (value: unknown) => void,
-  scopes?: string[],
-) {
-  const token = request.headers.authorization?.split(" ")[1];
-  if (!token) {
-    const err = new AuthenticationError();
-    request.authErrors?.push(err);
-    return reject(err);
-  }
+): Promise<jwt.JwtPayload | null> {
+  return new Promise((resolve) => {
+    const token = request.headers.authorization?.split(" ")[1];
+    if (!token) {
+      const err = new AuthenticationError();
+      request.authErrors?.push(err);
+      return resolve(null);
+    }
 
-  jwt.verify(
-    token,
-    (header, callback) => {
-      client.getSigningKey(header.kid, (_error, key) => {
-        if (!key) {
-          console.error("No key found for kid:", header.kid);
+    jwt.verify(
+      token,
+      (header, callback) => {
+        client.getSigningKey(header.kid, (err, key) => {
+          if (err || !key) {
+            console.error("No key found for kid:", header.kid);
+            const err = new AuthenticationError();
+            request.authErrors?.push(err);
+            return callback(err || new Error("No signing key"));
+          }
+          return callback(null, key.getPublicKey());
+        });
+      },
+      { issuer: env.AUTH_ISSUER, audience: env.AUTH_CLIENT_ID },
+      (error, decoded) => {
+        // Check if the token is valid
+        if (error) {
+          console.error("Authentication error:", error.message);
           const err = new AuthenticationError();
           request.authErrors?.push(err);
-          return reject(err);
+          return resolve(null);
         }
 
-        const signingKey = key.getPublicKey();
-        callback(null, signingKey);
-      });
-    },
-    { issuer: env.AUTH_ISSUER, audience: env.AUTH_CLIENT_ID },
-    (error, decoded) => {
-      // Check if the token is valid
-      if (error) {
-        console.error("Authentication error:", error.message);
-        const err = new AuthenticationError();
-        request.authErrors?.push(err);
-        return reject(err);
-      }
+        // Check if the token format is valid
+        if (typeof decoded !== "object") {
+          const err = new AuthenticationError();
+          request.authErrors?.push(err);
+          return resolve(null);
+        }
 
-      // Check if the token format is valid
-      if (!decoded || typeof decoded !== "object") {
-        const err = new AuthenticationError();
-        request.authErrors?.push(err);
-        return reject(err);
-      }
-
-      // Check if the token contains any of the required scopes
-      if (!hasAnyScope(decoded["groups"], scopes)) {
-        return scopeValidationError(request, reject);
-      }
-
-      request.authenticated = true;
-      return resolve(decodedTokenToUser(decoded));
-    },
-  );
+        return resolve(decoded);
+      },
+    );
+  });
 }
+
+const verifyScope = (
+  request: express.Request,
+  decoded: jwt.JwtPayload | null,
+  resolve: (value: unknown) => void,
+  reject: (value: unknown) => void,
+  scopes?: string[],
+) => {
+  if (!decoded) {
+    return reject({});
+  }
+
+  if (!hasAnyScope(decoded?.["groups"], scopes)) {
+    request.authErrors?.push(
+      new AuthorizationError(
+        "Insufficient permissions to access this resource.",
+      ),
+    );
+    return reject({});
+  }
+
+  request.authenticated = true;
+  return resolve({});
+};
 
 // Verify if the groups contain ANY of the required scopes
 const hasAnyScope = (groups?: string[], scopes?: string[]) => {
@@ -204,23 +192,3 @@ const hasAnyScope = (groups?: string[], scopes?: string[]) => {
   // Check if any of the groups contain any of the required scopes
   return groups.some((group) => scopes.includes(group));
 };
-
-function scopeValidationError(
-  request: express.Request,
-  reject: (value: unknown) => void,
-) {
-  const err = new AuthorizationError(
-    "Insufficient permissions to access this resource.",
-  );
-  request.authErrors?.push(err);
-  return reject(err);
-}
-
-function decodedTokenToUser(decoded: jwt.JwtPayload): Express.User {
-  return {
-    sub: decoded.sub as string,
-    email: decoded["email"],
-    givenName: decoded["given_name"],
-    isAdmin: decoded["groups"].includes(ADMIN_GROUP),
-  };
-}
