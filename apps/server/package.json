@@ -38,7 +38,7 @@
   "private": true,
   "scripts": {
     "build": "bun build src/server.ts --outdir=dist --target=bun --sourcemap",
-    "check": "tsc && biome check",
+    "check": "tsc -b && biome check",
     "db:generate": "dotenv -e .env.local -- bunx drizzle-kit generate",
     "db:migrate": "dotenv -e .env.local -- bunx drizzle-kit migrate",
     "db:seed": "bun run src/db/seed.ts",
@@ -51,7 +51,7 @@
     "openapi:watch": "onchange './build/swagger.yaml' -- bun run openapi",
     "server": "bun run --watch src/server.ts",
     "start": "bun dist/server.js",
-    "tsc": "tsc",
+    "tsc": "tsc -b",
     "tsoa": "tsoa spec-and-routes",
     "tsoa:watch": "onchange 'src/controllers/*.ts' 'tsoa.json' -- bun run tsoa"
   },
