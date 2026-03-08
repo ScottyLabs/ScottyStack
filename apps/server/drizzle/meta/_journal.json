@@ -15,6 +15,20 @@
       "when": 1772928814131,
       "tag": "0001_solid_micromax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772929435878,
+      "tag": "0002_cute_invaders",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772929518608,
+      "tag": "0003_broken_speed",
+      "breakpoints": true
     }
   ]
 }

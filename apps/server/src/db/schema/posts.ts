@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm";
-import { index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
 export const post = pgTable(
   "post",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -22,11 +22,11 @@ export const post = pgTable(
 export const reply = pgTable(
   "reply",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    postId: text("post_id")
+    postId: uuid("post_id")
       .notNull()
       .references(() => post.id, { onDelete: "cascade" }),
     content: text("content").notNull(),
