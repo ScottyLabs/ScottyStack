@@ -7,6 +7,7 @@ export type PostItem = {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  authorName?: string;
 };
 
 type PostLayoutContextValue = {

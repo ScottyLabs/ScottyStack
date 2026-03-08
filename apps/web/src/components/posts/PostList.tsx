@@ -12,6 +12,7 @@ type PostItem = {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  authorName?: string;
 };
 
 interface PostListProps {
@@ -22,7 +23,7 @@ interface PostListProps {
 function groupPostsByDate(posts: PostItem[]) {
   const groups: Record<string, PostItem[]> = {};
   for (const post of posts) {
-    const dateKey = new Date(post.createdAt).toLocaleDateString("en-US", {
+    const dateKey = new Date(post.updatedAt).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -107,7 +108,11 @@ export function PostList({ selectedPostId, onSelectPost }: PostListProps) {
                         {post.title}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        User · {new Date(post.createdAt).toLocaleString()}
+                        {post.authorName ?? "User"} ·{" "}
+                        {new Date(post.updatedAt).toLocaleString(undefined, {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
                       </p>
                     </div>
                   </div>

@@ -13,6 +13,7 @@ type PostItem = {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  authorName?: string;
 };
 
 export function PostLayout() {

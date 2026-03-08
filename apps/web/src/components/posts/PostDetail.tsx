@@ -5,6 +5,7 @@ type PostItem = {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  authorName?: string;
 };
 
 interface PostDetailProps {
@@ -20,7 +21,11 @@ export function PostDetail({ post }: PostDetailProps) {
     <div className="flex flex-col p-6">
       <h1 className="text-xl font-semibold">{post.title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {new Date(post.createdAt).toLocaleString()}
+        {post.authorName ?? "User"} ·{" "}
+        {new Date(post.updatedAt).toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
       </p>
       <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
     </div>
