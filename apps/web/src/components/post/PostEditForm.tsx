@@ -17,13 +17,14 @@ export function PostEditForm({ post, onCancel, onSuccess }: PostEditFormProps) {
   const [anonymous, setAnonymous] = useState(post.anonymous ?? false);
 
   const updatePost = $api.useMutation("patch", "/posts/{postId}", {
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: $api.queryOptions("get", "/posts/{postId}", {
-          params: { path: { postId: post.id } },
-        }).queryKey,
+    onSuccess: async () => {
+      const postQueryKey = $api.queryOptions("get", "/posts/{postId}", {
+        params: { path: { postId: post.id } },
+      }).queryKey;
+      await queryClient.refetchQueries({ queryKey: postQueryKey });
+      await queryClient.invalidateQueries({
+        queryKey: $api.queryOptions("get", "/posts", {}).queryKey,
       });
-      queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
       toast.success("Post updated");
       onSuccess();
     },
