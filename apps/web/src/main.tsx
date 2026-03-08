@@ -1,15 +1,15 @@
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDom from "react-dom/client";
-import * as TanStackQueryProvider from "./integrations/tanstack-query/root-provider.tsx";
 import { reportWebVitals } from "./reportWebVitals.ts";
 import "./styles.css";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen.ts";
 
 // Create a new router instance
-const TanStackQueryProviderContext = TanStackQueryProvider.getContext();
+const TanStackQueryProviderContext = { queryClient: new QueryClient() };
 const router = createRouter({
   routeTree,
   context: {
@@ -34,9 +34,9 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDom.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+      <QueryClientProvider client={TanStackQueryProviderContext.queryClient}>
         <RouterProvider router={router} />
-      </TanStackQueryProvider.Provider>
+      </QueryClientProvider>
     </StrictMode>,
   );
 }
