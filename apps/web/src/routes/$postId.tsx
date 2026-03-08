@@ -11,12 +11,12 @@ export const Route = createFileRoute("/$postId")({
     );
   },
   pendingComponent: () => (
-    <div className="flex flex-1 items-center justify-center p-4 text-muted-foreground">
+    <div className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">
       Loading...
     </div>
   ),
   errorComponent: ({ error }) => (
-    <div className="p-6 text-destructive">
+    <div className="p-6 text-sm text-destructive">
       Error: {String(error) ?? "Failed to load post"}
     </div>
   ),
@@ -51,14 +51,14 @@ function PostPage() {
                 key={r.id}
                 className="rounded-lg border bg-muted/30 p-4 text-sm"
               >
-                <p className="text-muted-foreground mb-1">
+                <p className="mb-1 text-sm text-muted-foreground">
                   {r.authorName ?? "User"} ·{" "}
                   {new Date(r.createdAt).toLocaleString(undefined, {
                     dateStyle: "medium",
                     timeStyle: "short",
                   })}
                 </p>
-                <div className="whitespace-pre-wrap">{r.content}</div>
+                <div className="whitespace-pre-wrap text-sm">{r.content}</div>
               </li>
             ))}
           </ul>

@@ -10,7 +10,7 @@ export function SignOutButton({ onSuccess }: { onSuccess?: () => void }) {
         signOut();
         onSuccess?.();
       }}
-      className="mt-3 border-white/30 bg-white text-gray-800 hover:bg-gray-100"
+      className="mt-3 w-full border-white/30 bg-white text-gray-800 hover:bg-gray-100"
     >
       Sign Out
     </Button>

@@ -44,17 +44,19 @@ export function UserProfile() {
         <User className="size-5" aria-hidden />
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-fit min-w-40 max-w-64 rounded-lg border border-white/20 bg-gray-800 py-2 shadow-xl">
+        <div className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-white/20 bg-gray-800 py-2 shadow-xl">
           <div className="px-4 py-3">
-            <p className="font-medium text-white truncate">{user.name}</p>
-            <p className="text-sm text-gray-300 truncate mt-0.5">
+            <p className="truncate text-sm font-medium text-white">
+              {user.name}
+            </p>
+            <p className="mt-0.5 truncate text-sm text-gray-300">
               {user.email}
             </p>
             {user.groups?.includes("scottystack-admins") && (
               <Link
                 to="/dashboard"
                 onClick={() => setOpen(false)}
-                className="mt-2 block w-full rounded px-3 py-2 text-left text-sm text-white hover:bg-white/10"
+                className="mt-2 flex h-7 w-full items-center justify-center whitespace-nowrap rounded-lg border border-white/30 bg-white px-2.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-100"
               >
                 Admin Dashboard
               </Link>

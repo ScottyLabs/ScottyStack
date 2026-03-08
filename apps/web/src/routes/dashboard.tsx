@@ -35,7 +35,7 @@ function DashboardPage() {
 
   if (sessionPending) {
     return (
-      <div className="flex flex-1 items-center justify-center p-4 text-muted-foreground">
+      <div className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">
         Loading...
       </div>
     );
@@ -50,10 +50,10 @@ function DashboardPage() {
   if (!isAdmin) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
-        <p className="text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           You do not have access to this page.
         </p>
-        <Link to="/" className="text-primary underline">
+        <Link to="/" className="text-sm text-primary underline">
           Go home
         </Link>
       </div>
@@ -62,7 +62,7 @@ function DashboardPage() {
 
   if (usersLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center p-4 text-muted-foreground">
+      <div className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">
         Loading users...
       </div>
     );
@@ -70,7 +70,7 @@ function DashboardPage() {
 
   if (usersError) {
     return (
-      <div className="p-6 text-destructive">
+      <div className="p-6 text-sm text-destructive">
         Error loading users: {String(usersErrorDetail) ?? "Unknown error"}
       </div>
     );
@@ -100,7 +100,7 @@ function DashboardPage() {
             <TableRow>
               <TableCell
                 colSpan={4}
-                className="text-center text-muted-foreground"
+                className="text-center text-sm text-muted-foreground"
               >
                 No users found.
               </TableCell>
@@ -108,7 +108,7 @@ function DashboardPage() {
           ) : (
             list.map((row) => (
               <TableRow key={row.id}>
-                <TableCell className="font-mono text-xs">{row.id}</TableCell>
+                <TableCell className="font-mono text-sm">{row.id}</TableCell>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.postCount}</TableCell>
                 <TableCell>{row.replyCount}</TableCell>

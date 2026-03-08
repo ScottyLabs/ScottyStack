@@ -42,7 +42,7 @@ export function PostList() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-1 items-center justify-center p-4 text-muted-foreground">
+      <div className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">
         Loading posts...
       </div>
     );
@@ -50,7 +50,7 @@ export function PostList() {
 
   if (isError) {
     return (
-      <div className="p-4 text-destructive">
+      <div className="p-4 text-sm text-destructive">
         Error loading posts: {String(error)}
       </div>
     );
@@ -86,7 +86,7 @@ export function PostList() {
         ) : (
           Object.entries(groupedPosts).map(([dateKey, datePosts]) => (
             <div key={dateKey} className="border-b">
-              <div className="px-4 py-2 text-xs font-medium text-muted-foreground">
+              <div className="px-4 py-2 text-sm font-medium text-muted-foreground">
                 {dateKey}
               </div>
               {datePosts.map((post) => {
@@ -106,7 +106,7 @@ export function PostList() {
                         <p className="truncate text-sm font-medium">
                           {post.title}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {post.authorName ?? "User"} ·{" "}
                           {new Date(post.updatedAt).toLocaleString(undefined, {
                             dateStyle: "medium",
