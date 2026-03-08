@@ -9,93 +9,68 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LayoutRouteRouteImport } from './routes/_layout/route'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
-import { Route as LayoutNewRouteImport } from './routes/_layout/new'
+import { Route as NewRouteImport } from './routes/new'
+import { Route as IndexRouteImport } from './routes/index'
 
-const LayoutRouteRoute = LayoutRouteRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => LayoutRouteRoute,
-} as any)
-const LayoutNewRoute = LayoutNewRouteImport.update({
+const NewRoute = NewRouteImport.update({
   id: '/new',
   path: '/new',
-  getParentRoute: () => LayoutRouteRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof LayoutIndexRoute
-  '/new': typeof LayoutNewRoute
+  '/': typeof IndexRoute
+  '/new': typeof NewRoute
 }
 export interface FileRoutesByTo {
-  '/new': typeof LayoutNewRoute
-  '/': typeof LayoutIndexRoute
+  '/': typeof IndexRoute
+  '/new': typeof NewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_layout': typeof LayoutRouteRouteWithChildren
-  '/_layout/new': typeof LayoutNewRoute
-  '/_layout/': typeof LayoutIndexRoute
+  '/': typeof IndexRoute
+  '/new': typeof NewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/new' | '/'
-  id: '__root__' | '/_layout' | '/_layout/new' | '/_layout/'
+  to: '/' | '/new'
+  id: '__root__' | '/' | '/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  LayoutRouteRoute: typeof LayoutRouteRouteWithChildren
+  IndexRoute: typeof IndexRoute
+  NewRoute: typeof NewRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_layout/': {
-      id: '/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRouteRoute
-    }
-    '/_layout/new': {
-      id: '/_layout/new'
+    '/new': {
+      id: '/new'
       path: '/new'
       fullPath: '/new'
-      preLoaderRoute: typeof LayoutNewRouteImport
-      parentRoute: typeof LayoutRouteRoute
+      preLoaderRoute: typeof NewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface LayoutRouteRouteChildren {
-  LayoutNewRoute: typeof LayoutNewRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
-}
-
-const LayoutRouteRouteChildren: LayoutRouteRouteChildren = {
-  LayoutNewRoute: LayoutNewRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
-}
-
-const LayoutRouteRouteWithChildren = LayoutRouteRoute._addFileChildren(
-  LayoutRouteRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
-  LayoutRouteRoute: LayoutRouteRouteWithChildren,
+  IndexRoute: IndexRoute,
+  NewRoute: NewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

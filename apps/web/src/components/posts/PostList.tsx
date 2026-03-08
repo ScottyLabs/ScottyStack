@@ -17,7 +17,7 @@ type PostItem = {
 
 interface PostListProps {
   selectedPostId?: string;
-  onSelectPost: (post: PostItem) => void;
+  onSelectPost?: (post: PostItem) => void;
 }
 
 function groupPostsByDate(posts: PostItem[]) {
@@ -96,7 +96,7 @@ export function PostList({ selectedPostId, onSelectPost }: PostListProps) {
                 <button
                   key={post.id}
                   type="button"
-                  onClick={() => onSelectPost(post)}
+                  onClick={() => onSelectPost?.(post)}
                   className={`flex w-full flex-col gap-1 border-b px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
                     selectedPostId === post.id ? "bg-muted" : ""
                   }`}
