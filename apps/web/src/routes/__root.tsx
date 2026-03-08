@@ -1,7 +1,7 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-
 import { NavBar } from "@/components/NavBar.tsx";
 import { PostList } from "@/components/posts/PostList";
 import { MyToastContainer } from "@/components/ToastContainer";
@@ -27,6 +27,10 @@ export const Route = createRootRoute({
           {
             name: "Tanstack Router",
             render: <TanStackRouterDevtoolsPanel />,
+          },
+          {
+            name: "Tanstack Query",
+            render: <ReactQueryDevtoolsPanel />,
           },
         ]}
       />
