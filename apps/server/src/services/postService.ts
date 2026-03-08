@@ -1,7 +1,12 @@
+import { desc } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import { post } from "../db/schema/posts.ts";
 
 export const postService = {
+  listPosts: async () => {
+    return db.select().from(post).orderBy(desc(post.createdAt));
+  },
+
   createPost: async (userId: string, title: string, content: string) => {
     const now = new Date();
 

@@ -1,5 +1,13 @@
 import type { Request as ExpressRequest } from "express";
-import { Body, Post, Request, Route, Security, SuccessResponse } from "tsoa";
+import {
+  Body,
+  Get,
+  Post,
+  Request,
+  Route,
+  Security,
+  SuccessResponse,
+} from "tsoa";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { postService } from "../services/postService.ts";
 
@@ -10,6 +18,12 @@ export interface CreatePostRequest {
 
 @Route("posts")
 export class PostController {
+  @Get("/")
+  @SuccessResponse(200)
+  async listPosts() {
+    return postService.listPosts();
+  }
+
   @Post("/")
   @Security(OIDC_AUTH)
   @Security(BEARER_AUTH)
