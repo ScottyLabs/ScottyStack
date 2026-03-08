@@ -12,8 +12,8 @@ import {
   AuthorizationError,
   InternalServerError,
 } from "../middlewares/errorHandler.ts";
-import { getJwtPayloadFromHeaders } from "./accessControl.ts";
 import { auth } from "./auth.ts";
+import { getJwtPayloadFromHeaders } from "./authUtils.ts";
 
 export const OIDC_AUTH = "oidc";
 export const BEARER_AUTH = "bearerAuth";

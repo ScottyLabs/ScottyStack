@@ -2,10 +2,9 @@ import type { User } from "@scottystack/access-control";
 import type { Role } from "@scottystack/access-control/src/types.ts";
 import { eq } from "drizzle-orm";
 import type { Request as ExpressRequest } from "express";
-import jwt from "jsonwebtoken";
+import type jwt from "jsonwebtoken";
 import { db } from "../db/index.ts";
 import { account, user } from "../db/schema/index.ts";
-import { auth } from "./auth.ts";
 import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./authentication.ts";
 
 /**
@@ -13,15 +12,7 @@ import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./authentication.ts";
  */
 export async function getAcUserFromRequest(req: ExpressRequest): Promise<User> {
   const jwtPayload = (await verifyBearer(req)) ?? (await verifyOidc(req));
-  return await jwtPayloadToAcUser(jwtPayload);
-}
 
-/**
- * Convert the decoded JWT payload to an access control user.
- */
-async function jwtPayloadToAcUser(
-  jwtPayload: jwt.JwtPayload | string | undefined | null,
-): Promise<User> {
   const sub = jwtPayload?.sub;
   if (typeof sub !== "string") {
     return {
@@ -41,7 +32,6 @@ async function jwtPayloadToAcUser(
   // since we create a user when the user logs in for the first time.
   const dbUser = rows[0]?.user;
   if (!dbUser) {
-    console.error("User not found");
     throw new Error("User not found");
   }
 
@@ -61,15 +51,4 @@ export function getRolesFromJwt(
   return jwtPayload["groups"].includes(ADMIN_GROUP)
     ? ["admin", "user"]
     : ["user"];
-}
-
-export async function getJwtPayloadFromHeaders(
-  headers?: Headers,
-): Promise<jwt.JwtPayload | null> {
-  return await auth.api
-    .getAccessToken({
-      body: { providerId: "keycloak" },
-      headers: headers,
-    })
-    .then((accessToken) => jwt.decode(accessToken.accessToken, { json: true }));
 }

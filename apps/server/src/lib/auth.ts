@@ -6,7 +6,8 @@ import { customSession, genericOAuth } from "better-auth/plugins";
 import { db } from "../db/index.ts";
 import * as schema from "../db/schema/index.ts";
 import { env } from "../env.ts";
-import { getJwtPayloadFromHeaders, getRolesFromJwt } from "./accessControl.ts";
+import { getRolesFromJwt } from "./accessControl.ts";
+import { getJwtPayloadFromHeaders } from "./authUtils.ts";
 
 /**
  * Custom session type.
