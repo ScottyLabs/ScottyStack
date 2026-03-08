@@ -1,30 +1,32 @@
+import type { User } from "@scottystack/access-control";
+import { eq } from "drizzle-orm";
 import type { Request as ExpressRequest } from "express";
+import { db } from "./db";
+import { account, user } from "./db/schema";
 import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./lib/authentication.ts";
 
-export type RequestUser = {
-  sub: string;
-  email?: string;
-  givenName?: string;
-  isAdmin: boolean;
-};
-
 /**
- * Get the authenticated user from the request.
- * Works for both OIDC (session/cookies) and Bearer token authentication.
- * Returns null if the request is not authenticated.
+ * Get user from the request for access control.
  */
 export async function getUserFromRequest(
   req: ExpressRequest,
-): Promise<RequestUser | null> {
+): Promise<User | null> {
   const decoded = (await verifyBearer(req)) ?? (await verifyOidc(req));
   if (!decoded) {
     return null;
   }
 
+  // Use the user's IDP sub to find the user's ID
+  const rows = await db
+    .select({ user })
+    .from(user)
+    .innerJoin(account, eq(user.id, account.userId))
+    .where(eq(account.accountId, decoded.sub as string));
+
   return {
-    sub: decoded.sub as string,
-    email: decoded["email"],
-    givenName: decoded["given_name"],
-    isAdmin: (decoded["groups"] ?? []).includes(ADMIN_GROUP),
+    id: rows[0]?.user.id ?? "",
+    roles: decoded["groups"].includes(ADMIN_GROUP)
+      ? ["admin", "user"]
+      : ["user"],
   };
 }

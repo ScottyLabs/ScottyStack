@@ -21,6 +21,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@better-auth/drizzle-adapter": "^1.5.4",
+        "@scottystack/access-control": "workspace:*",
         "@tsoa/runtime": "^7.0.0-alpha.0",
         "better-auth": "^1.4.18",
         "cors": "^2.8.6",
@@ -58,6 +59,7 @@
       "dependencies": {
         "@base-ui/react": "^1.2.0",
         "@fontsource-variable/geist": "^5.2.8",
+        "@scottystack/access-control": "workspace:*",
         "@scottystack/server": "workspace:*",
         "@tailwindcss/vite": "^4.0.6",
         "@tanstack/react-query": "^5.90.20",
@@ -97,6 +99,10 @@
         "vitest": "^4.0.18",
         "web-vitals": "^5.1.0",
       },
+    },
+    "packages/access-control": {
+      "name": "@scottystack/access-control",
+      "version": "0.0.0",
     },
     "packages/common": {
       "name": "@scottystack/common",
@@ -497,6 +503,8 @@
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.57.1", "", { "os": "win32", "cpu": "x64" }, "sha512-mxRFDdHIWRxg3UfIIAwCm6NzvxG0jDX/wBN6KsQFTvKFqqg9vTrWUE68qEjHt19A5wwx5X5aUi2zuZT7YR0jrA=="],
 
     "@scarf/scarf": ["@scarf/scarf@1.4.0", "", {}, "sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ=="],
+
+    "@scottystack/access-control": ["@scottystack/access-control@workspace:packages/access-control"],
 
     "@scottystack/common": ["@scottystack/common@workspace:packages/common"],
 
