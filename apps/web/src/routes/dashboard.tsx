@@ -1,0 +1,141 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table.tsx";
+import { $api } from "@/lib/api/client.ts";
+import { useSession } from "@/lib/auth/client.ts";
+
+const ADMIN_GROUP = "scottystack-admins";
+const PAGE_SIZE = 10;
+
+export const Route = createFileRoute("/dashboard")({
+  component: DashboardPage,
+});
+
+function DashboardPage() {
+  const { data: auth, isPending: sessionPending } = useSession();
+  const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+
+  const {
+    data: users,
+    isLoading: usersLoading,
+    isError: usersError,
+    error: usersErrorDetail,
+  } = $api.useQuery("get", "/admin/users", {
+    params: { query: { page, limit: PAGE_SIZE } },
+  });
+
+  if (sessionPending) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-4 text-muted-foreground">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!auth?.user) {
+    navigate({ to: "/" });
+    return null;
+  }
+
+  const isAdmin = auth.user.groups?.includes(ADMIN_GROUP);
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
+        <p className="text-muted-foreground">
+          You do not have access to this page.
+        </p>
+        <Link to="/" className="text-primary underline">
+          Go home
+        </Link>
+      </div>
+    );
+  }
+
+  if (usersLoading) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-4 text-muted-foreground">
+        Loading users...
+      </div>
+    );
+  }
+
+  if (usersError) {
+    return (
+      <div className="p-6 text-destructive">
+        Error loading users: {String(usersErrorDetail) ?? "Unknown error"}
+      </div>
+    );
+  }
+
+  const list = users ?? [];
+  const hasNextPage = list.length === PAGE_SIZE;
+  const hasPrevPage = page > 0;
+
+  return (
+    <div className="flex flex-col p-6">
+      <h1 className="mb-4 text-2xl font-semibold">Admin Dashboard</h1>
+      <p className="mb-6 text-sm text-muted-foreground">
+        All users with post and reply counts.
+      </p>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>User ID</TableHead>
+            <TableHead>User name</TableHead>
+            <TableHead>Number of posts</TableHead>
+            <TableHead>Number of replies</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {list.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={4}
+                className="text-center text-muted-foreground"
+              >
+                No users found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            list.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell className="font-mono text-xs">{row.id}</TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.postCount}</TableCell>
+                <TableCell>{row.replyCount}</TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+      <div className="mt-4 flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!hasPrevPage}
+          onClick={() => setPage((p) => p - 1)}
+        >
+          Previous
+        </Button>
+        <span className="text-sm text-muted-foreground">Page {page + 1}</span>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!hasNextPage}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+}

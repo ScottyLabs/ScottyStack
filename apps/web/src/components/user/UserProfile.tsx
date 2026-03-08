@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "@/lib/auth/client.ts";
@@ -49,6 +50,15 @@ export function UserProfile() {
             <p className="text-sm text-gray-300 truncate mt-0.5">
               {user.email}
             </p>
+            {user.groups?.includes("scottystack-admins") && (
+              <Link
+                to="/dashboard"
+                onClick={() => setOpen(false)}
+                className="mt-2 block w-full rounded px-3 py-2 text-left text-sm text-white hover:bg-white/10"
+              >
+                Admin Dashboard
+              </Link>
+            )}
             <SignOutButton onSuccess={() => setOpen(false)} />
           </div>
         </div>
