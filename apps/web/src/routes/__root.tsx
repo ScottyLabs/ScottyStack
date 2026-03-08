@@ -7,9 +7,11 @@ import { MyToastContainer } from "@/components/ToastContainer";
 
 export const Route = createRootRoute({
   component: () => (
-    <>
+    <div className="flex min-h-screen flex-col">
       <NavBar />
-      <Outlet />
+      <main className="flex-1 overflow-hidden">
+        <Outlet />
+      </main>
       <MyToastContainer />
       <TanStackDevtools
         config={{
@@ -22,6 +24,6 @@ export const Route = createRootRoute({
           },
         ]}
       />
-    </>
+    </div>
   ),
 });
