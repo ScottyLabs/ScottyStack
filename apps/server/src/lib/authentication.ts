@@ -63,7 +63,7 @@ export function expressAuthentication(
 }
 
 // Return the decoded token if successful, otherwise return null
-async function verifyOidc(
+export async function verifyOidc(
   request: express.Request,
 ): Promise<jwt.JwtPayload | null> {
   try {
@@ -106,7 +106,7 @@ async function verifyOidc(
 }
 
 const client = jwksClient({ jwksUri: env.AUTH_JWKS_URI });
-function verifyBearer(
+export function verifyBearer(
   request: express.Request,
 ): Promise<jwt.JwtPayload | null> {
   return new Promise((resolve) => {

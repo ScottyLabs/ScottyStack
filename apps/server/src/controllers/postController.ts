@@ -13,8 +13,9 @@ import {
   SuccessResponse,
 } from "tsoa";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
+import { AuthenticationError } from "../middlewares/errorHandler.ts";
 import { postService } from "../services/postService.ts";
-import { isAdminFromRequest } from "../utils.ts";
+import { getUserFromRequest } from "../utils.ts";
 
 export interface CreatePostRequest {
   title: string;
@@ -42,14 +43,16 @@ export class PostController {
     @Query() limit?: number,
     @Query() cursor?: string,
   ) {
-    const isAdmin = await isAdminFromRequest(req);
+    const user = await getUserFromRequest(req);
+    const isAdmin = user?.isAdmin ?? false;
     return postService.listPosts(isAdmin, limit ?? 20, cursor);
   }
 
   @Get("{postId}")
   @SuccessResponse(200)
   async getPost(@Request() req: ExpressRequest, @Path() postId: string) {
-    const isAdmin = await isAdminFromRequest(req);
+    const user = await getUserFromRequest(req);
+    const isAdmin = user?.isAdmin ?? false;
     return postService.getPostById(postId, isAdmin);
   }
 
@@ -61,7 +64,8 @@ export class PostController {
     @Request() req: ExpressRequest,
     @Body() body: CreatePostRequest,
   ) {
-    const user = req.user as Express.User;
+    const user = await getUserFromRequest(req);
+    if (!user) throw new AuthenticationError();
     return postService.createPost(
       user.sub,
       body.title,
@@ -79,7 +83,8 @@ export class PostController {
     @Path() postId: string,
     @Body() body: UpdatePostRequest,
   ) {
-    const user = req.user as Express.User;
+    const user = await getUserFromRequest(req);
+    if (!user) throw new AuthenticationError();
     return postService.updatePost(
       user.sub,
       postId,
@@ -94,9 +99,9 @@ export class PostController {
   @Security(BEARER_AUTH)
   @SuccessResponse(204)
   async deletePost(@Request() req: ExpressRequest, @Path() postId: string) {
-    const user = req.user as Express.User;
-    const isAdmin = await isAdminFromRequest(req);
-    await postService.deletePost(user.sub, postId, isAdmin);
+    const user = await getUserFromRequest(req);
+    if (!user) throw new AuthenticationError();
+    await postService.deletePost(user.sub, postId, user.isAdmin);
   }
 
   @Post("{postId}/replies")
@@ -108,7 +113,8 @@ export class PostController {
     @Path() postId: string,
     @Body() body: CreateReplyRequest,
   ) {
-    const user = req.user as Express.User;
+    const user = await getUserFromRequest(req);
+    if (!user) throw new AuthenticationError();
     return postService.createReply(
       user.sub,
       postId,
@@ -126,8 +132,8 @@ export class PostController {
     @Path() postId: string,
     @Path() replyId: string,
   ) {
-    const user = req.user as Express.User;
-    const isAdmin = await isAdminFromRequest(req);
-    await postService.deleteReply(user.sub, postId, replyId, isAdmin);
+    const user = await getUserFromRequest(req);
+    if (!user) throw new AuthenticationError();
+    await postService.deleteReply(user.sub, postId, replyId, user.isAdmin);
   }
 }

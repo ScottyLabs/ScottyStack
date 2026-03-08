@@ -1,27 +1,30 @@
-import { fromNodeHeaders } from "better-auth/node";
 import type { Request as ExpressRequest } from "express";
-// import type jwt from "jsonwebtoken";
-import { auth } from "./lib/auth.ts";
-// import { ADMIN_GROUP } from "./lib/authentication.ts";
+import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./lib/authentication.ts";
+
+export type RequestUser = {
+  sub: string;
+  email?: string;
+  givenName?: string;
+  isAdmin: boolean;
+};
 
 /**
- * Check if the request is authenticated and the user is an admin.
- * We need to use it when we need to check if the user is an admin in a public route.
+ * Get the authenticated user from the request.
+ * Works for both OIDC (session/cookies) and Bearer token authentication.
+ * Returns null if the request is not authenticated.
  */
-export async function isAdminFromRequest(
+export async function getUserFromRequest(
   req: ExpressRequest,
-): Promise<boolean> {
-  const session = await auth.api.getSession({
-    headers: fromNodeHeaders(req.headers),
-  });
-  return Boolean((session?.user as { isAdmin?: boolean })?.isAdmin);
-}
+): Promise<RequestUser | null> {
+  const decoded = (await verifyBearer(req)) ?? (await verifyOidc(req));
+  if (!decoded) {
+    return null;
+  }
 
-// function decodedTokenToUser(decoded: jwt.JwtPayload): Express.User {
-//   return {
-//     sub: decoded.sub as string,
-//     email: decoded["email"],
-//     givenName: decoded["given_name"],
-//     isAdmin: decoded["groups"].includes(ADMIN_GROUP),
-//   };
-// }
+  return {
+    sub: decoded.sub as string,
+    email: decoded["email"],
+    givenName: decoded["given_name"],
+    isAdmin: (decoded["groups"] ?? []).includes(ADMIN_GROUP),
+  };
+}
