@@ -4,6 +4,7 @@
   "dependencies": {
     "@base-ui/react": "^1.2.0",
     "@fontsource-variable/geist": "^5.2.8",
+    "@posthog/react": "^1.8.2",
     "@scottystack/access-control": "workspace:*",
     "@scottystack/server": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
@@ -16,6 +17,7 @@
     "lucide-react": "^0.577.0",
     "openapi-fetch": "^0.15.0",
     "openapi-react-query": "^0.5.1",
+    "posthog-js": "^1.359.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-infinite-scroll-component": "^6.1.1",

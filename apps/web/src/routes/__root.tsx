@@ -4,6 +4,7 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { NavBar } from "@/components/NavBar.tsx";
+import { PostHogIdentify } from "@/components/PostHogIdentify";
 import { PostList } from "@/components/posts/PostList";
 import { MyToastContainer } from "@/components/ToastContainer";
 
@@ -15,6 +16,7 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <div className="flex min-h-screen flex-col">
+      <PostHogIdentify />
       <NavBar />
       <main className="flex h-full flex-1 overflow-hidden">
         <section className="flex w-80 flex-col border-r">
