@@ -1,7 +1,9 @@
+import { hasPermission } from "@scottystack/access-control";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/hooks/useUser";
 import { $api } from "@/lib/apiClient";
 import { useSession } from "@/lib/authClient";
 
@@ -42,9 +44,9 @@ function PostPage() {
   const [editContent, setEditContent] = useState(post.content);
   const [editAnonymous, setEditAnonymous] = useState(post.anonymous ?? false);
 
-  const isOwner = auth?.user?.id === post.userId;
-  const isAdmin = auth?.user?.isAdmin ?? false;
-  const canDeletePost = isOwner || isAdmin;
+  const user = useUser();
+  const canUpdate = hasPermission(user, "posts", "update", post);
+  const canDelete = hasPermission(user, "posts", "delete", post);
 
   const updatePost = $api.useMutation("patch", "/posts/{postId}", {
     onSuccess: () => {
@@ -181,7 +183,7 @@ function PostPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              {isOwner && (
+              {canUpdate && (
                 <Button
                   type="button"
                   variant="outline"
@@ -196,7 +198,7 @@ function PostPage() {
                   Edit
                 </Button>
               )}
-              {canDeletePost && (
+              {canDelete && (
                 <Button
                   type="button"
                   variant="outline"
@@ -225,8 +227,12 @@ function PostPage() {
           </h2>
           <ul className="space-y-4">
             {post.replies.map((r) => {
-              const canDeleteReply =
-                auth?.user && (auth.user.id === r.userId || isAdmin);
+              const canDeleteThisReply = hasPermission(
+                user,
+                "replies",
+                "delete",
+                r,
+              );
               return (
                 <li
                   key={r.id}
@@ -250,7 +256,7 @@ function PostPage() {
                         </>
                       )}
                     </p>
-                    {canDeleteReply && (
+                    {canDeleteThisReply && (
                       <Button
                         type="button"
                         variant="ghost"
