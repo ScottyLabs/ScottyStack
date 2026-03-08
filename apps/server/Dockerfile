@@ -61,4 +61,4 @@ COPY --from=builder --chown=server:server \
 
 EXPOSE 3000
 WORKDIR /app/apps/server
-CMD ["bun", "--preload", "src/instrument.ts", "dist/server.js"]
+CMD ["bun", "--preload", "./src/instrument.ts", "dist/server.js"]
