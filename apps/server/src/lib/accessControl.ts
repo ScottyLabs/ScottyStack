@@ -37,13 +37,12 @@ async function jwtPayloadToAcUser(
     .innerJoin(account, eq(user.id, account.userId))
     .where(eq(account.accountId, sub));
 
-  // TODO: throw an error if the user is not found
+  // There should always be a user found in the database for the given sub
+  // since we create a user when the user logs in for the first time.
   const dbUser = rows[0]?.user;
   if (!dbUser) {
-    return {
-      id: "",
-      roles: ["guest"],
-    };
+    console.error("User not found");
+    throw new Error("User not found");
   }
 
   return {

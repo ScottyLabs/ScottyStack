@@ -36,48 +36,39 @@ export function errorHandler(
   next: NextFunction,
 ) {
   // The authentication errors takes the highest priority
-  const firstAuthError = req.authErrors?.[0];
+  //
   // Since we authenticated with both OIDC and Bearer, even if the request was
   // authenticated successfully in one of the methods, there will still be auth
   // errors in the authErrors array due to the other method. Therefore, we only
   // want to return the auth errors if the request was not authenticated.
+  const firstAuthError = req.authErrors?.[0];
   if (!req.authenticated && req.authErrors && firstAuthError) {
     // the most relevant error is the one with the highest status code
     // 500 (corresponds to Invalid Security Name) > 403 Forbidden > 401 Unauthorized
     const errorToReturn = req.authErrors.reduce((max, currentError) => {
       return currentError.status > max.status ? currentError : max;
     }, firstAuthError);
-
-    return res.status(errorToReturn.status).json({
-      status: errorToReturn.status,
-      error: errorToReturn.name,
-      message: errorToReturn.message,
-    });
+    return res.status(errorToReturn.status).json({ ...errorToReturn });
   }
 
   // The validation errors take the second highest priority
   if (err instanceof ValidateError) {
-    console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
     return res.status(422).json({
-      message: "Validation Failed",
-      details: err?.fields,
+      message: `Validation Failed: ${JSON.stringify(err?.fields)}`,
     });
   }
 
   // The HTTP errors take priority over unknown errors
   if (err instanceof HttpError) {
-    return res.status(err.status).json({
-      status: err.status,
-      error: err.name,
-      message: err.message,
-    });
+    return res.status(err.status).json({ ...err });
   }
 
   if (err instanceof Error) {
+    // Log the error to the console for debugging since it is an unexpected error
     console.error(`Error ${req.path}`, err);
     return res
       .status(500)
-      .json({ message: "Internal Server Error", details: err.message });
+      .json({ message: `Internal Server Error: ${err.message}` });
   }
 
   return next();
