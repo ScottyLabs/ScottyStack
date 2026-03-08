@@ -8,6 +8,13 @@
       "when": 1772916777231,
       "tag": "0000_aromatic_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772928814131,
+      "tag": "0001_solid_micromax",
+      "breakpoints": true
     }
   ]
 }
