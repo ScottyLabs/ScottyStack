@@ -1,9 +1,3 @@
-import * as Sentry from "@sentry/bun";
-
-// Reference: https://bun.com/docs/guides/ecosystem/sentry
-// Ensure to call this before importing any other modules!
-Sentry.init({ dsn: env.SENTRY_DSN });
-
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";

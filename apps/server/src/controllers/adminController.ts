@@ -3,7 +3,7 @@ import { ADMIN_GROUP, BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { userService } from "../services/userService.ts";
 
 @Route("admin")
-export class AdminController {
+class AdminController {
   @Get("users")
   @Security(OIDC_AUTH, [ADMIN_GROUP])
   @Security(BEARER_AUTH, [ADMIN_GROUP])
@@ -15,3 +15,5 @@ export class AdminController {
     });
   }
 }
+
+export { AdminController };
