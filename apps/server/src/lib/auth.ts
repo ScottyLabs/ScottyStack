@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { db } from "../db/index.ts";
 import * as schema from "../db/schema/index.ts";
 import { env } from "../env.ts";
+import { ADMIN_GROUP } from "./authentication.ts";
 
 /**
  * Custom session type
@@ -14,7 +15,7 @@ import { env } from "../env.ts";
  */
 interface Auth {
   session: Session;
-  user: User & { groups?: string[] };
+  user: User & { isAdmin?: boolean };
 }
 
 // https://www.better-auth.com/docs/installation#create-a-better-auth-instance
@@ -96,7 +97,8 @@ export const auth = betterAuth({
 
       // Add groups to the session if they are present in the access token
       if (decoded && typeof decoded === "object" && "groups" in decoded) {
-        customSessionObject.user.groups = decoded["groups"];
+        customSessionObject.user.isAdmin =
+          decoded["groups"].includes(ADMIN_GROUP);
       }
 
       return customSessionObject;

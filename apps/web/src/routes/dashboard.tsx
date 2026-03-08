@@ -12,7 +12,6 @@ import {
 import { $api } from "@/lib/api/client.ts";
 import { useSession } from "@/lib/auth/client.ts";
 
-const ADMIN_GROUP = "scottystack-admins";
 const PAGE_SIZE = 10;
 
 export const Route = createFileRoute("/dashboard")({
@@ -46,7 +45,7 @@ function DashboardPage() {
     return null;
   }
 
-  const isAdmin = auth.user.groups?.includes(ADMIN_GROUP);
+  const isAdmin = auth.user.isAdmin;
   if (!isAdmin) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
