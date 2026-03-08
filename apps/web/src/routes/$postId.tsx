@@ -28,7 +28,7 @@ export const Route = createFileRoute("/$postId")({
   ),
 });
 
-export function PostPage() {
+function PostPage() {
   const { postId } = Route.useParams();
   const { data: auth } = useSession();
   const { data: post } = $api.useSuspenseQuery("get", "/posts/{postId}", {
