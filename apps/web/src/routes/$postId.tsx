@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PostDetail } from "@/components/posts/PostDetail";
-import { $api } from "@/lib/api/client";
+import { $api } from "@/lib/api/client.ts";
 
 export const Route = createFileRoute("/$postId")({
   component: PostPage,
