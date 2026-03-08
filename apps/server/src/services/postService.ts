@@ -1,4 +1,4 @@
-import { asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, lt, or } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import { user } from "../db/schema/auth.ts";
 import { post, reply } from "../db/schema/posts.ts";
@@ -69,22 +69,88 @@ export const postService = {
     };
   },
 
-  listPosts: async (isAdmin: boolean) => {
-    const rows = await db
-      .select({
-        id: post.id,
-        userId: post.userId,
-        title: post.title,
-        content: post.content,
-        anonymous: post.anonymous,
-        updatedAt: post.updatedAt,
-        authorName: user.name,
-      })
-      .from(post)
-      .innerJoin(user, eq(post.userId, user.id))
-      .orderBy(desc(post.createdAt));
+  listPosts: async (
+    isAdmin: boolean,
+    limit: number = 20,
+    cursor?: string,
+  ): Promise<{
+    posts: Array<{
+      id: string;
+      userId: string;
+      title: string;
+      content: string;
+      updatedAt: Date;
+      authorName: string;
+    }>;
+    nextCursor: string | null;
+  }> => {
+    const pageSize = Math.min(Math.max(1, limit), 100);
 
-    return rows.map((row) => ({
+    type Row = {
+      id: string;
+      userId: string;
+      title: string;
+      content: string;
+      updatedAt: Date;
+      authorName: string | null;
+      anonymous: boolean;
+    };
+
+    let rows: Row[];
+
+    const hasCursor = cursor && cursor.trim() !== "";
+    if (hasCursor) {
+      const [cursorPost] = await db
+        .select({ id: post.id, createdAt: post.createdAt })
+        .from(post)
+        .where(eq(post.id, cursor));
+      if (!cursorPost) {
+        throw new HttpError(400, "Invalid cursor");
+      }
+      rows = await db
+        .select({
+          id: post.id,
+          userId: post.userId,
+          title: post.title,
+          content: post.content,
+          anonymous: post.anonymous,
+          updatedAt: post.updatedAt,
+          authorName: user.name,
+        })
+        .from(post)
+        .innerJoin(user, eq(post.userId, user.id))
+        .where(
+          or(
+            lt(post.createdAt, cursorPost.createdAt),
+            and(
+              eq(post.createdAt, cursorPost.createdAt),
+              lt(post.id, cursorPost.id),
+            ),
+          ),
+        )
+        .orderBy(desc(post.createdAt), desc(post.id))
+        .limit(pageSize + 1);
+    } else {
+      rows = await db
+        .select({
+          id: post.id,
+          userId: post.userId,
+          title: post.title,
+          content: post.content,
+          anonymous: post.anonymous,
+          updatedAt: post.updatedAt,
+          authorName: user.name,
+        })
+        .from(post)
+        .innerJoin(user, eq(post.userId, user.id))
+        .orderBy(desc(post.createdAt), desc(post.id))
+        .limit(pageSize + 1);
+    }
+
+    const hasMore = rows.length > pageSize;
+    const slice = hasMore ? rows.slice(0, pageSize) : rows;
+    const lastRow = slice[slice.length - 1];
+    const posts = slice.map((row) => ({
       id: row.id,
       userId: row.userId,
       title: row.title,
@@ -92,6 +158,9 @@ export const postService = {
       updatedAt: row.updatedAt,
       authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
     }));
+    const nextCursor = hasMore && lastRow ? lastRow.id : null;
+
+    return { posts, nextCursor };
   },
 
   createPost: async (

@@ -6,6 +6,7 @@ import {
   Patch,
   Path,
   Post,
+  Query,
   Request,
   Route,
   Security,
@@ -36,9 +37,13 @@ export interface UpdatePostRequest {
 export class PostController {
   @Get("/")
   @SuccessResponse(200)
-  async listPosts(@Request() req: ExpressRequest) {
+  async listPosts(
+    @Request() req: ExpressRequest,
+    @Query() limit?: number,
+    @Query() cursor?: string,
+  ) {
     const isAdmin = await isAdminFromRequest(req);
-    return postService.listPosts(isAdmin);
+    return postService.listPosts(isAdmin, limit ?? 20, cursor);
   }
 
   @Get("{postId}")
