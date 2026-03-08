@@ -2,6 +2,7 @@ import type { Request as ExpressRequest } from "express";
 import {
   Body,
   Get,
+  Patch,
   Path,
   Post,
   Request,
@@ -20,6 +21,12 @@ export interface CreatePostRequest {
 }
 
 export interface CreateReplyRequest {
+  content: string;
+  anonymous?: boolean;
+}
+
+export interface UpdatePostRequest {
+  title: string;
   content: string;
   anonymous?: boolean;
 }
@@ -51,6 +58,25 @@ export class PostController {
     const user = req.user as Express.User;
     return postService.createPost(
       user.sub,
+      body.title,
+      body.content,
+      body.anonymous ?? false,
+    );
+  }
+
+  @Patch("{postId}")
+  @Security(OIDC_AUTH)
+  @Security(BEARER_AUTH)
+  @SuccessResponse(200)
+  async updatePost(
+    @Request() req: ExpressRequest,
+    @Path() postId: string,
+    @Body() body: UpdatePostRequest,
+  ) {
+    const user = req.user as Express.User;
+    return postService.updatePost(
+      user.sub,
+      postId,
       body.title,
       body.content,
       body.anonymous ?? false,

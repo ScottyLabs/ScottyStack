@@ -36,6 +36,22 @@ function PostPage() {
 
   const [content, setContent] = useState("");
   const [anonymous, setAnonymous] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(post.title);
+  const [editContent, setEditContent] = useState(post.content);
+  const [editAnonymous, setEditAnonymous] = useState(post.anonymous ?? false);
+
+  const isOwner = auth?.user?.id === post.userId;
+
+  const updatePost = $api.useMutation("patch", "/posts/{postId}", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get", "/posts/{postId}", { path: { postId } }],
+      });
+      queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
+      setEditing(false);
+    },
+  });
 
   const createReply = $api.useMutation("post", "/posts/{postId}/replies", {
     onSuccess: () => {
@@ -46,7 +62,7 @@ function PostPage() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleReplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
     createReply.mutate({
@@ -55,17 +71,98 @@ function PostPage() {
     });
   };
 
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editTitle.trim() || !editContent.trim()) return;
+    updatePost.mutate({
+      params: { path: { postId } },
+      body: {
+        title: editTitle.trim(),
+        content: editContent.trim(),
+        anonymous: editAnonymous,
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col p-6">
-      <h1 className="text-xl font-semibold">{post.title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {post.authorName} ·{" "}
-        {new Date(post.updatedAt).toLocaleString(undefined, {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })}
-      </p>
-      <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
+      {editing ? (
+        <form onSubmit={handleEditSubmit} className="space-y-4">
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-xl font-semibold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            required
+          />
+          <textarea
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            rows={8}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            required
+          />
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={editAnonymous}
+                onChange={(e) => setEditAnonymous(e.target.checked)}
+                className="rounded border-input"
+              />
+              Post anonymously
+            </label>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setEditing(false);
+                  setEditTitle(post.title);
+                  setEditContent(post.content);
+                  setEditAnonymous(post.anonymous ?? false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={updatePost.isPending}>
+                {updatePost.isPending ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </form>
+      ) : (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-semibold">{post.title}</h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {post.authorName} ·{" "}
+                {new Date(post.updatedAt).toLocaleString(undefined, {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </p>
+            </div>
+            {isOwner && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEditTitle(post.title);
+                  setEditContent(post.content);
+                  setEditAnonymous(post.anonymous ?? false);
+                  setEditing(true);
+                }}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
+          <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
+        </>
+      )}
 
       {post.replies && post.replies.length > 0 && (
         <div className="mt-8 border-t pt-6">
@@ -93,7 +190,7 @@ function PostPage() {
       )}
 
       {auth?.user && (
-        <form onSubmit={handleSubmit} className="mt-8 border-t pt-6">
+        <form onSubmit={handleReplySubmit} className="mt-8 border-t pt-6">
           <h2 className="mb-4 text-sm font-medium text-muted-foreground">
             Reply
           </h2>

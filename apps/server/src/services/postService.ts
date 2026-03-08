@@ -53,6 +53,7 @@ export const postService = {
       userId: row.userId,
       title: row.title,
       content: row.content,
+      anonymous: row.anonymous,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
@@ -116,6 +117,39 @@ export const postService = {
       .returning();
 
     return created;
+  },
+
+  updatePost: async (
+    providerId: string,
+    postId: string,
+    title: string,
+    content: string,
+    anonymous: boolean,
+  ) => {
+    const userRecord = await userService.getUserByAccountId(providerId);
+    if (!userRecord) {
+      throw new HttpError(404, "User not found");
+    }
+
+    const [existing] = await db
+      .select({ id: post.id, userId: post.userId })
+      .from(post)
+      .where(eq(post.id, postId));
+    if (!existing) {
+      throw new HttpError(404, "Post not found");
+    }
+    if (existing.userId !== userRecord.id) {
+      throw new HttpError(403, "Forbidden: you can only edit your own posts");
+    }
+
+    const now = new Date();
+    const [updated] = await db
+      .update(post)
+      .set({ title, content, anonymous, updatedAt: now })
+      .where(eq(post.id, postId))
+      .returning();
+
+    return updated;
   },
 
   createReply: async (
