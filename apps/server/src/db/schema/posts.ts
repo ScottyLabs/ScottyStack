@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
 export const post = pgTable(
@@ -15,6 +22,7 @@ export const post = pgTable(
     updatedAt: timestamp("updated_at")
       .$onUpdate(() => new Date())
       .notNull(),
+    anonymous: boolean().notNull().default(false),
   },
   (table) => [index("post_userId_idx").on(table.userId)],
 );
@@ -34,6 +42,7 @@ export const reply = pgTable(
     updatedAt: timestamp("updated_at")
       .$onUpdate(() => new Date())
       .notNull(),
+    anonymous: boolean().notNull().default(false),
   },
   (table) => [
     index("reply_userId_idx").on(table.userId),

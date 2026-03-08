@@ -36,6 +36,20 @@
       "when": 1772934163406,
       "tag": "0004_friendly_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772940940496,
+      "tag": "0005_panoramic_firestar",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1772940982361,
+      "tag": "0006_nice_ender_wiggin",
+      "breakpoints": true
     }
   ]
 }
