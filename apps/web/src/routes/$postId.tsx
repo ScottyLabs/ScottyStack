@@ -2,8 +2,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { $api } from "@/lib/api/client.ts";
-import { useSession } from "@/lib/auth/client.ts";
+import { $api } from "@/lib/apiClient";
+import { useSession } from "@/lib/authClient";
 
 export const Route = createFileRoute("/$postId")({
   component: PostPage,

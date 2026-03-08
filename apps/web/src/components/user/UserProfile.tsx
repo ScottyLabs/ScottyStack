@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useSession } from "@/lib/auth/client.ts";
+import { useSession } from "@/lib/authClient";
 import { SignInButton } from "./SignInButton";
 import { SignOutButton } from "./SignOutButton";
 

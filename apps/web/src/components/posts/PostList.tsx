@@ -2,8 +2,8 @@ import { Link, useParams } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { buttonVariants } from "@/components/ui/button";
-import { $api } from "@/lib/api/client.ts";
-import { useSession } from "@/lib/auth/client.ts";
+import { $api } from "@/lib/apiClient";
+import { useSession } from "@/lib/authClient";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 10;

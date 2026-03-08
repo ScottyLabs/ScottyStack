@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table.tsx";
-import { $api } from "@/lib/api/client.ts";
-import { useSession } from "@/lib/auth/client.ts";
+import { $api } from "@/lib/apiClient";
+import { useSession } from "@/lib/authClient";
 
 const PAGE_SIZE = 10;
 

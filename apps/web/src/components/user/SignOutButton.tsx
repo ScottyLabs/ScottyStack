@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/lib/auth/client.ts";
+import { signOut } from "@/lib/authClient";
 
 export function SignOutButton({ onSuccess }: { onSuccess?: () => void }) {
   return (

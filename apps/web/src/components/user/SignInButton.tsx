@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { signIn } from "@/lib/auth/client.ts";
+import { signIn } from "@/lib/authClient";
 
 export function SignInButton() {
   return (
