@@ -70,6 +70,7 @@ export const postService = {
           id: r.id,
           userId: r.userId,
           content: r.content,
+          anonymous: r.anonymous,
           authorName: maskAuthor(r.anonymous, r.authorName, canViewReplyName),
           createdAt: r.createdAt,
           updatedAt: r.updatedAt,

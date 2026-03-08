@@ -54,4 +54,36 @@ export const replyService = {
 
     await db.delete(reply).where(eq(reply.id, replyId));
   },
+
+  updateReply: async (
+    acUser: User,
+    postId: string,
+    replyId: string,
+    content: string,
+    anonymous: boolean,
+  ) => {
+    const [existing] = await db
+      .select({ id: reply.id, userId: reply.userId, postId: reply.postId })
+      .from(reply)
+      .where(eq(reply.id, replyId));
+    if (!existing) {
+      throw new HttpError(404, "Reply not found");
+    }
+    if (existing.postId !== postId) {
+      throw new HttpError(404, "Reply not found");
+    }
+
+    if (!hasPermission(acUser, "replies", "update", existing)) {
+      throw new HttpError(403, "You are not allowed to update this reply");
+    }
+
+    const now = new Date();
+    const [updated] = await db
+      .update(reply)
+      .set({ content, anonymous, updatedAt: now })
+      .where(eq(reply.id, replyId))
+      .returning();
+
+    return updated;
+  },
 };

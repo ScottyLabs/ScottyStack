@@ -40,6 +40,9 @@ function PostPage() {
   const [content, setContent] = useState("");
   const [anonymous, setAnonymous] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
+  const [editReplyContent, setEditReplyContent] = useState("");
+  const [editReplyAnonymous, setEditReplyAnonymous] = useState(false);
   const [editTitle, setEditTitle] = useState(post.title);
   const [editContent, setEditContent] = useState(post.content);
   const [editAnonymous, setEditAnonymous] = useState(post.anonymous ?? false);
@@ -76,6 +79,21 @@ function PostPage() {
     },
   });
 
+  const updateReply = $api.useMutation(
+    "patch",
+    "/posts/{postId}/replies/{replyId}",
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: $api.queryOptions("get", "/posts/{postId}", {
+            params: { path: { postId } },
+          }).queryKey,
+        });
+        setEditingReplyId(null);
+      },
+    },
+  );
+
   const deleteReply = $api.useMutation(
     "delete",
     "/posts/{postId}/replies/{replyId}",
@@ -108,6 +126,18 @@ function PostPage() {
         title: editTitle.trim(),
         content: editContent.trim(),
         anonymous: editAnonymous,
+      },
+    });
+  };
+
+  const handleReplyEditSubmit = (e: React.FormEvent, replyId: string) => {
+    e.preventDefault();
+    if (!editReplyContent.trim()) return;
+    updateReply.mutate({
+      params: { path: { postId, replyId } },
+      body: {
+        content: editReplyContent.trim(),
+        anonymous: editReplyAnonymous,
       },
     });
   };
@@ -227,57 +257,132 @@ function PostPage() {
           </h2>
           <ul className="space-y-4">
             {post.replies.map((r) => {
+              const canUpdateThisReply = hasPermission(
+                user,
+                "replies",
+                "update",
+                r,
+              );
               const canDeleteThisReply = hasPermission(
                 user,
                 "replies",
                 "delete",
                 r,
               );
+              const isEditingReply = editingReplyId === r.id;
               return (
                 <li
                   key={r.id}
                   className="rounded-lg border bg-muted/30 p-4 text-sm"
                 >
-                  <div className="mb-1 flex items-start justify-between gap-2">
-                    <p className="text-sm text-muted-foreground">
-                      {r.authorName} · Created{" "}
-                      {new Date(r.createdAt).toLocaleString(undefined, {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
-                      {r.updatedAt !== r.createdAt && (
-                        <>
-                          {" "}
-                          · Updated{" "}
-                          {new Date(r.updatedAt).toLocaleString(undefined, {
+                  {isEditingReply ? (
+                    <form
+                      onSubmit={(e) => handleReplyEditSubmit(e, r.id)}
+                      className="space-y-3"
+                    >
+                      <textarea
+                        value={editReplyContent}
+                        onChange={(e) => setEditReplyContent(e.target.value)}
+                        rows={4}
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        required
+                      />
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={editReplyAnonymous}
+                            onChange={(e) =>
+                              setEditReplyAnonymous(e.target.checked)
+                            }
+                            className="rounded border-input"
+                          />
+                          Post anonymously
+                        </label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingReplyId(null);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          type="submit"
+                          size="sm"
+                          disabled={updateReply.isPending}
+                        >
+                          {updateReply.isPending ? "Saving..." : "Save"}
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      <div className="mb-1 flex items-start justify-between gap-2">
+                        <p className="text-sm text-muted-foreground">
+                          {r.authorName} · Created{" "}
+                          {new Date(r.createdAt).toLocaleString(undefined, {
                             dateStyle: "medium",
                             timeStyle: "short",
                           })}
-                        </>
-                      )}
-                    </p>
-                    {canDeleteThisReply && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto p-1 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        disabled={deleteReply.isPending}
-                        onClick={() => {
-                          if (
-                            confirm("Delete this reply? This cannot be undone.")
-                          ) {
-                            deleteReply.mutate({
-                              params: { path: { postId, replyId: r.id } },
-                            });
-                          }
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </div>
-                  <div className="whitespace-pre-wrap text-sm">{r.content}</div>
+                          {r.updatedAt !== r.createdAt && (
+                            <>
+                              {" "}
+                              · Updated{" "}
+                              {new Date(r.updatedAt).toLocaleString(undefined, {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              })}
+                            </>
+                          )}
+                        </p>
+                        <div className="flex gap-1">
+                          {canUpdateThisReply && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-1"
+                              onClick={() => {
+                                setEditingReplyId(r.id);
+                                setEditReplyContent(r.content);
+                                setEditReplyAnonymous(r.anonymous ?? false);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          )}
+                          {canDeleteThisReply && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-1 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              disabled={deleteReply.isPending}
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "Delete this reply? This cannot be undone.",
+                                  )
+                                ) {
+                                  deleteReply.mutate({
+                                    params: { path: { postId, replyId: r.id } },
+                                  });
+                                }
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                      <div className="whitespace-pre-wrap text-sm">
+                        {r.content}
+                      </div>
+                    </>
+                  )}
                 </li>
               );
             })}

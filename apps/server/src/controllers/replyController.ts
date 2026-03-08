@@ -2,6 +2,7 @@ import type { Request as ExpressRequest } from "express";
 import {
   Body,
   Delete,
+  Patch,
   Path,
   Post,
   Request,
@@ -11,9 +12,15 @@ import {
 } from "tsoa";
 import { getUserFromRequest } from "../lib/accessControl.ts";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
+import { AuthenticationError } from "../middlewares/errorHandler.ts";
 import { replyService } from "../services/replyService.ts";
 
 export interface CreateReplyRequest {
+  content: string;
+  anonymous?: boolean;
+}
+
+export interface UpdateReplyRequest {
   content: string;
   anonymous?: boolean;
 }
@@ -30,9 +37,31 @@ export class ReplyController {
     @Body() body: CreateReplyRequest,
   ) {
     const user = await getUserFromRequest(req);
+    if (!user.id) throw new AuthenticationError();
     return replyService.createReply(
       user,
       postId,
+      body.content,
+      body.anonymous ?? false,
+    );
+  }
+
+  @Patch("{replyId}")
+  @Security(OIDC_AUTH)
+  @Security(BEARER_AUTH)
+  @SuccessResponse(200)
+  async updateReply(
+    @Request() req: ExpressRequest,
+    @Path() postId: string,
+    @Path() replyId: string,
+    @Body() body: UpdateReplyRequest,
+  ) {
+    const user = await getUserFromRequest(req);
+    if (!user.id) throw new AuthenticationError();
+    return replyService.updateReply(
+      user,
+      postId,
+      replyId,
       body.content,
       body.anonymous ?? false,
     );
@@ -48,6 +77,7 @@ export class ReplyController {
     @Path() replyId: string,
   ) {
     const user = await getUserFromRequest(req);
+    if (!user.id) throw new AuthenticationError();
     await replyService.deleteReply(user, postId, replyId);
   }
 }
