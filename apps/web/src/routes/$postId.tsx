@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/api/client.ts";
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/$postId")({
 
 function PostPage() {
   const { postId } = Route.useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: auth } = useSession();
   const { data: post } = $api.useSuspenseQuery("get", "/posts/{postId}", {
@@ -42,6 +43,8 @@ function PostPage() {
   const [editAnonymous, setEditAnonymous] = useState(post.anonymous ?? false);
 
   const isOwner = auth?.user?.id === post.userId;
+  const isAdmin = auth?.user?.isAdmin ?? false;
+  const canDeletePost = isOwner || isAdmin;
 
   const updatePost = $api.useMutation("patch", "/posts/{postId}", {
     onSuccess: () => {
@@ -61,6 +64,27 @@ function PostPage() {
       setContent("");
     },
   });
+
+  const deletePost = $api.useMutation("delete", "/posts/{postId}", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
+      navigate({ to: "/" });
+    },
+  });
+
+  const deleteReply = $api.useMutation(
+    "delete",
+    "/posts/{postId}/replies/{replyId}",
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: $api.queryOptions("get", "/posts/{postId}", {
+            params: { path: { postId } },
+          }).queryKey,
+        });
+      },
+    },
+  );
 
   const handleReplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,21 +168,39 @@ function PostPage() {
                 })}
               </p>
             </div>
-            {isOwner && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setEditTitle(post.title);
-                  setEditContent(post.content);
-                  setEditAnonymous(post.anonymous ?? false);
-                  setEditing(true);
-                }}
-              >
-                Edit
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {isOwner && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEditTitle(post.title);
+                    setEditContent(post.content);
+                    setEditAnonymous(post.anonymous ?? false);
+                    setEditing(true);
+                  }}
+                >
+                  Edit
+                </Button>
+              )}
+              {canDeletePost && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  disabled={deletePost.isPending}
+                  onClick={() => {
+                    if (confirm("Delete this post? This cannot be undone.")) {
+                      deletePost.mutate({ params: { path: { postId } } });
+                    }
+                  }}
+                >
+                  {deletePost.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              )}
+            </div>
           </div>
           <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
         </>
@@ -170,21 +212,47 @@ function PostPage() {
             Replies ({post.replies.length})
           </h2>
           <ul className="space-y-4">
-            {post.replies.map((r) => (
-              <li
-                key={r.id}
-                className="rounded-lg border bg-muted/30 p-4 text-sm"
-              >
-                <p className="mb-1 text-sm text-muted-foreground">
-                  {r.authorName} ·{" "}
-                  {new Date(r.createdAt).toLocaleString(undefined, {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
-                </p>
-                <div className="whitespace-pre-wrap text-sm">{r.content}</div>
-              </li>
-            ))}
+            {post.replies.map((r) => {
+              const canDeleteReply =
+                auth?.user && (auth.user.id === r.userId || isAdmin);
+              return (
+                <li
+                  key={r.id}
+                  className="rounded-lg border bg-muted/30 p-4 text-sm"
+                >
+                  <div className="mb-1 flex items-start justify-between gap-2">
+                    <p className="text-sm text-muted-foreground">
+                      {r.authorName} ·{" "}
+                      {new Date(r.createdAt).toLocaleString(undefined, {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </p>
+                    {canDeleteReply && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-1 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        disabled={deleteReply.isPending}
+                        onClick={() => {
+                          if (
+                            confirm("Delete this reply? This cannot be undone.")
+                          ) {
+                            deleteReply.mutate({
+                              params: { path: { postId, replyId: r.id } },
+                            });
+                          }
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </div>
+                  <div className="whitespace-pre-wrap text-sm">{r.content}</div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

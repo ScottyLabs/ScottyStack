@@ -37,6 +37,7 @@ export const postService = {
     const replies = await db
       .select({
         id: reply.id,
+        userId: reply.userId,
         content: reply.content,
         anonymous: reply.anonymous,
         createdAt: reply.createdAt,
@@ -59,6 +60,7 @@ export const postService = {
       authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
       replies: replies.map((r) => ({
         id: r.id,
+        userId: r.userId,
         content: r.content,
         authorName: maskAuthor(r.anonymous, r.authorName, isAdmin),
         createdAt: r.createdAt,
@@ -185,5 +187,56 @@ export const postService = {
       .returning();
 
     return created;
+  },
+
+  deletePost: async (providerId: string, postId: string, isAdmin: boolean) => {
+    const userRecord = await userService.getUserByAccountId(providerId);
+    if (!userRecord) {
+      throw new HttpError(404, "User not found");
+    }
+
+    const [existing] = await db
+      .select({ id: post.id, userId: post.userId })
+      .from(post)
+      .where(eq(post.id, postId));
+    if (!existing) {
+      throw new HttpError(404, "Post not found");
+    }
+    if (!isAdmin && existing.userId !== userRecord.id) {
+      throw new HttpError(403, "Forbidden: you can only delete your own posts");
+    }
+
+    await db.delete(post).where(eq(post.id, postId));
+  },
+
+  deleteReply: async (
+    providerId: string,
+    postId: string,
+    replyId: string,
+    isAdmin: boolean,
+  ) => {
+    const userRecord = await userService.getUserByAccountId(providerId);
+    if (!userRecord) {
+      throw new HttpError(404, "User not found");
+    }
+
+    const [existing] = await db
+      .select({ id: reply.id, userId: reply.userId, postId: reply.postId })
+      .from(reply)
+      .where(eq(reply.id, replyId));
+    if (!existing) {
+      throw new HttpError(404, "Reply not found");
+    }
+    if (existing.postId !== postId) {
+      throw new HttpError(404, "Reply not found");
+    }
+    if (!isAdmin && existing.userId !== userRecord.id) {
+      throw new HttpError(
+        403,
+        "Forbidden: you can only delete your own replies",
+      );
+    }
+
+    await db.delete(reply).where(eq(reply.id, replyId));
   },
 };

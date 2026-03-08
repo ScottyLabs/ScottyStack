@@ -1,6 +1,7 @@
 import type { Request as ExpressRequest } from "express";
 import {
   Body,
+  Delete,
   Get,
   Patch,
   Path,
@@ -83,6 +84,16 @@ export class PostController {
     );
   }
 
+  @Delete("{postId}")
+  @Security(OIDC_AUTH)
+  @Security(BEARER_AUTH)
+  @SuccessResponse(204)
+  async deletePost(@Request() req: ExpressRequest, @Path() postId: string) {
+    const user = req.user as Express.User;
+    const isAdmin = await isAdminFromRequest(req);
+    await postService.deletePost(user.sub, postId, isAdmin);
+  }
+
   @Post("{postId}/replies")
   @Security(OIDC_AUTH)
   @Security(BEARER_AUTH)
@@ -99,5 +110,19 @@ export class PostController {
       body.content,
       body.anonymous ?? false,
     );
+  }
+
+  @Delete("{postId}/replies/{replyId}")
+  @Security(OIDC_AUTH)
+  @Security(BEARER_AUTH)
+  @SuccessResponse(204)
+  async deleteReply(
+    @Request() req: ExpressRequest,
+    @Path() postId: string,
+    @Path() replyId: string,
+  ) {
+    const user = req.user as Express.User;
+    const isAdmin = await isAdminFromRequest(req);
+    await postService.deleteReply(user.sub, postId, replyId, isAdmin);
   }
 }
