@@ -32,7 +32,7 @@ function PostPage() {
     <div className="flex flex-col p-6">
       <h1 className="text-xl font-semibold">{post.title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {post.authorName ?? "User"} ·{" "}
+        {post.authorName} ·{" "}
         {new Date(post.updatedAt).toLocaleString(undefined, {
           dateStyle: "medium",
           timeStyle: "short",
@@ -52,7 +52,7 @@ function PostPage() {
                 className="rounded-lg border bg-muted/30 p-4 text-sm"
               >
                 <p className="mb-1 text-sm text-muted-foreground">
-                  {r.authorName ?? "User"} ·{" "}
+                  {r.authorName} ·{" "}
                   {new Date(r.createdAt).toLocaleString(undefined, {
                     dateStyle: "medium",
                     timeStyle: "short",

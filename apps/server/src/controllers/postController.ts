@@ -11,6 +11,7 @@ import {
 } from "tsoa";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { postService } from "../services/postService.ts";
+import { isAdminFromRequest } from "../utils.ts";
 
 export interface CreatePostRequest {
   title: string;
@@ -21,14 +22,16 @@ export interface CreatePostRequest {
 export class PostController {
   @Get("/")
   @SuccessResponse(200)
-  async listPosts() {
-    return postService.listPosts();
+  async listPosts(@Request() req: ExpressRequest) {
+    const isAdmin = await isAdminFromRequest(req);
+    return postService.listPosts(isAdmin);
   }
 
   @Get("{postId}")
   @SuccessResponse(200)
-  async getPost(@Path() postId: string) {
-    return postService.getPostById(postId);
+  async getPost(@Request() req: ExpressRequest, @Path() postId: string) {
+    const isAdmin = await isAdminFromRequest(req);
+    return postService.getPostById(postId, isAdmin);
   }
 
   @Post("/")

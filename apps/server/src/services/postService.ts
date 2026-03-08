@@ -5,14 +5,24 @@ import { post, reply } from "../db/schema/posts.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
 import { userService } from "./userService.ts";
 
+function maskAuthor(
+  anonymous: boolean,
+  authorName: string | null,
+  isAdmin: boolean,
+) {
+  if (isAdmin || !anonymous) return authorName;
+  return "Anonymous";
+}
+
 export const postService = {
-  getPostById: async (id: string) => {
+  getPostById: async (id: string, isAdmin: boolean) => {
     const [row] = await db
       .select({
         id: post.id,
         userId: post.userId,
         title: post.title,
         content: post.content,
+        anonymous: post.anonymous,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         authorName: user.name,
@@ -39,30 +49,46 @@ export const postService = {
       .orderBy(asc(reply.createdAt));
 
     return {
-      ...row,
+      id: row.id,
+      userId: row.userId,
+      title: row.title,
+      content: row.content,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
       replies: replies.map((r) => ({
         id: r.id,
         content: r.content,
-        authorName: r.anonymous ? "Anonymous" : r.authorName,
+        authorName: maskAuthor(r.anonymous, r.authorName, isAdmin),
         createdAt: r.createdAt,
         updatedAt: r.updatedAt,
       })),
     };
   },
 
-  listPosts: async () => {
-    return db
+  listPosts: async (isAdmin: boolean) => {
+    const rows = await db
       .select({
         id: post.id,
         userId: post.userId,
         title: post.title,
         content: post.content,
+        anonymous: post.anonymous,
         updatedAt: post.updatedAt,
         authorName: user.name,
       })
       .from(post)
       .innerJoin(user, eq(post.userId, user.id))
       .orderBy(desc(post.createdAt));
+
+    return rows.map((row) => ({
+      id: row.id,
+      userId: row.userId,
+      title: row.title,
+      content: row.content,
+      updatedAt: row.updatedAt,
+      authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
+    }));
   },
 
   createPost: async (providerId: string, title: string, content: string) => {

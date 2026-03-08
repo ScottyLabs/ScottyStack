@@ -49,7 +49,7 @@ declare global {
       sub: string;
       email?: string;
       givenName?: string;
-      groups?: string[];
+      isAdmin: boolean;
     }
   }
 }
@@ -221,6 +221,6 @@ function decodedTokenToUser(decoded: jwt.JwtPayload): Express.User {
     sub: decoded.sub as string,
     email: decoded["email"],
     givenName: decoded["given_name"],
-    groups: decoded["groups"],
+    isAdmin: decoded["groups"].includes(ADMIN_GROUP),
   };
 }
