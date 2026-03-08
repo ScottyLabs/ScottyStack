@@ -4,12 +4,14 @@ import ReactDom from "react-dom/client";
 import { reportWebVitals } from "./reportWebVitals.ts";
 import "./styles.css";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { getQueryClient } from "./lib/queryClient.ts";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen.ts";
 
 // Create a new router instance
-const TanStackQueryProviderContext = { queryClient: new QueryClient() };
+const queryClient = getQueryClient();
+const TanStackQueryProviderContext = { queryClient };
 const router = createRouter({
   routeTree,
   context: {

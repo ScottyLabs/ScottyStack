@@ -1,6 +1,7 @@
 import { hasPermission } from "@scottystack/access-control";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/useUser";
 import { $api } from "@/lib/apiClient";
@@ -38,6 +39,7 @@ export function PostHeader({ post, onEdit }: PostHeaderProps) {
   const deletePost = $api.useMutation("delete", "/posts/{postId}", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
+      toast.success("Post deleted");
       navigate({ to: "/" });
     },
   });
@@ -57,7 +59,7 @@ export function PostHeader({ post, onEdit }: PostHeaderProps) {
           {updatedAt !== createdAt && <> · Updated {updatedAt}</>}
         </p>
       </div>
-      <div className="flex gap-2">
+      <div className="flex shrink-0 gap-2">
         {canUpdate && (
           <Button type="button" variant="outline" size="sm" onClick={onEdit}>
             Edit

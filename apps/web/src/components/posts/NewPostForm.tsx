@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 
@@ -14,6 +15,7 @@ export function NewPostForm() {
   const createPost = $api.useMutation("post", "/posts", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
+      toast.success("Post created");
       navigate({ to: "/" });
     },
   });

@@ -12,7 +12,6 @@ import {
 } from "tsoa";
 import { getUserFromRequest } from "../lib/accessControl.ts";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
-import { AuthenticationError } from "../middlewares/errorHandler.ts";
 import { replyService } from "../services/replyService.ts";
 
 export interface CreateReplyRequest {
@@ -37,7 +36,6 @@ export class ReplyController {
     @Body() body: CreateReplyRequest,
   ) {
     const user = await getUserFromRequest(req);
-    if (!user.id) throw new AuthenticationError();
     return replyService.createReply(
       user,
       postId,
@@ -57,7 +55,6 @@ export class ReplyController {
     @Body() body: UpdateReplyRequest,
   ) {
     const user = await getUserFromRequest(req);
-    if (!user.id) throw new AuthenticationError();
     return replyService.updateReply(
       user,
       postId,
@@ -77,7 +74,6 @@ export class ReplyController {
     @Path() replyId: string,
   ) {
     const user = await getUserFromRequest(req);
-    if (!user.id) throw new AuthenticationError();
     await replyService.deleteReply(user, postId, replyId);
   }
 }

@@ -13,7 +13,6 @@ import { Route as NewRouteImport } from './routes/new'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as PostIdRouteImport } from './routes/$postId'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PostIdIndexRouteImport } from './routes/$postId/index'
 
 const NewRoute = NewRouteImport.update({
   id: '/new',
@@ -35,44 +34,37 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostIdIndexRoute = PostIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PostIdRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$postId': typeof PostIdRouteWithChildren
+  '/$postId': typeof PostIdRoute
   '/dashboard': typeof DashboardRoute
   '/new': typeof NewRoute
-  '/$postId/': typeof PostIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$postId': typeof PostIdRoute
   '/dashboard': typeof DashboardRoute
   '/new': typeof NewRoute
-  '/$postId': typeof PostIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$postId': typeof PostIdRouteWithChildren
+  '/$postId': typeof PostIdRoute
   '/dashboard': typeof DashboardRoute
   '/new': typeof NewRoute
-  '/$postId/': typeof PostIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$postId' | '/dashboard' | '/new' | '/$postId/'
+  fullPaths: '/' | '/$postId' | '/dashboard' | '/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/new' | '/$postId'
-  id: '__root__' | '/' | '/$postId' | '/dashboard' | '/new' | '/$postId/'
+  to: '/' | '/$postId' | '/dashboard' | '/new'
+  id: '__root__' | '/' | '/$postId' | '/dashboard' | '/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PostIdRoute: typeof PostIdRouteWithChildren
+  PostIdRoute: typeof PostIdRoute
   DashboardRoute: typeof DashboardRoute
   NewRoute: typeof NewRoute
 }
@@ -107,30 +99,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$postId/': {
-      id: '/$postId/'
-      path: '/'
-      fullPath: '/$postId/'
-      preLoaderRoute: typeof PostIdIndexRouteImport
-      parentRoute: typeof PostIdRoute
-    }
   }
 }
 
-interface PostIdRouteChildren {
-  PostIdIndexRoute: typeof PostIdIndexRoute
-}
-
-const PostIdRouteChildren: PostIdRouteChildren = {
-  PostIdIndexRoute: PostIdIndexRoute,
-}
-
-const PostIdRouteWithChildren =
-  PostIdRoute._addFileChildren(PostIdRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PostIdRoute: PostIdRouteWithChildren,
+  PostIdRoute: PostIdRoute,
   DashboardRoute: DashboardRoute,
   NewRoute: NewRoute,
 }

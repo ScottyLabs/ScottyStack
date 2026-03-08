@@ -2,6 +2,7 @@ import type { User } from "@scottystack/access-control";
 import { hasPermission } from "@scottystack/access-control";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 
@@ -47,6 +48,7 @@ export function ReplyItem({
             params: { path: { postId } },
           }).queryKey,
         });
+        toast.success("Reply updated");
         onEndEdit();
       },
     },
@@ -62,6 +64,7 @@ export function ReplyItem({
             params: { path: { postId } },
           }).queryKey,
         });
+        toast.success("Reply deleted");
         onEndEdit();
       },
     },
@@ -139,28 +142,35 @@ export function ReplyItem({
   return (
     <div className="rounded-lg border p-4">
       <p className="text-sm">{reply.content}</p>
-      <p className="mt-2 text-xs text-muted-foreground">
-        {reply.authorName} · {createdAt}
-        {updatedAt !== createdAt && <> · Updated {updatedAt}</>}
-      </p>
-      <div className="mt-2 flex gap-2">
-        {canUpdate && (
-          <Button type="button" variant="ghost" size="sm" onClick={onStartEdit}>
-            Edit
-          </Button>
-        )}
-        {canDelete && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-            disabled={deleteReply.isPending}
-            onClick={handleDelete}
-          >
-            {deleteReply.isPending ? "Deleting..." : "Delete"}
-          </Button>
-        )}
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          {reply.authorName} · {createdAt}
+          {updatedAt !== createdAt && <> · Updated {updatedAt}</>}
+        </p>
+        <div className="flex shrink-0 gap-2">
+          {canUpdate && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onStartEdit}
+            >
+              Edit
+            </Button>
+          )}
+          {canDelete && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              disabled={deleteReply.isPending}
+              onClick={handleDelete}
+            >
+              {deleteReply.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

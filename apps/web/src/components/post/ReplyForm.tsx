@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 
@@ -19,6 +20,7 @@ export function ReplyForm({ postId }: ReplyFormProps) {
           params: { path: { postId } },
         }).queryKey,
       });
+      toast.success("Reply posted");
       setContent("");
     },
   });
