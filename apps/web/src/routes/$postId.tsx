@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PostDetail } from "@/components/posts/PostDetail";
 import { $api } from "@/lib/api/client.ts";
 
 export const Route = createFileRoute("/$postId")({
@@ -29,9 +28,17 @@ function PostPage() {
     params: { path: { postId } },
   });
 
-  if (!post) {
-    return <div className="p-6 text-muted-foreground">Post not found</div>;
-  }
-
-  return <PostDetail post={post} />;
+  return (
+    <div className="flex flex-col p-6">
+      <h1 className="text-xl font-semibold">{post.title}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {post.authorName ?? "User"} ·{" "}
+        {new Date(post.updatedAt).toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
+      </p>
+      <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
+    </div>
+  );
 }
