@@ -6,9 +6,12 @@ import { SignOutButton } from "./SignOutButton";
 
 export function UserProfile() {
   const { data: auth } = useSession();
+  const user = auth?.user;
+
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Close the dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -24,23 +27,15 @@ export function UserProfile() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  const userName =
-    auth?.user?.name ??
-    (auth?.user as { givenName?: string })?.givenName ??
-    "User";
-  const userEmail = auth?.user?.email ?? "";
-
-  if (!auth?.user) {
-    return (
-      <SignInButton className="border-white/30 bg-white text-gray-800 hover:bg-gray-100" />
-    );
+  if (!user) {
+    return <SignInButton />;
   }
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((open) => !open)}
         className="rounded-full p-2 hover:bg-white/10 transition-colors"
         aria-label="User menu"
         aria-expanded={open}
@@ -50,16 +45,11 @@ export function UserProfile() {
       {open && (
         <div className="absolute right-0 mt-2 w-fit min-w-40 max-w-64 rounded-lg border border-white/20 bg-gray-800 py-2 shadow-xl">
           <div className="px-4 py-3">
-            <p className="font-medium text-white truncate">{userName}</p>
-            {userEmail && (
-              <p className="text-sm text-gray-300 truncate mt-0.5">
-                {userEmail}
-              </p>
-            )}
-            <SignOutButton
-              onSuccess={() => setOpen(false)}
-              className="mt-3 border-white/30 bg-white text-gray-800 hover:bg-gray-100"
-            />
+            <p className="font-medium text-white truncate">{user.name}</p>
+            <p className="text-sm text-gray-300 truncate mt-0.5">
+              {user.email}
+            </p>
+            <SignOutButton onSuccess={() => setOpen(false)} />
           </div>
         </div>
       )}

@@ -1,24 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { signIn } from "@/lib/auth/client.ts";
 
-const buttonClassName =
-  "w-full border-white/30 bg-white text-gray-800 hover:bg-gray-100";
-
-interface SignInButtonProps {
-  onSuccess?: () => void;
-  className?: string;
-}
-
-export function SignInButton({ onSuccess, className }: SignInButtonProps) {
+export function SignInButton() {
   return (
     <Button
       variant="outline"
       size="sm"
-      onClick={() => {
-        signIn();
-        onSuccess?.();
-      }}
-      className={className ?? buttonClassName}
+      onClick={() => signIn()}
+      className="border-white/30 bg-white text-gray-800 hover:bg-gray-100"
     >
       Sign In
     </Button>

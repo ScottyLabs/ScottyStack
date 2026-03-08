@@ -1,15 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/lib/auth/client.ts";
 
-const buttonClassName =
-  "w-full border-white/30 bg-white text-gray-800 hover:bg-gray-100";
-
-interface SignOutButtonProps {
-  onSuccess?: () => void;
-  className?: string;
-}
-
-export function SignOutButton({ onSuccess, className }: SignOutButtonProps) {
+export function SignOutButton({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <Button
       variant="outline"
@@ -18,7 +10,7 @@ export function SignOutButton({ onSuccess, className }: SignOutButtonProps) {
         signOut();
         onSuccess?.();
       }}
-      className={className ?? buttonClassName}
+      className="mt-3 border-white/30 bg-white text-gray-800 hover:bg-gray-100"
     >
       Sign Out
     </Button>
