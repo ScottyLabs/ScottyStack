@@ -39,6 +39,31 @@ function PostPage() {
         })}
       </p>
       <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
+
+      {post.replies && post.replies.length > 0 && (
+        <div className="mt-8 border-t pt-6">
+          <h2 className="text-sm font-medium text-muted-foreground mb-4">
+            Replies ({post.replies.length})
+          </h2>
+          <ul className="space-y-4">
+            {post.replies.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-lg border bg-muted/30 p-4 text-sm"
+              >
+                <p className="text-muted-foreground mb-1">
+                  {r.authorName ?? "User"} ·{" "}
+                  {new Date(r.createdAt).toLocaleString(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </p>
+                <div className="whitespace-pre-wrap">{r.content}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

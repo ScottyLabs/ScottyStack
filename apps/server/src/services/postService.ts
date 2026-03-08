@@ -1,7 +1,7 @@
-import { desc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import { user } from "../db/schema/auth.ts";
-import { post } from "../db/schema/posts.ts";
+import { post, reply } from "../db/schema/posts.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
 import { userService } from "./userService.ts";
 
@@ -23,7 +23,31 @@ export const postService = {
     if (!row) {
       throw new HttpError(404, "Post not found");
     }
-    return row;
+
+    const replies = await db
+      .select({
+        id: reply.id,
+        content: reply.content,
+        anonymous: reply.anonymous,
+        createdAt: reply.createdAt,
+        updatedAt: reply.updatedAt,
+        authorName: user.name,
+      })
+      .from(reply)
+      .innerJoin(user, eq(reply.userId, user.id))
+      .where(eq(reply.postId, id))
+      .orderBy(asc(reply.createdAt));
+
+    return {
+      ...row,
+      replies: replies.map((r) => ({
+        id: r.id,
+        content: r.content,
+        authorName: r.anonymous ? "Anonymous" : r.authorName,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+      })),
+    };
   },
 
   listPosts: async () => {
