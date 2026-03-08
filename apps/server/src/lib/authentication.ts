@@ -45,7 +45,7 @@ declare global {
      * used by the server's controller methods.
      */
     interface User {
-      sub: string;
+      id: string;
       email?: string;
       givenName?: string;
       groups?: string[];
@@ -215,9 +215,10 @@ function scopeValidationError(
   return reject(err);
 }
 
-function decodedTokenToUser(decoded: jwt.JwtPayload) {
+function decodedTokenToUser(decoded: jwt.JwtPayload): Express.User {
   return {
-    sub: decoded.sub,
+    // Use Andrew ID as the user ID
+    id: decoded["full_email"].split("@")[0],
     email: decoded["email"],
     givenName: decoded["given_name"],
     groups: decoded["groups"],
