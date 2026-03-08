@@ -21,7 +21,9 @@ type PostItem = {
 function groupPostsByDate(posts: PostItem[]) {
   const groups: Record<string, PostItem[]> = {};
   for (const post of posts) {
-    const dateKey = new Date(post.updatedAt).toLocaleDateString("en-US", {
+    const dateKey = new Date(
+      post.createdAt ?? post.updatedAt,
+    ).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -141,13 +143,12 @@ export function PostList() {
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {post.authorName ?? "User"} ·{" "}
-                            {new Date(post.updatedAt).toLocaleString(
-                              undefined,
-                              {
-                                dateStyle: "medium",
-                                timeStyle: "short",
-                              },
-                            )}
+                            {new Date(
+                              post.createdAt ?? post.updatedAt,
+                            ).toLocaleString(undefined, {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            })}
                           </p>
                         </div>
                       </div>

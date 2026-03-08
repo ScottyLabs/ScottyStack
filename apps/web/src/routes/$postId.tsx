@@ -161,11 +161,21 @@ function PostPage() {
             <div>
               <h1 className="text-xl font-semibold">{post.title}</h1>
               <p className="mt-2 text-sm text-muted-foreground">
-                {post.authorName} ·{" "}
-                {new Date(post.updatedAt).toLocaleString(undefined, {
+                {post.authorName} · Created{" "}
+                {new Date(post.createdAt).toLocaleString(undefined, {
                   dateStyle: "medium",
                   timeStyle: "short",
                 })}
+                {post.updatedAt !== post.createdAt && (
+                  <>
+                    {" "}
+                    · Updated{" "}
+                    {new Date(post.updatedAt).toLocaleString(undefined, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </>
+                )}
               </p>
             </div>
             <div className="flex gap-2">
@@ -222,11 +232,21 @@ function PostPage() {
                 >
                   <div className="mb-1 flex items-start justify-between gap-2">
                     <p className="text-sm text-muted-foreground">
-                      {r.authorName} ·{" "}
+                      {r.authorName} · Created{" "}
                       {new Date(r.createdAt).toLocaleString(undefined, {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}
+                      {r.updatedAt !== r.createdAt && (
+                        <>
+                          {" "}
+                          · Updated{" "}
+                          {new Date(r.updatedAt).toLocaleString(undefined, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </>
+                      )}
                     </p>
                     {canDeleteReply && (
                       <Button

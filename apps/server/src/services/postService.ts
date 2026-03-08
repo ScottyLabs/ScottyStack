@@ -79,6 +79,7 @@ export const postService = {
       userId: string;
       title: string;
       content: string;
+      createdAt: Date;
       updatedAt: Date;
       authorName: string;
     }>;
@@ -91,6 +92,7 @@ export const postService = {
       userId: string;
       title: string;
       content: string;
+      createdAt: Date;
       updatedAt: Date;
       authorName: string | null;
       anonymous: boolean;
@@ -114,6 +116,7 @@ export const postService = {
           title: post.title,
           content: post.content,
           anonymous: post.anonymous,
+          createdAt: post.createdAt,
           updatedAt: post.updatedAt,
           authorName: user.name,
         })
@@ -138,6 +141,7 @@ export const postService = {
           title: post.title,
           content: post.content,
           anonymous: post.anonymous,
+          createdAt: post.createdAt,
           updatedAt: post.updatedAt,
           authorName: user.name,
         })
@@ -155,6 +159,7 @@ export const postService = {
       userId: row.userId,
       title: row.title,
       content: row.content,
+      createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
     }));
