@@ -46,6 +46,10 @@ COPY --from=builder --chown=server:server \
   /app/apps/server/dist \
   /app/apps/server/dist
 
+COPY --from=builder --chown=server:server \
+  /app/apps/server/src/instrument.ts \
+  /app/apps/server/src/instrument.ts
+
 # Copy db folder and Drizzle config to enable migrations
 COPY --from=builder --chown=server:server \
   /app/apps/server/drizzle \
@@ -57,4 +61,4 @@ COPY --from=builder --chown=server:server \
 
 EXPOSE 3000
 WORKDIR /app/apps/server
-CMD ["bun", "dist/server.js"]
+CMD ["bun", "--preload", "src/instrument.ts", "dist/server.js"]
