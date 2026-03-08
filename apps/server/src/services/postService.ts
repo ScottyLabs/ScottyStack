@@ -1,21 +1,22 @@
+import type { User } from "@scottystack/access-control";
+import { hasPermission } from "@scottystack/access-control";
 import { and, asc, desc, eq, lt, or } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import { user } from "../db/schema/auth.ts";
 import { post, reply } from "../db/schema/posts.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
-import { userService } from "./userService.ts";
 
 function maskAuthor(
   anonymous: boolean,
   authorName: string | null,
-  isAdmin: boolean,
+  canViewName: boolean,
 ) {
-  if (isAdmin || !anonymous) return authorName ?? "User";
+  if (canViewName || !anonymous) return authorName ?? "User";
   return "Anonymous";
 }
 
 export const postService = {
-  getPostById: async (id: string, isAdmin: boolean) => {
+  getPostById: async (acUser: User, id: string) => {
     const [row] = await db
       .select({
         id: post.id,
@@ -49,6 +50,9 @@ export const postService = {
       .where(eq(reply.postId, id))
       .orderBy(asc(reply.createdAt));
 
+    const canViewPostName = hasPermission(acUser, "posts", "viewName", {
+      userId: row.userId,
+    });
     return {
       id: row.id,
       userId: row.userId,
@@ -57,20 +61,25 @@ export const postService = {
       anonymous: row.anonymous,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
-      authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
-      replies: replies.map((r) => ({
-        id: r.id,
-        userId: r.userId,
-        content: r.content,
-        authorName: maskAuthor(r.anonymous, r.authorName, isAdmin),
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      })),
+      authorName: maskAuthor(row.anonymous, row.authorName, canViewPostName),
+      replies: replies.map((r) => {
+        const canViewReplyName = hasPermission(acUser, "replies", "viewName", {
+          userId: r.userId,
+        });
+        return {
+          id: r.id,
+          userId: r.userId,
+          content: r.content,
+          authorName: maskAuthor(r.anonymous, r.authorName, canViewReplyName),
+          createdAt: r.createdAt,
+          updatedAt: r.updatedAt,
+        };
+      }),
     };
   },
 
   listPosts: async (
-    isAdmin: boolean,
+    acUser: User,
     limit: number = 20,
     cursor?: string,
   ): Promise<{
@@ -154,36 +163,36 @@ export const postService = {
     const hasMore = rows.length > pageSize;
     const slice = hasMore ? rows.slice(0, pageSize) : rows;
     const lastRow = slice[slice.length - 1];
-    const posts = slice.map((row) => ({
-      id: row.id,
-      userId: row.userId,
-      title: row.title,
-      content: row.content,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      authorName: maskAuthor(row.anonymous, row.authorName, isAdmin),
-    }));
+    const posts = slice.map((row) => {
+      const canViewName = hasPermission(acUser, "posts", "viewName", {
+        userId: row.userId,
+      });
+      return {
+        id: row.id,
+        userId: row.userId,
+        title: row.title,
+        content: row.content,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        authorName: maskAuthor(row.anonymous, row.authorName, canViewName),
+      };
+    });
     const nextCursor = hasMore && lastRow ? lastRow.id : null;
 
     return { posts, nextCursor };
   },
 
   createPost: async (
-    providerId: string,
+    acUser: User,
     title: string,
     content: string,
     anonymous: boolean = false,
   ) => {
-    const userRecord = await userService.getUserByAccountId(providerId);
-    if (!userRecord) {
-      throw new HttpError(404, "User not found");
-    }
-
     const now = new Date();
     const [created] = await db
       .insert(post)
       .values({
-        userId: userRecord.id,
+        userId: acUser.id,
         title,
         content,
         anonymous,
@@ -196,17 +205,12 @@ export const postService = {
   },
 
   updatePost: async (
-    providerId: string,
+    acUser: User,
     postId: string,
     title: string,
     content: string,
     anonymous: boolean,
   ) => {
-    const userRecord = await userService.getUserByAccountId(providerId);
-    if (!userRecord) {
-      throw new HttpError(404, "User not found");
-    }
-
     const [existing] = await db
       .select({ id: post.id, userId: post.userId })
       .from(post)
@@ -214,8 +218,9 @@ export const postService = {
     if (!existing) {
       throw new HttpError(404, "Post not found");
     }
-    if (existing.userId !== userRecord.id) {
-      throw new HttpError(403, "Forbidden: you can only edit your own posts");
+
+    if (!hasPermission(acUser, "posts", "update", existing)) {
+      throw new HttpError(403, "You are not allowed to update this post");
     }
 
     const now = new Date();
@@ -228,47 +233,7 @@ export const postService = {
     return updated;
   },
 
-  createReply: async (
-    providerId: string,
-    postId: string,
-    content: string,
-    anonymous: boolean = false,
-  ) => {
-    const userRecord = await userService.getUserByAccountId(providerId);
-    if (!userRecord) {
-      throw new HttpError(404, "User not found");
-    }
-
-    const [existingPost] = await db
-      .select({ id: post.id })
-      .from(post)
-      .where(eq(post.id, postId));
-    if (!existingPost) {
-      throw new HttpError(404, "Post not found");
-    }
-
-    const now = new Date();
-    const [created] = await db
-      .insert(reply)
-      .values({
-        userId: userRecord.id,
-        postId,
-        content,
-        anonymous,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning();
-
-    return created;
-  },
-
-  deletePost: async (providerId: string, postId: string, isAdmin: boolean) => {
-    const userRecord = await userService.getUserByAccountId(providerId);
-    if (!userRecord) {
-      throw new HttpError(404, "User not found");
-    }
-
+  deletePost: async (acUser: User, postId: string) => {
     const [existing] = await db
       .select({ id: post.id, userId: post.userId })
       .from(post)
@@ -276,41 +241,11 @@ export const postService = {
     if (!existing) {
       throw new HttpError(404, "Post not found");
     }
-    if (!isAdmin && existing.userId !== userRecord.id) {
-      throw new HttpError(403, "Forbidden: you can only delete your own posts");
+
+    if (!hasPermission(acUser, "posts", "delete", existing)) {
+      throw new HttpError(403, "You are not allowed to delete this post");
     }
 
     await db.delete(post).where(eq(post.id, postId));
-  },
-
-  deleteReply: async (
-    providerId: string,
-    postId: string,
-    replyId: string,
-    isAdmin: boolean,
-  ) => {
-    const userRecord = await userService.getUserByAccountId(providerId);
-    if (!userRecord) {
-      throw new HttpError(404, "User not found");
-    }
-
-    const [existing] = await db
-      .select({ id: reply.id, userId: reply.userId, postId: reply.postId })
-      .from(reply)
-      .where(eq(reply.id, replyId));
-    if (!existing) {
-      throw new HttpError(404, "Reply not found");
-    }
-    if (existing.postId !== postId) {
-      throw new HttpError(404, "Reply not found");
-    }
-    if (!isAdmin && existing.userId !== userRecord.id) {
-      throw new HttpError(
-        403,
-        "Forbidden: you can only delete your own replies",
-      );
-    }
-
-    await db.delete(reply).where(eq(reply.id, replyId));
   },
 };

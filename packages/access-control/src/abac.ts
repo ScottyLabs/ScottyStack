@@ -21,37 +21,53 @@ type RolesWithPermissions = {
 type Permissions = {
   posts: {
     dataType: Post;
-    action: "viewName" | "update" | "delete";
+    action: "view" | "viewName" | "create" | "update" | "delete";
   };
   replies: {
     dataType: Reply;
-    action: "viewName" | "update" | "delete";
+    action: "view" | "viewName" | "create" | "update" | "delete";
   };
 };
 
 const ROLES = {
   admin: {
     posts: {
+      view: true,
       viewName: true,
+      create: true,
       update: false,
       delete: true,
     },
     replies: {
+      view: true,
       viewName: true,
+      create: true,
       update: false,
       delete: true,
     },
   },
   user: {
     posts: {
-      viewName: () => false,
+      view: true,
+      viewName: false,
+      create: true,
       update: (user, post) => user.id === post.userId,
-      delete: () => false,
+      delete: false,
     },
     replies: {
-      viewName: () => false,
+      view: true,
+      viewName: false,
+      create: true,
       update: (user, reply) => user.id === reply.userId,
-      delete: () => false,
+      delete: false,
+    },
+  },
+  guest: {
+    posts: {
+      view: true,
+    },
+    replies: {
+      view: true,
     },
   },
 } as const satisfies RolesWithPermissions;

@@ -1,19 +1,20 @@
 import type { User } from "@scottystack/access-control";
 import { eq } from "drizzle-orm";
 import type { Request as ExpressRequest } from "express";
-import { db } from "./db";
-import { account, user } from "./db/schema";
-import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./lib/authentication.ts";
+import { db } from "../db/index.ts";
+import { account, user } from "../db/schema/index.ts";
+import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./authentication.ts";
 
 /**
  * Get user from the request for access control.
  */
-export async function getUserFromRequest(
-  req: ExpressRequest,
-): Promise<User | null> {
+export async function getUserFromRequest(req: ExpressRequest): Promise<User> {
   const decoded = (await verifyBearer(req)) ?? (await verifyOidc(req));
   if (!decoded) {
-    return null;
+    return {
+      id: "",
+      roles: ["guest"],
+    };
   }
 
   // Use the user's IDP sub to find the user's ID
