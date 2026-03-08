@@ -33,6 +33,6 @@ export class PostController {
     @Body() body: CreatePostRequest,
   ) {
     const user = req.user as Express.User;
-    return postService.createPost(user.id, body.title, body.content);
+    return postService.createPost(user.sub, body.title, body.content);
   }
 }

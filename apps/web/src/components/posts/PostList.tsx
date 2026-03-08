@@ -83,7 +83,7 @@ export function PostList({ selectedPostId, onSelectPost }: PostListProps) {
       <div className="flex-1 overflow-y-auto">
         {(posts?.length ?? 0) === 0 ? (
           <div className="p-4 text-center text-sm text-muted-foreground">
-            No posts yet. Create one!
+            No posts yet. Stack one!
           </div>
         ) : (
           Object.entries(groupedPosts).map(([dateKey, datePosts]) => (
