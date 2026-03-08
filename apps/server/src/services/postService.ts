@@ -10,7 +10,7 @@ function maskAuthor(
   authorName: string | null,
   isAdmin: boolean,
 ) {
-  if (isAdmin || !anonymous) return authorName;
+  if (isAdmin || !anonymous) return authorName ?? "User";
   return "Anonymous";
 }
 
@@ -104,6 +104,41 @@ export const postService = {
         userId: user.id,
         title,
         content,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+
+    return created;
+  },
+
+  createReply: async (
+    providerId: string,
+    postId: string,
+    content: string,
+    anonymous: boolean = false,
+  ) => {
+    const userRecord = await userService.getUserByAccountId(providerId);
+    if (!userRecord) {
+      throw new HttpError(404, "User not found");
+    }
+
+    const [existingPost] = await db
+      .select({ id: post.id })
+      .from(post)
+      .where(eq(post.id, postId));
+    if (!existingPost) {
+      throw new HttpError(404, "Post not found");
+    }
+
+    const now = new Date();
+    const [created] = await db
+      .insert(reply)
+      .values({
+        userId: userRecord.id,
+        postId,
+        content,
+        anonymous,
         createdAt: now,
         updatedAt: now,
       })

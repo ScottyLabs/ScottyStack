@@ -18,6 +18,11 @@ export interface CreatePostRequest {
   content: string;
 }
 
+export interface CreateReplyRequest {
+  content: string;
+  anonymous?: boolean;
+}
+
 @Route("posts")
 export class PostController {
   @Get("/")
@@ -44,5 +49,23 @@ export class PostController {
   ) {
     const user = req.user as Express.User;
     return postService.createPost(user.sub, body.title, body.content);
+  }
+
+  @Post("{postId}/replies")
+  @Security(OIDC_AUTH)
+  @Security(BEARER_AUTH)
+  @SuccessResponse(201)
+  async createReply(
+    @Request() req: ExpressRequest,
+    @Path() postId: string,
+    @Body() body: CreateReplyRequest,
+  ) {
+    const user = req.user as Express.User;
+    return postService.createReply(
+      user.sub,
+      postId,
+      body.content,
+      body.anonymous ?? false,
+    );
   }
 }
