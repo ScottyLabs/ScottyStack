@@ -25,8 +25,8 @@ export const ADMIN_GROUP = "scottystack-admins";
 
 declare module "express" {
   interface Request {
-    // Authentication errors are stored in the request object
-    // so we can return the most relevant error to the client in errorHandler
+    // Auth errors are stored on the request object across the two verification
+    // passes, so the error handler can return the most relevant error.
     authErrors?: HttpError[];
 
     // Whether the request successfully authenticated.
@@ -103,10 +103,12 @@ export function verifyBearer(
       (header, callback) => {
         client.getSigningKey(header.kid, (err, key) => {
           if (err || !key) {
-            console.error("No key found for kid:", header.kid);
-            const err = new AuthenticationError();
-            request.authErrors?.push(err);
-            return callback(err || new Error("No signing key"));
+            const message: string = err
+              ? String(err)
+              : `No signing key found for kid: ${header.kid}`;
+            console.error(message);
+            request.authErrors?.push(new AuthenticationError());
+            return callback(err);
           }
           return callback(null, key.getPublicKey());
         });
@@ -115,13 +117,14 @@ export function verifyBearer(
       (error, decoded) => {
         // Check if the token is valid
         if (error) {
-          console.error("Authentication error:", error.message);
+          console.error("Authentication error:", error);
           const err = new AuthenticationError();
           request.authErrors?.push(err);
           return resolve(null);
         }
 
         if (typeof decoded !== "object") {
+          console.error("Invalid decoded JWT payload:", decoded);
           const err = new AuthenticationError();
           request.authErrors?.push(err);
           return resolve(null);
@@ -140,9 +143,9 @@ const verifyScope = (
   reject: (value: unknown) => void,
   scopes?: string[],
 ) => {
+  // If decoded is null, just reject.
+  // Releveant error information should be stored in `authErrors` already.
   if (!decoded) {
-    const err = new AuthenticationError();
-    request.authErrors?.push(err);
     return reject({});
   }
 
