@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "check": "tsc && biome check",
+    "check": "tsc -b && biome check",
     "format": "biome format",
     "lint": "biome lint",
-    "tsc": "tsc"
+    "tsc": "tsc -b",
+    "tsc:clean": "tsc -b -clean"
   },
   "type": "module"
 }

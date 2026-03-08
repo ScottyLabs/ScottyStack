@@ -23,6 +23,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    // An extra flag for monorepo tsc speedup optimization. Similar to the flag in
+    // root tsconfig.json, but `composite` results in errors with Tanstack Router.
+    "incremental": true
   }
 }

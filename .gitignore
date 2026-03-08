@@ -8,6 +8,7 @@ node_modules/
 
 # Cache
 .turbo/
+*.tsbuildinfo
 
 # Build
 dist/

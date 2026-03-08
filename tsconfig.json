@@ -35,6 +35,10 @@
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
+
+    // An extra flag for monorepo tsc speedup optimization.
+    // Verified through empirical testing.
+    "composite": true
   }
 }

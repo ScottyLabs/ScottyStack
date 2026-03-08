@@ -52,6 +52,7 @@
     "server": "bun run --watch src/server.ts",
     "start": "bun dist/server.js",
     "tsc": "tsc -b",
+    "tsc:clean": "tsc -b -clean",
     "tsoa": "tsoa spec-and-routes",
     "tsoa:watch": "onchange 'src/controllers/*.ts' 'tsoa.json' -- bun run tsoa"
   },

@@ -38,7 +38,8 @@
     "syncpack": "syncpack lint",
     "syncpack:fix": "syncpack format && syncpack fix-mismatches",
     "syncpack:update": "syncpack update",
-    "tsc": "turbo run tsc"
+    "tsc": "turbo run tsc",
+    "tsc:clean": "turbo run tsc:clean"
   },
   "workspaces": [
     "apps/*",

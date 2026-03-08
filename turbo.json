@@ -27,6 +27,7 @@
     },
     "check": {
       "dependsOn": ["transit"]
-    }
+    },
+    "tsc:clean": {}
   }
 }
