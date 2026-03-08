@@ -59,7 +59,9 @@ function PostPage() {
   const createReply = $api.useMutation("post", "/posts/{postId}/replies", {
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["get", "/posts/{postId}", { path: { postId } }],
+        queryKey: $api.queryOptions("get", "/posts/{postId}", {
+          params: { path: { postId } },
+        }).queryKey,
       });
       setContent("");
     },
