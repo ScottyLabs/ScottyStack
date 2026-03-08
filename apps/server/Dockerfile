@@ -25,7 +25,6 @@ WORKDIR /app
 # Create non-root user
 RUN groupadd --system --gid 1001 server && \
     useradd --system --uid 1001 --gid 1001 server
-USER server
 
 # Copy Swagger spec
 COPY --from=builder --chown=server:server \
@@ -62,6 +61,7 @@ COPY --from=builder --chown=server:server \
   /app/apps/server/drizzle.config.ts \
   /app/apps/server/drizzle.config.ts
 
+USER server
 EXPOSE 3000
 WORKDIR /app/apps/server
 CMD ["bun", "--preload", "./src/instrument.ts", "dist/server.js"]
