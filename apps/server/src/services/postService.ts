@@ -6,6 +6,26 @@ import { HttpError } from "../middlewares/errorHandler.ts";
 import { userService } from "./userService.ts";
 
 export const postService = {
+  getPostById: async (id: string) => {
+    const [row] = await db
+      .select({
+        id: post.id,
+        userId: post.userId,
+        title: post.title,
+        content: post.content,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        authorName: user.name,
+      })
+      .from(post)
+      .innerJoin(user, eq(post.userId, user.id))
+      .where(eq(post.id, id));
+    if (!row) {
+      throw new HttpError(404, "Post not found");
+    }
+    return row;
+  },
+
   listPosts: async () => {
     return db
       .select({

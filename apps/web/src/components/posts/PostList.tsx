@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { $api } from "@/lib/api/client.ts";
@@ -10,15 +10,10 @@ type PostItem = {
   title: string;
   content: string;
   userId: string;
-  createdAt: string;
+  createdAt?: string;
   updatedAt: string;
   authorName?: string;
 };
-
-interface PostListProps {
-  selectedPostId?: string;
-  onSelectPost?: (post: PostItem) => void;
-}
 
 function groupPostsByDate(posts: PostItem[]) {
   const groups: Record<string, PostItem[]> = {};
@@ -34,8 +29,10 @@ function groupPostsByDate(posts: PostItem[]) {
   return groups;
 }
 
-export function PostList({ selectedPostId, onSelectPost }: PostListProps) {
+export function PostList() {
   const { data: auth } = useSession();
+  const params = useParams({ strict: false });
+  const activePostId = params?.postId;
   const {
     data: posts,
     isLoading,
@@ -92,32 +89,35 @@ export function PostList({ selectedPostId, onSelectPost }: PostListProps) {
               <div className="px-4 py-2 text-xs font-medium text-muted-foreground">
                 {dateKey}
               </div>
-              {datePosts.map((post) => (
-                <button
-                  key={post.id}
-                  type="button"
-                  onClick={() => onSelectPost?.(post)}
-                  className={`flex w-full flex-col gap-1 border-b px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
-                    selectedPostId === post.id ? "bg-muted" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    <span className="mt-1.5 size-2 shrink-0 rounded-full bg-emerald-500" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
-                        {post.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {post.authorName ?? "User"} ·{" "}
-                        {new Date(post.updatedAt).toLocaleString(undefined, {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
-                      </p>
+              {datePosts.map((post) => {
+                const isSelected = activePostId === post.id;
+                return (
+                  <Link
+                    key={post.id}
+                    to="/$postId"
+                    params={{ postId: post.id }}
+                    className={`flex w-full flex-col gap-1 border-b px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
+                      isSelected ? "bg-muted" : ""
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <span className="mt-1.5 size-2 shrink-0 rounded-full bg-emerald-500" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">
+                          {post.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {post.authorName ?? "User"} ·{" "}
+                          {new Date(post.updatedAt).toLocaleString(undefined, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           ))
         )}

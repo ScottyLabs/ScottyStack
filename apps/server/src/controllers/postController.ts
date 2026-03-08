@@ -2,6 +2,7 @@ import type { Request as ExpressRequest } from "express";
 import {
   Body,
   Get,
+  Path,
   Post,
   Request,
   Route,
@@ -22,6 +23,12 @@ export class PostController {
   @SuccessResponse(200)
   async listPosts() {
     return postService.listPosts();
+  }
+
+  @Get("{postId}")
+  @SuccessResponse(200)
+  async getPost(@Path() postId: string) {
+    return postService.getPostById(postId);
   }
 
   @Post("/")

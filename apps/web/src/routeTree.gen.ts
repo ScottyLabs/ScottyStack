@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NewRouteImport } from './routes/new'
+import { Route as PostIdRouteImport } from './routes/$postId'
 import { Route as IndexRouteImport } from './routes/index'
 
 const NewRoute = NewRouteImport.update({
   id: '/new',
   path: '/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostIdRoute = PostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$postId': typeof PostIdRoute
   '/new': typeof NewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$postId': typeof PostIdRoute
   '/new': typeof NewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$postId': typeof PostIdRoute
   '/new': typeof NewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/new'
+  fullPaths: '/' | '/$postId' | '/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/new'
-  id: '__root__' | '/' | '/new'
+  to: '/' | '/$postId' | '/new'
+  id: '__root__' | '/' | '/$postId' | '/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PostIdRoute: typeof PostIdRoute
   NewRoute: typeof NewRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/new'
       fullPath: '/new'
       preLoaderRoute: typeof NewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$postId': {
+      id: '/$postId'
+      path: '/$postId'
+      fullPath: '/$postId'
+      preLoaderRoute: typeof PostIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PostIdRoute: PostIdRoute,
   NewRoute: NewRoute,
 }
 export const routeTree = rootRouteImport

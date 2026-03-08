@@ -3,22 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/auth/client.ts";
 import { CreatePostForm } from "./posts/CreatePostForm";
-import { PostDetail } from "./posts/PostDetail";
 import { PostList } from "./posts/PostList";
-
-type PostItem = {
-  id: string;
-  title: string;
-  content: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-  authorName?: string;
-};
 
 export function PostLayout() {
   const { data: auth } = useSession();
-  const [selectedPost, setSelectedPost] = useState<PostItem | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   return (
@@ -44,16 +32,11 @@ export function PostLayout() {
 
       {/* Post List */}
       <section className="flex w-80 flex-col border-r">
-        <PostList
-          selectedPostId={selectedPost?.id}
-          onSelectPost={setSelectedPost}
-        />
+        <PostList />
       </section>
 
-      {/* Right: Post Detail */}
-      <main className="flex-1 overflow-auto">
-        <PostDetail post={selectedPost} />
-      </main>
+      {/* Right: Post Detail - navigate via PostList links to /$postId */}
+      <main className="flex-1 overflow-auto" />
 
       {/* Create Post Modal */}
       {showCreateForm && (
