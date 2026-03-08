@@ -1,5 +1,7 @@
+import * as Sentry from "@sentry/bun";
 import type { NextFunction, Request, Response } from "express";
 import { ValidateError } from "tsoa";
+import { env } from "../env";
 
 export class HttpError extends Error {
   status: number;
@@ -67,12 +69,22 @@ export function errorHandler(
   }
 
   if (err instanceof Error) {
-    // Log the error to the console for debugging since it is an unexpected error
-    console.error(`Error ${req.path}`, err);
+    captureUnexpectedError(`Unexpected error in ${req.path}: ${err}`);
     return res
       .status(500)
       .json({ message: `Internal Server Error: ${err.message}` });
   }
 
   return next();
+}
+
+/**
+ * For an unexpected error, we either capture the error to Sentry or log it to the console.
+ */
+export function captureUnexpectedError(err: unknown) {
+  if (env.SENTRY_DSN) {
+    Sentry.captureException(err);
+  } else {
+    console.error(`Unexpected error`, err);
+  }
 }

@@ -10,6 +10,7 @@ import type { HttpError } from "../middlewares/errorHandler.ts";
 import {
   AuthenticationError,
   AuthorizationError,
+  captureUnexpectedError,
   InternalServerError,
 } from "../middlewares/errorHandler.ts";
 import { auth } from "./auth.ts";
@@ -79,9 +80,8 @@ export async function verifyOidc(
       return null;
     }
   } catch (error) {
-    console.error("Authentication error:", error);
-    const err = new AuthenticationError();
-    request.authErrors?.push(err);
+    captureUnexpectedError(error);
+    request.authErrors?.push(new AuthenticationError());
     return null;
   }
 }
@@ -106,25 +106,24 @@ export function verifyBearer(
             const message: string = err
               ? String(err)
               : `No signing key found for kid: ${header.kid}`;
-            console.error(message);
+            captureUnexpectedError(message);
             request.authErrors?.push(new AuthenticationError());
             return callback(err);
           }
-          return callback(null, key.getPublicKey());
         });
       },
       { issuer: env.AUTH_ISSUER, audience: env.AUTH_CLIENT_ID },
       (error, decoded) => {
         // Check if the token is valid
         if (error) {
-          console.error("Authentication error:", error);
+          captureUnexpectedError(`Authentication error: ${error}`);
           const err = new AuthenticationError();
           request.authErrors?.push(err);
           return resolve(null);
         }
 
         if (typeof decoded !== "object") {
-          console.error("Invalid decoded JWT payload:", decoded);
+          captureUnexpectedError(`Invalid decoded JWT payload: ${decoded}`);
           const err = new AuthenticationError();
           request.authErrors?.push(err);
           return resolve(null);
