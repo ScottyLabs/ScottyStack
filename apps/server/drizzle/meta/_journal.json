@@ -50,6 +50,13 @@
       "when": 1772940982361,
       "tag": "0006_nice_ender_wiggin",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1773004865915,
+      "tag": "0007_normal_fallen_one",
+      "breakpoints": true
     }
   ]
 }

@@ -31,7 +31,6 @@ async function main() {
         id: f.uuid(),
         name: f.fullName(),
         email: f.valuesFromArray({ values: emails1, isUnique: true }),
-        fullEmail: f.valuesFromArray({ values: emails1, isUnique: true }),
         emailVerified: f.default({ defaultValue: false }),
         image: f.default({ defaultValue: null }),
         createdAt: f.timestamp(),
@@ -51,7 +50,6 @@ async function main() {
         id: f.uuid(),
         name: f.fullName(),
         email: f.valuesFromArray({ values: emails2, isUnique: true }),
-        fullEmail: f.valuesFromArray({ values: emails2, isUnique: true }),
         emailVerified: f.default({ defaultValue: false }),
         image: f.default({ defaultValue: null }),
         createdAt: f.timestamp(),
@@ -84,7 +82,6 @@ async function main() {
         id: f.uuid(),
         name: f.fullName(),
         email: f.valuesFromArray({ values: emails3, isUnique: true }),
-        fullEmail: f.valuesFromArray({ values: emails3, isUnique: true }),
         emailVerified: f.default({ defaultValue: false }),
         image: f.default({ defaultValue: null }),
         createdAt: f.timestamp(),
@@ -132,10 +129,6 @@ async function main() {
           values: [REPLY_ONLY_EMAIL],
           isUnique: true,
         }),
-        fullEmail: f.valuesFromArray({
-          values: [REPLY_ONLY_EMAIL],
-          isUnique: true,
-        }),
         emailVerified: f.default({ defaultValue: false }),
         image: f.default({ defaultValue: null }),
         createdAt: f.timestamp(),
@@ -175,6 +168,7 @@ async function main() {
   console.log(
     "Seeded: 3 users (no posts), 5 users (posts, no replies), 7 users (posts with replies), 1 user (replies only).",
   );
+  await db.$client.end();
 }
 
 main().catch((err) => {

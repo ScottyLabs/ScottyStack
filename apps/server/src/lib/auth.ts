@@ -9,9 +9,10 @@ import { env } from "../env.ts";
 import { getJwtPayloadFromHeaders, getRolesFromJwt } from "./accessControl.ts";
 
 /**
- * Custom session type
+ * Custom session type.
  *
- * Used by the frontend client.
+ * Used by the web client via the `useSession` hook.
+ * Used by the server via
  */
 interface Auth {
   session: Session;
@@ -20,41 +21,27 @@ interface Auth {
 
 // https://www.better-auth.com/docs/installation#create-a-better-auth-instance
 export const auth = betterAuth({
-  database: drizzleAdapter(db, { schema, provider: "pg" }),
-
   baseURL: env.SERVER_URL,
   trustedOrigins: [env.BETTER_AUTH_URL],
 
-  // Add full email as an additional field to the user object
-  // in order to consitently retrieve the Andrew ID
-  user: {
-    additionalFields: {
-      fullEmail: {
-        type: "string",
-        required: true,
-      },
-    },
-  },
-
-  // Change the user id to Andrew ID when creating a new user
+  // Override the user id to Andrew ID when creating a new user
+  database: drizzleAdapter(db, { schema, provider: "pg" }),
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => {
-          return {
-            data: {
-              ...user,
-              // @ts-expect-error - fullEmail is an additional field
-              id: user["fullEmail"].split("@")[0],
-            },
-          };
-        },
+        before: async (user) => ({
+          data: {
+            ...user,
+            // @ts-expect-error The user here actually has all the JWT fields
+            id: user["full_email"].split("@")[0],
+          },
+        }),
       },
     },
   },
 
+  // https://better-auth.com/docs/plugins/generic-oauth#add-the-plugin-to-your-auth-config
   plugins: [
-    // https://www.better-auth.com/docs/plugins/generic-oauth#pre-configured-provider-helpers
     genericOAuth({
       config: [
         {
@@ -64,24 +51,11 @@ export const auth = betterAuth({
           discoveryUrl: `${env.AUTH_ISSUER}/.well-known/openid-configuration`,
           redirectURI: `${env.SERVER_URL}/api/auth/oauth2/callback/keycloak`,
           scopes: ["openid", "email", "profile", "offline_access"],
-          mapProfileToUser: (profile) => {
-            return {
-              id: profile["sub"],
-              name: profile["name"],
-              email: profile["email"],
-              emailVerified: profile["email_verified"],
-              image: null,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              fullEmail: profile["full_email"],
-            };
-          },
         },
       ],
     }),
 
-    // Add groups to the session so it can used easily in the frontend via `useSession` hook.
-    // Reference: https://www.better-auth.com/docs/concepts/session-management#customizing-session-response
+    // Reference: https://better-auth.com/docs/concepts/session-management#customizing-session-response
     customSession(async ({ user, session }, ctx): Promise<Auth> => {
       const jwtPayload = await getJwtPayloadFromHeaders(ctx.headers);
       return {

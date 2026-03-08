@@ -19,7 +19,7 @@ export async function getAcUserFromRequest(req: ExpressRequest): Promise<User> {
 /**
  * Convert the decoded JWT payload to an access control user.
  */
-export async function jwtPayloadToAcUser(
+async function jwtPayloadToAcUser(
   jwtPayload: jwt.JwtPayload | string | undefined | null,
 ): Promise<User> {
   const sub = jwtPayload?.sub;
