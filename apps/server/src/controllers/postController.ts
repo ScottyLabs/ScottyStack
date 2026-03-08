@@ -12,7 +12,7 @@ import {
   Security,
   SuccessResponse,
 } from "tsoa";
-import { getUserFromRequest } from "../lib/accessControl.ts";
+import { getAcUserFromRequest } from "../lib/accessControl.ts";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { postService } from "../services/postService.ts";
 
@@ -37,14 +37,14 @@ export class PostController {
     @Query() limit?: number,
     @Query() cursor?: string,
   ) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     return postService.listPosts(user, limit ?? 20, cursor);
   }
 
   @Get("{postId}")
   @SuccessResponse(200)
   async getPost(@Request() req: ExpressRequest, @Path() postId: string) {
-    const requestUser = await getUserFromRequest(req);
+    const requestUser = await getAcUserFromRequest(req);
     return postService.getPostById(requestUser, postId);
   }
 
@@ -56,7 +56,7 @@ export class PostController {
     @Request() req: ExpressRequest,
     @Body() body: CreatePostRequest,
   ) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     return postService.createPost(
       user,
       body.title,
@@ -74,7 +74,7 @@ export class PostController {
     @Path() postId: string,
     @Body() body: UpdatePostRequest,
   ) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     return postService.updatePost(
       user,
       postId,
@@ -89,7 +89,7 @@ export class PostController {
   @Security(BEARER_AUTH)
   @SuccessResponse(204)
   async deletePost(@Request() req: ExpressRequest, @Path() postId: string) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     await postService.deletePost(user, postId);
   }
 }

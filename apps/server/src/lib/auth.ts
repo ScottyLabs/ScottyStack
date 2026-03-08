@@ -1,12 +1,12 @@
+import type { Role } from "@scottystack/access-control/src/types.ts";
 import type { Session, User } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession, genericOAuth } from "better-auth/plugins";
-import jwt from "jsonwebtoken";
 import { db } from "../db/index.ts";
 import * as schema from "../db/schema/index.ts";
 import { env } from "../env.ts";
-import { ADMIN_GROUP } from "./authentication.ts";
+import { getJwtPayloadFromHeaders, getRolesFromJwt } from "./accessControl.ts";
 
 /**
  * Custom session type
@@ -15,7 +15,7 @@ import { ADMIN_GROUP } from "./authentication.ts";
  */
 interface Auth {
   session: Session;
-  user: User & { isAdmin?: boolean };
+  user: User & { roles: Role[] };
 }
 
 // https://www.better-auth.com/docs/installation#create-a-better-auth-instance
@@ -83,25 +83,11 @@ export const auth = betterAuth({
     // Add groups to the session so it can used easily in the frontend via `useSession` hook.
     // Reference: https://www.better-auth.com/docs/concepts/session-management#customizing-session-response
     customSession(async ({ user, session }, ctx): Promise<Auth> => {
-      const customSessionObject: Auth = { session, user };
-
-      // Get the decoded access token from the user
-      const decoded = await auth.api
-        .getAccessToken({
-          body: { providerId: "keycloak" },
-          headers: ctx.headers,
-        })
-        .then((accessToken) => {
-          return jwt.decode(accessToken.accessToken);
-        });
-
-      // Add groups to the session if they are present in the access token
-      if (decoded && typeof decoded === "object" && "groups" in decoded) {
-        customSessionObject.user.isAdmin =
-          decoded["groups"].includes(ADMIN_GROUP);
-      }
-
-      return customSessionObject;
+      const jwtPayload = await getJwtPayloadFromHeaders(ctx.headers);
+      return {
+        session,
+        user: { ...user, roles: getRolesFromJwt(jwtPayload) },
+      };
     }),
   ],
 });

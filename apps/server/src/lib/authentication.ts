@@ -12,6 +12,7 @@ import {
   AuthorizationError,
   InternalServerError,
 } from "../middlewares/errorHandler.ts";
+import { getJwtPayloadFromHeaders } from "./accessControl.ts";
 import { auth } from "./auth.ts";
 
 export const OIDC_AUTH = "oidc";
@@ -45,14 +46,14 @@ export function expressAuthentication(
 
   return new Promise((resolve, reject) => {
     if (securityName === OIDC_AUTH) {
-      return verifyOidc(request).then((decoded) =>
-        verifyScope(request, decoded, resolve, reject, scopes),
+      return verifyOidc(request).then((jwtPayload) =>
+        verifyScope(request, jwtPayload, resolve, reject, scopes),
       );
     }
 
     if (securityName === BEARER_AUTH) {
-      return verifyBearer(request).then((decoded) =>
-        verifyScope(request, decoded, resolve, reject, scopes),
+      return verifyBearer(request).then((jwtPayload) =>
+        verifyScope(request, jwtPayload, resolve, reject, scopes),
       );
     }
 
@@ -62,41 +63,21 @@ export function expressAuthentication(
   });
 }
 
-// Return the decoded token if successful, otherwise return null
 export async function verifyOidc(
   request: express.Request,
 ): Promise<jwt.JwtPayload | null> {
   try {
-    // https://www.better-auth.com/docs/integrations/express
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(request.headers),
-    });
-
     // Check if the user is authenticated
-    if (!session?.user) {
+    // Reference: https://www.better-auth.com/docs/integrations/express
+    const headers = fromNodeHeaders(request.headers);
+    const session = await auth.api.getSession({ headers });
+    if (session?.user) {
+      return await getJwtPayloadFromHeaders(headers);
+    } else {
       const err = new AuthenticationError();
       request.authErrors?.push(err);
       return null;
     }
-
-    // Get the decoded token from the user access token
-    const decoded = await auth.api
-      .getAccessToken({
-        body: { providerId: "keycloak" },
-        headers: fromNodeHeaders(request.headers),
-      })
-      .then((accessToken) => {
-        return jwt.decode(accessToken.accessToken);
-      });
-
-    // Check if the decoded token is valid
-    if (typeof decoded !== "object") {
-      const err = new AuthenticationError();
-      request.authErrors?.push(err);
-      return null;
-    }
-
-    return decoded;
   } catch (error) {
     console.error("Authentication error:", error);
     const err = new AuthenticationError();
@@ -140,7 +121,6 @@ export function verifyBearer(
           return resolve(null);
         }
 
-        // Check if the token format is valid
         if (typeof decoded !== "object") {
           const err = new AuthenticationError();
           request.authErrors?.push(err);
@@ -161,6 +141,8 @@ const verifyScope = (
   scopes?: string[],
 ) => {
   if (!decoded) {
+    const err = new AuthenticationError();
+    request.authErrors?.push(err);
     return reject({});
   }
 

@@ -10,7 +10,7 @@ import {
   Security,
   SuccessResponse,
 } from "tsoa";
-import { getUserFromRequest } from "../lib/accessControl.ts";
+import { getAcUserFromRequest } from "../lib/accessControl.ts";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { replyService } from "../services/replyService.ts";
 
@@ -35,7 +35,7 @@ export class ReplyController {
     @Path() postId: string,
     @Body() body: CreateReplyRequest,
   ) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     return replyService.createReply(
       user,
       postId,
@@ -54,7 +54,7 @@ export class ReplyController {
     @Path() replyId: string,
     @Body() body: UpdateReplyRequest,
   ) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     return replyService.updateReply(
       user,
       postId,
@@ -73,7 +73,7 @@ export class ReplyController {
     @Path() postId: string,
     @Path() replyId: string,
   ) {
-    const user = await getUserFromRequest(req);
+    const user = await getAcUserFromRequest(req);
     await replyService.deleteReply(user, postId, replyId);
   }
 }

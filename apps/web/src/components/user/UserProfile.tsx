@@ -52,7 +52,7 @@ export function UserProfile() {
             <p className="mt-0.5 truncate text-sm text-gray-300">
               {user.email}
             </p>
-            {user.isAdmin && (
+            {user.roles.includes("admin") && (
               <Link
                 to="/dashboard"
                 onClick={() => setOpen(false)}

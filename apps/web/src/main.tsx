@@ -8,7 +8,6 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { env } from "@/env.ts";
 import { getQueryClient } from "./lib/queryClient.ts";
-// Import the generated route tree
 import { routeTree } from "./routeTree.gen.ts";
 
 // Create a new router instance
