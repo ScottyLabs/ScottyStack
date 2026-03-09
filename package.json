@@ -25,6 +25,7 @@
   "scripts": {
     "build": "turbo run build",
     "check": "turbo run check",
+    "deploy:env": "./scripts/deploy/push-env.sh",
     "dev": "turbo run dev",
     "format": "turbo run format",
     "generate": "cd apps/server && bun run generate",

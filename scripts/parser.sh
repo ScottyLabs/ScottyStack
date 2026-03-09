@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # Load the config and shared variables
-source "$SCRIPT_DIR/config.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/constants.sh"
 
 # Convert space-separated strings to arrays
