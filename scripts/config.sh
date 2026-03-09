@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-export BAO_ADDR=https://secrets.scottylabs.org
-export BAO_MOUNT=ScottyLabs
+# OpenBao configuration
+export BAO_ADDR="https://bao.scottylabs.org"
+export BAO_MOUNT="labrador"
+
+# Project configuration
+export PROJECT="scottystack"
+export APPS="web server"
+export ENVS="local dev staging prod"
