@@ -3,7 +3,7 @@
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "apps/server/Dockerfile",
-    "buildCommand": ":",
+    "buildCommand": null,
     "watchPatterns": [
       "/apps/server/**",
       "/packages/common/**",
