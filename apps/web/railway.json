@@ -3,8 +3,8 @@
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "apps/web/Dockerfile",
-    "buildCommand": "",
-    "startCommand": "",
+    "buildCommand": ":",
+    "startCommand": ":",
     "watchPatterns": [
       "/apps/web/**",
       "/packages/common/**",
