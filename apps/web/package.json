@@ -17,7 +17,7 @@
     "lucide-react": "^0.577.0",
     "openapi-fetch": "^0.15.0",
     "openapi-react-query": "^0.5.1",
-    "posthog-js": "^1.359.1",
+    "posthog-js": "^1.360.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-infinite-scroll-component": "^6.1.1",
