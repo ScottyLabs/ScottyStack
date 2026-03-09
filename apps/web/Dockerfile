@@ -36,7 +36,7 @@ COPY Caddyfile ./
 RUN caddy fmt Caddyfile --overwrite
 
 # Copy files to the container image.
-COPY --from=build /apps/web/dist ./dist
+COPY --from=builder /apps/web/dist ./dist
 
 # Use Caddy to run/serve the app
 CMD ["caddy", "run", "--config", "Caddyfile", "--adapter", "caddyfile"]
