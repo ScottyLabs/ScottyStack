@@ -15,4 +15,4 @@ parse_args "$@"
 source "$(dirname "$0")/../shared/push-util.sh"
 
 # Push the secrets
-push "$ENV_PATH" "$VAULT_PATH"
+push "$ENV_PATH" "$BAO_PATH"

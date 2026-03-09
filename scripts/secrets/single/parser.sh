@@ -10,14 +10,14 @@ usage() {
 
   echo
   echo -e "${BOLD_TEXT}Usage:${RESET_TEXT}"
-  echo -e "  $script_name ENV_PATH VAULT_PATH"
+  echo -e "  $script_name ENV_PATH BAO_PATH"
   echo
   echo -e "${BOLD_TEXT}Description:${RESET_TEXT}"
 
   if [ "$action" == "pull" ]; then
-    echo -e "  ${action} secrets from Vault to the local environment."
+    echo -e "  ${action} secrets from OpenBao to the local environment."
   else
-    echo -e "  ${action} secrets from the local environment to Vault."
+    echo -e "  ${action} secrets from the local environment to OpenBao."
   fi
 
   echo
@@ -25,10 +25,10 @@ usage() {
 
   if [ "$action" == "pull" ]; then
     echo -e "  ENV_PATH     The local environment file to ${action} into"
-    echo -e "  VAULT_PATH   The Vault path in $VAULT_MOUNT to ${action} from"
+    echo -e "  BAO_PATH   The OpenBao path in $BAO_MOUNT to ${action} from"
   else
     echo -e "  ENV_PATH     The local environment file to ${action} from"
-    echo -e "  VAULT_PATH   The Vault path in $VAULT_MOUNT to ${action} into"
+    echo -e "  BAO_PATH   The OpenBao path in $BAO_MOUNT to ${action} into"
   fi
 
   echo
@@ -40,7 +40,7 @@ usage() {
 }
 
 parse_args() {
-  unset ENV_PATH VAULT_PATH
+  unset ENV_PATH BAO_PATH
 
   # Read the arguments
   while [[ "$#" -gt 0 ]]; do
@@ -51,12 +51,12 @@ parse_args() {
       ;;
     esac
 
-    # The first argument is the local environment file and the second argument is the Vault path
+    # The first argument is the local environment file and the second argument is the OpenBao path
     # Show an error message and exit if the user passes in more than two arguments.
     if [[ -z "$ENV_PATH" ]]; then
       ENV_PATH="$1"
-    elif [[ -z "$VAULT_PATH" ]]; then
-      VAULT_PATH="$1"
+    elif [[ -z "$BAO_PATH" ]]; then
+      BAO_PATH="$1"
     else
       echo -e "${RED_TEXT}Error: Too many arguments provided${RESET_TEXT}" >&2
       usage >&2
@@ -73,8 +73,8 @@ parse_args() {
     exit 1
   fi
 
-  if [ -z "$VAULT_PATH" ]; then
-    echo -e "${RED_TEXT}Error: Vault path is required${RESET_TEXT}" >&2
+  if [ -z "$BAO_PATH" ]; then
+    echo -e "${RED_TEXT}Error: OpenBao path is required${RESET_TEXT}" >&2
     usage >&2
     exit 1
   fi

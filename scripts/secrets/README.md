@@ -1,11 +1,11 @@
 # Secrets Sync Scripts
 
 This directory contains scripts that are used to manage the project's secrets
-using [Vault](https://github.com/ScottyLabs/wiki/wiki/Credentials#hashicorp-vault).
+using [OpenBao](https://github.com/ScottyLabs/wiki/wiki/Credentials#openbao).
 
 ## Quick Start
 
-Log into the Vault by running the following command.  Copy the link from the terminal
+Log into OpenBao by running the following command. Copy the link from the terminal
 and paste it in your browser if the link doesn't automatically open.
 
 ```zsh
@@ -13,7 +13,7 @@ and paste it in your browser if the link doesn't automatically open.
 ```
 
 Run the following commands to pull and push secrets by specifying a local environment
-file and a Vault path in ScottyLabs Vault.
+file and a bao path in ScottyLabs [OpenBao](https:/bao.scottylabs.org).
 
 ```zsh
 ./single/pull.sh
@@ -46,17 +46,17 @@ Each environment will create a `.env.$ENV` file in the root directory.
 ### Syncing Behavior
 
 When there is at least one application and one environment, the scripts
-sync local secrets from `apps/$APP/.env.$ENV` to the vault path
+sync local secrets from `apps/$APP/.env.$ENV` to the bao path
 `ScottyLabs/$PROJECT/$ENV/$APP`, for every application and environment.
 
 When there is no application, the scripts sync local secrets from `.env.$ENV`
-to the vault path `ScottyLabs/$PROJECT/$ENV`, for every environment.
+to the bao path `ScottyLabs/$PROJECT/$ENV`, for every environment.
 
 When there is no environment, the scripts sync local secrets from `apps/$APP/.env`
-to the in the vault path `ScottyLabs/$PROJECT/$APP`, for every application.
+to the in the bao path `ScottyLabs/$PROJECT/$APP`, for every application.
 
 When there is no application and no environment, the scripts sync local secrets
-from `.env` to the vault path `ScottyLabs/$PROJECT`.
+from `.env` to the bao path `ScottyLabs/$PROJECT`.
 This script contains the configuration and helper functions used by the other scripts,
 including argument parsing and validation.
 

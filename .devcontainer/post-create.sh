@@ -29,10 +29,10 @@ brew install shfmt
 # https://github.com/editorconfig-checker/editorconfig-checker?tab=readme-ov-file#6-using-homebrew
 brew install editorconfig-checker
 
-# Install Vault for secret management
-# https://developer.hashicorp.com/vault/install
-brew tap hashicorp/tap
-brew install hashicorp/tap/vault
+# Install OpenBao for secret management.
+# Removes the `brew info openbao` command due to errors.
+# https://openbao.org/docs/install/
+brew install openbao
 
 # Set up environment variables
 bun run secrets:setup

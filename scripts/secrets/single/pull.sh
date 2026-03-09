@@ -15,4 +15,4 @@ parse_args "$@"
 source "$(dirname "$0")/../shared/pull-util.sh"
 
 # Pull the secrets
-pull "$ENV_PATH" "$VAULT_PATH"
+pull "$ENV_PATH" "$BAO_PATH"

@@ -5,7 +5,7 @@ FROM homebrew/brew:master
 # Switch to root user to install packages
 USER root
 
-# Install xdg-utils for Vault login
+# Install xdg-utils for OpenBao login
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         xdg-utils && \

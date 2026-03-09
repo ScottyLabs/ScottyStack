@@ -29,13 +29,13 @@ usage() {
   echo -e "${BOLD_TEXT}Description:${RESET_TEXT}"
 
   if [ "$action" == "pull" ]; then
-    echo -e "  ${action} secrets from Vault to the local environment."
+    echo -e "  ${action} secrets from OpenBao to the local environment."
   else
-    echo -e "  ${action} secrets from the local environment to Vault."
+    echo -e "  ${action} secrets from the local environment to OpenBao."
   fi
 
   echo -e "${BOLD_TEXT}Configuration Variables:${RESET_TEXT}"
-  echo -e "  - PROJECT (required) - team slug defined in Governance, corresponds to the folder name in Vault."
+  echo -e "  - PROJECT (required) - team slug defined in Governance, corresponds to the folder name in OpenBao."
   echo -e "  - APPS (optional) — space-separated string of valid applications."
   echo -e "  - ENVS (optional) — space-separated string of valid environments."
   echo
