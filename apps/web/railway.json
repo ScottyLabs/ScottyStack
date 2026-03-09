@@ -4,11 +4,13 @@
     "builder": "DOCKERFILE",
     "dockerfilePath": "apps/web/Dockerfile",
     "buildCommand": ":",
-    "startCommand": ":",
     "watchPatterns": [
       "/apps/web/**",
       "/packages/common/**",
       "/packages/access-control/**"
     ]
+  },
+  "deploy": {
+    "startCommand": ":"
   }
 }
