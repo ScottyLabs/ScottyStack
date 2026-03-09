@@ -12,6 +12,11 @@ COPY . .
 # Install deps from bun.lock
 RUN bun install --frozen-lockfile
 
+# Environment variables
+ARG VITE_SERVER_URL
+ARG VITE_PUBLIC_POSTHOG_HOST
+ARG VITE_PUBLIC_POSTHOG_KEY
+
 # Build the project
 RUN bun run build --filter=@scottystack/web...
 
