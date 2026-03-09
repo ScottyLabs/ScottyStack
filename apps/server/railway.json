@@ -3,6 +3,11 @@
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "apps/server/Dockerfile",
-    "startCommand": null
+    "startCommand": null,
+    "watchPatterns": [
+      "/apps/server/**",
+      "/packages/common/**",
+      "/packages/access-control/**"
+    ]
   }
 }
