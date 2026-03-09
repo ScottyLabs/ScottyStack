@@ -6,8 +6,9 @@
       "cache": false,
       "persistent": true
     },
+    "@scottystack/server#generate": {},
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "@scottystack/server#generate"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },

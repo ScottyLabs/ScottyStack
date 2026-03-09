@@ -12,9 +12,6 @@ COPY . .
 # Install deps from bun.lock
 RUN bun install --frozen-lockfile
 
-# Generate artifacts
-RUN bun run generate
-
 # Build the project
 RUN bun run build --filter=@scottystack/web...
 
