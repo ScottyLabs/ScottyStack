@@ -4,6 +4,7 @@ const MyToastContainer = () => (
   <ToastContainer
     position="top-right"
     autoClose={2000}
+    hideProgressBar={true}
     closeOnClick={true}
     theme="colored"
     transition={Slide}
