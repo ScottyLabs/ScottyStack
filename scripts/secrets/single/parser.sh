@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Load shared variables
-source "$(dirname "$0")/../shared/constants.sh"
-
 # Usage message
 usage() {
   local script_name="$0"

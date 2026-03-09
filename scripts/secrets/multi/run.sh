@@ -18,12 +18,7 @@ fi
 if [ ${#APPS[@]} -eq 0 ]; then
   for ENV in "${ENVS[@]}"; do
     vault_path="$PROJECT/$ENV"
-
     env_path=".env.$ENV"
-    if [ "$ENV" == $APPLICANTS_ENV_NAME ]; then
-      env_path=".env"
-    fi
-
     "$action" "$env_path" "$vault_path"
   done
   exit 0
@@ -48,9 +43,6 @@ for APP in "${APPS[@]}"; do
     echo
     vault_path="$PROJECT/$ENV/$APP"
     env_path="apps/$APP/.env.$ENV"
-    if [ "$ENV" == $APPLICANTS_ENV_NAME ]; then
-      env_path="apps/$APP/.env"
-    fi
     "$action" "$env_path" "$vault_path"
   done
   echo

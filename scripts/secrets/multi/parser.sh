@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Load shared variables
-source "$(dirname "$0")/../shared/constants.sh"
-
 # Convert space-separated strings to arrays
 unset ALLOWED_APPS_ARR ALLOWED_ENVS_ARR
 read -r -a ALLOWED_APPS_ARR <<<"$APPS"
