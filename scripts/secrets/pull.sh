@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# Load the secrets specific config
+source "$(dirname "$0")/config.sh"
+
 # Parse the arguments
-source "$(dirname "$0")/parser.sh"
-parse_args "$@" "Pull secrets from OpenBao to the local environment."
+source "$(dirname "$0")/../parser.sh"
+parse_args "Pull secrets from OpenBao to the local environment." "$@"
 
 # Define the pull function
 pull() {

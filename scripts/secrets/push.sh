@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# Load the secrets specific config
+source "$(dirname "$0")/config.sh"
+
 # Load the parser and parse the arguments
-source "$(dirname "$0")/parser.sh"
-parse_args "$@" "Push secrets from the local environment to OpenBao."
+source "$(dirname "$0")/../parser.sh"
+parse_args "Push secrets from the local environment to OpenBao." "$@"
 
 # Define the push function
 push() {

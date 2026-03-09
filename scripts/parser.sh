@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Load the config and shared variables
-source "$(dirname "$0")/config.sh"
-source "$(dirname "$0")/constants.sh"
+source "$SCRIPT_DIR/config.sh"
+source "$SCRIPT_DIR/constants.sh"
 
 # Convert space-separated strings to arrays
 unset ALLOWED_APPS_ARR ALLOWED_ENVS_ARR
@@ -45,13 +48,6 @@ usage() {
   echo -e "  $script_name all prod"
 }
 
-# Show an error message and exit if the PROJECT is not defined
-if [ -z "$PROJECT" ]; then
-  echo -e "${RED_TEXT}Error: PROJECT is not defined${RESET_TEXT}" >&2
-  usage >&2
-  exit 1
-fi
-
 # Helper function to validate the app/env input
 validate_input() {
   local input="$1" # the specific value provided by the user
@@ -89,14 +85,25 @@ validate_input() {
 }
 
 # Shared Argument Parsing and Validation
+# The first argument is the description of the script
 parse_args() {
   unset APP ENV
+
+  local description="$1"
+  shift 1
+
+  # Show an error message and exit if the PROJECT is not defined
+  if [ -z "$PROJECT" ]; then
+    echo -e "${RED_TEXT}Error: PROJECT is not defined${RESET_TEXT}" >&2
+    usage "$description" >&2
+    exit 1
+  fi
 
   # Read the arguments
   while [[ "$#" -gt 0 ]]; do
     # Show help message and exit if the user passes the -h or --help flag
     case "$1" in -h | --help)
-      usage
+      usage "$description"
       exit 0
       ;;
     esac
@@ -109,7 +116,7 @@ parse_args() {
       ENV="$1"
     else
       echo -e "${RED_TEXT}Error: Too many arguments provided${RESET_TEXT}" >&2
-      usage >&2
+      usage "$description" >&2
       exit 1
     fi
 
@@ -119,13 +126,13 @@ parse_args() {
   # Show an error message and exit if the user does not provide an application or environment
   if [ -z "$APP" ]; then
     echo -e "${RED_TEXT}Error: Application is required${RESET_TEXT}" >&2
-    usage >&2
+    usage "$description" >&2
     exit 1
   fi
 
   if [ -z "$ENV" ]; then
     echo -e "${RED_TEXT}Error: Environment is required${RESET_TEXT}" >&2
-    usage >&2
+    usage "$description" >&2
     exit 1
   fi
 
