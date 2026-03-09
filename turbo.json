@@ -11,10 +11,6 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
-    "start": {
-      "dependsOn": ["^start", "^build"],
-      "persistent": true
-    },
     "format": {},
     "transit": {
       "dependsOn": ["^transit"]
