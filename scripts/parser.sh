@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
+# Load the config and shared variables
+source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/constants.sh"
+
 # Convert space-separated strings to arrays
 unset ALLOWED_APPS_ARR ALLOWED_ENVS_ARR
 read -r -a ALLOWED_APPS_ARR <<<"$APPS"
 read -r -a ALLOWED_ENVS_ARR <<<"$ENVS"
 
-# Usage message
+# Usage message with description as the first argument
 usage() {
   local script_name="$0"
+  local description="$1"
 
   # the action is the script name without the .sh extension (either "pull" or "push")
   local action="$(basename "$script_name" .sh)"
@@ -27,17 +32,7 @@ usage() {
   echo -e "  $script_name APP ENV"
   echo
   echo -e "${BOLD_TEXT}Description:${RESET_TEXT}"
-
-  if [ "$action" == "pull" ]; then
-    echo -e "  ${action} secrets from OpenBao to the local environment."
-  else
-    echo -e "  ${action} secrets from the local environment to OpenBao."
-  fi
-
-  echo -e "${BOLD_TEXT}Configuration Variables:${RESET_TEXT}"
-  echo -e "  - PROJECT (required) - team slug defined in Governance, corresponds to the folder name in OpenBao."
-  echo -e "  - APPS (optional) — space-separated string of valid applications."
-  echo -e "  - ENVS (optional) — space-separated string of valid environments."
+  echo -e "  $description"
   echo
   echo -e "${BOLD_TEXT}Arguments:${RESET_TEXT}"
   echo -e "  APP   The application to ${action}, one of: ${allowed_apps_joined}all"
@@ -47,7 +42,7 @@ usage() {
   echo -e "  -h, --help    Show this help message and exit"
   echo
   echo -e "${BOLD_TEXT}Example Usage:${RESET_TEXT}"
-  echo -e "  PROJECT=my-project APPS='web server' ENVS='dev staging prod' $script_name all prod"
+  echo -e "  $script_name all prod"
 }
 
 # Show an error message and exit if the PROJECT is not defined

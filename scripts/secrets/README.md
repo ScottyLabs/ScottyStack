@@ -12,30 +12,19 @@ and paste it in your browser if the link doesn't automatically open.
 ./setup.sh
 ```
 
-Run the following commands to pull and push secrets by specifying a local environment
-file and a bao path in ScottyLabs [OpenBao](https:/bao.scottylabs.org).
+Run the following commands read the help message for pulling/pushing secrets
+for multiple applications and environments from local env files to
+[OpenBao](https:/bao.scottylabs.org).
 
 ```zsh
-./single/pull.sh
-./single/push.sh
-```
-
-## Advanced Usage
-
-It is tedious to pull/push secrets for each application and environment in a large
-project. To simplify this process, we have created the `multi` directory which
-contains scripts that are used to manage the project's secrets for multiple
-applications and environments.
-
-```zsh
-./multi/pull.sh
-./multi/push.sh
+./pull.sh
+./push.sh
 ```
 
 ### Configuration Variables
 
 The PROJECT (required) is the team slug you defined in
-[Governance](https://github.com/ScottyLabs/governance/tree/main/teams).
+[Governance](https://github.com/ScottyLabs-Labrador/governance/tree/main/teams).
 
 The APPS (optional) is a space-separated string of valid applications. Each
 application is a directory in the `apps` directory.
@@ -47,18 +36,15 @@ Each environment will create a `.env.$ENV` file in the root directory.
 
 When there is at least one application and one environment, the scripts
 sync local secrets from `apps/$APP/.env.$ENV` to the bao path
-`ScottyLabs/$PROJECT/$ENV/$APP`, for every application and environment.
+`$BAO_MOUNT/$PROJECT/$ENV/$APP`, for every application and environment.
 
 When there is no application, the scripts sync local secrets from `.env.$ENV`
-to the bao path `ScottyLabs/$PROJECT/$ENV`, for every environment.
+to the bao path `$BAO_MOUNT/$PROJECT/$ENV`, for every environment.
 
 When there is no environment, the scripts sync local secrets from `apps/$APP/.env`
-to the in the bao path `ScottyLabs/$PROJECT/$APP`, for every application.
+to the in the bao path `$BAO_MOUNT/$PROJECT/$APP`, for every application.
 
 When there is no application and no environment, the scripts sync local secrets
-from `.env` to the bao path `ScottyLabs/$PROJECT`.
+from `.env` to the bao path `$BAO_MOUNT/$PROJECT`.
 This script contains the configuration and helper functions used by the other scripts,
 including argument parsing and validation.
-
-**Exception**: when the `ENV` is `applicants`, the local secrets file name will be
-`.env` instead of `.env.applicant`.

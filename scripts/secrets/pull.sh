@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Requires that the BAO_MOUNT is defined.
 set -e
 
+# Parse the arguments
+source "$(dirname "$0")/parser.sh"
+parse_args "$@" "Pull secrets from OpenBao to the local environment."
+
+# Define the pull function
 pull() {
   local env_path="$1"
   local bao_path="$2"
@@ -10,3 +14,6 @@ pull() {
   bao kv get -format=json "$bao_path" |
     jq -r '.data.data | to_entries[] | "\(.key)=\"\(.value)\""' >$env_path
 }
+
+# Run the pull
+source "$(dirname "$0")/run.sh"
