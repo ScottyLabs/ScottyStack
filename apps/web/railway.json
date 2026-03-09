@@ -1,9 +1,9 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "RAILPACK",
-    "buildCommand": "cd apps/server && bun run generate && cd ../web/ && bun run build",
-    "startCommand": "bun run start --filter=@scottystack/web...",
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "apps/web/Dockerfile",
+    "startCommand": null,
     "watchPatterns": [
       "/apps/web/**",
       "/packages/common/**",
