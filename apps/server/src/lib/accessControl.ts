@@ -45,11 +45,17 @@ export async function getAcUserFromRequest(req: ExpressRequest): Promise<User> {
 export function getRolesFromJwt(
   jwtPayload: jwt.JwtPayload | null | undefined | string,
 ): Role[] {
+  // When the user is not authenticated, return a guest role.
   if (!jwtPayload || typeof jwtPayload !== "object") {
     return ["guest"];
   }
 
-  return jwtPayload["groups"].includes(env.ADMIN_GROUP)
-    ? ["admin", "user"]
-    : ["user"];
+  // When the user is authenticated but not in any groups, return a user role.
+  const groups = jwtPayload["groups"];
+  if (!groups) {
+    return ["user"];
+  }
+
+  // When the user is in the admin group, return an admin role.
+  return groups.includes(env.ADMIN_GROUP) ? ["admin", "user"] : ["user"];
 }
