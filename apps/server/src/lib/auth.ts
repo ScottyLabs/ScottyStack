@@ -24,9 +24,17 @@ interface Auth {
 export const auth = betterAuth({
   baseURL: env.SERVER_URL,
   trustedOrigins: [env.BETTER_AUTH_URL],
-
-  // Override the user id to Andrew ID when creating a new user
   database: drizzleAdapter(db, { schema, provider: "pg" }),
+
+  // Override the user id to Andrew ID when creating a new user.
+  // Note that we have to use the `full_email` field since the `email` field
+  // in the JWT payload defaults to CMU alias emails if the user sets one.
+  // References: https://www.cmu.edu/computing/services/comm-collab/email-calendar/how-to/emailalias.html
+  //
+  // Here is a scenario where using the `email` field is problematic: a user
+  // without a CMU alias email created an account. Then they create an alias email
+  // that is not their Andrew ID. We will fail to find the user in the database
+  // when they try to login again and create a new account with the alias email.
   databaseHooks: {
     user: {
       create: {
