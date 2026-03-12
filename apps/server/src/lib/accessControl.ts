@@ -5,7 +5,8 @@ import type { Request as ExpressRequest } from "express";
 import type jwt from "jsonwebtoken";
 import { db } from "../db/index.ts";
 import { account, user } from "../db/schema/index.ts";
-import { ADMIN_GROUP, verifyBearer, verifyOidc } from "./authentication.ts";
+import { env } from "../env.ts";
+import { verifyBearer, verifyOidc } from "./authentication.ts";
 
 /**
  * Get user from the request for access control.
@@ -48,7 +49,7 @@ export function getRolesFromJwt(
     return ["guest"];
   }
 
-  return jwtPayload["groups"].includes(ADMIN_GROUP)
+  return jwtPayload["groups"].includes(env.ADMIN_GROUP)
     ? ["admin", "user"]
     : ["user"];
 }

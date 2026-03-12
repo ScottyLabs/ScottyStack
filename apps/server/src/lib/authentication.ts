@@ -18,11 +18,10 @@ import { getJwtPayloadFromHeaders } from "./authUtils.ts";
 
 export const OIDC_AUTH = "oidc";
 export const BEARER_AUTH = "bearerAuth";
-
-// You can change this to scottystack-members if you are not an admin but
-// need to test as an admin in development. You can also change it to a random
-// string if you are an admin but need to test as a non-admin in development.
-export const ADMIN_GROUP = "scottystack-admins";
+export const ADMIN_SCOPE = "admins";
+const SCOPE_TO_GROUP: Record<string, string> = {
+  [ADMIN_SCOPE]: env.ADMIN_GROUP,
+};
 
 declare module "express" {
   interface Request {
@@ -174,5 +173,8 @@ const hasAnyScope = (groups?: string[], scopes?: string[]) => {
   }
 
   // Check if any of the groups contain any of the required scopes
-  return groups.some((group) => scopes.includes(group));
+  return groups.some((group) =>
+    // Default to the scope if it is not in the mapping to a group
+    scopes.map((scope) => SCOPE_TO_GROUP[scope] ?? scope).includes(group),
+  );
 };
