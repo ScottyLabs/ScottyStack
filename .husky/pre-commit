@@ -3,4 +3,4 @@ set -e
 editorconfig-checker --exclude '(^LICENSE|^apps/server/drizzle/.*$)'
 bun run syncpack
 bunx markdownlint-cli2
-turbo run quality
+bunx turbo run quality
