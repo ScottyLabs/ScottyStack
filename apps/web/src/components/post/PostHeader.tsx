@@ -39,9 +39,9 @@ export function PostHeader({ post, onEdit }: PostHeaderProps) {
 
   const deletePost = $api.useMutation("delete", "/posts/{postId}", {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
+      void queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
       toast.success("Post deleted");
-      navigate({ to: "/" });
+      void navigate({ to: "/" });
     },
   });
 

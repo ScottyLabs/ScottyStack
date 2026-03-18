@@ -49,7 +49,9 @@ export function errorHandler(err: unknown, req: Request, res: Response, next: Ne
     const errorToReturn = req.authErrors.reduce((max, currentError) => {
       return currentError.status > max.status ? currentError : max;
     }, firstAuthError);
-    return res.status(errorToReturn.status).json({ ...errorToReturn });
+    return res
+      .status(errorToReturn.status)
+      .json({ name: errorToReturn.name, message: errorToReturn.message });
   }
 
   // The validation errors take the second highest priority
@@ -61,7 +63,7 @@ export function errorHandler(err: unknown, req: Request, res: Response, next: Ne
 
   // The HTTP errors take priority over unknown errors
   if (err instanceof HttpError) {
-    return res.status(err.status).json({ ...err });
+    return res.status(err.status).json({ name: err.name, message: err.message });
   }
 
   if (err instanceof Error) {

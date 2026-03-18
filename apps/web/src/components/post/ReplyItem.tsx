@@ -41,7 +41,7 @@ export function ReplyItem({
 
   const updateReply = $api.useMutation("patch", "/posts/{postId}/replies/{replyId}", {
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: $api.queryOptions("get", "/posts/{postId}", {
           params: { path: { postId } },
         }).queryKey,
@@ -53,7 +53,7 @@ export function ReplyItem({
 
   const deleteReply = $api.useMutation("delete", "/posts/{postId}/replies/{replyId}", {
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: $api.queryOptions("get", "/posts/{postId}", {
           params: { path: { postId } },
         }).queryKey,

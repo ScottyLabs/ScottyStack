@@ -15,9 +15,9 @@ export function NewPostForm() {
 
   const createPost = $api.useMutation("post", "/posts", {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
+      void queryClient.invalidateQueries({ queryKey: ["get", "/posts"] });
       toast.success("Post created");
-      navigate({ to: "/" });
+      void navigate({ to: "/" });
     },
   });
 

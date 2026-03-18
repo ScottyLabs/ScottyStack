@@ -16,7 +16,7 @@ export function ReplyForm({ postId }: ReplyFormProps) {
 
   const createReply = $api.useMutation("post", "/posts/{postId}/replies", {
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: $api.queryOptions("get", "/posts/{postId}", {
           params: { path: { postId } },
         }).queryKey,

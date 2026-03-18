@@ -10,8 +10,8 @@ import { useSession } from "@/lib/authClient";
 
 export const Route = createFileRoute("/$postId")({
   component: PostPage,
-  loader: ({ context, params }) => {
-    context.queryClient.ensureQueryData(
+  loader: async ({ context, params }) => {
+    await context.queryClient.ensureQueryData(
       $api.queryOptions("get", "/posts/{postId}", {
         params: { path: { postId: params.postId } },
       }),
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/$postId")({
   ),
   errorComponent: ({ error }) => (
     <div className="p-6 text-sm text-destructive">
-      Error: {String(error) ?? "Failed to load post"}
+      Error: {error ? String(error) : "Failed to load post"}
     </div>
   ),
 });

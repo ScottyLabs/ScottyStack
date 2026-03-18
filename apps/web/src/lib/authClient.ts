@@ -12,7 +12,7 @@ const authClient = createAuthClient({
 });
 
 export function signIn() {
-  authClient.signIn
+  void authClient.signIn
     .social({
       provider: "keycloak",
       callbackURL: window.location.href,
@@ -25,7 +25,7 @@ export function signIn() {
 }
 
 export function signOut() {
-  authClient.signOut().then((result) => {
+  void authClient.signOut().then((result) => {
     if (result.error) {
       console.error(result.error);
     }

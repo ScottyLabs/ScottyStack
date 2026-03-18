@@ -42,7 +42,7 @@ function DashboardPage() {
   }
 
   if (!auth?.user) {
-    navigate({ to: "/" });
+    void navigate({ to: "/" });
     return null;
   }
 
@@ -69,7 +69,7 @@ function DashboardPage() {
   if (usersError) {
     return (
       <div className="p-6 text-sm text-destructive">
-        Error loading users: {String(usersErrorDetail) ?? "Unknown error"}
+        Error loading users: {usersErrorDetail ? String(usersErrorDetail) : "Unknown error"}
       </div>
     );
   }

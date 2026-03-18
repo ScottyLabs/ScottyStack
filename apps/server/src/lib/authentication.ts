@@ -112,7 +112,7 @@ export function verifyBearer(request: express.Request): Promise<jwt.JwtPayload |
       (error, decoded) => {
         // Check if the token is valid
         if (error) {
-          captureUnexpectedError(`Authentication error: ${error}`);
+          captureUnexpectedError(`Authentication error: ${JSON.stringify(error)}`);
           const err = new AuthenticationError();
           request.authErrors?.push(err);
           return resolve(null);
