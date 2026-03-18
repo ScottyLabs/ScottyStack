@@ -12,6 +12,13 @@ export default {
   // https://jamiemason.github.io/syncpack/semver-groups/
   semverGroups: [
     {
+      // We would not want new errors to appear in our codebase from unintended Oxlint upgrades.
+      // Reference: https://oxc.rs/docs/guide/usage/linter/versioning.html#what-to-expect-from-new-versions
+      dependencies: ["oxlint"],
+      dependencyTypes: ["dev"],
+      range: "~",
+    },
+    {
       // "highly recommended to save the exact version" - https://biomejs.dev/internals/versioning/
       dependencies: ["@biomejs/biome"],
       dependencyTypes: ["dev"],
