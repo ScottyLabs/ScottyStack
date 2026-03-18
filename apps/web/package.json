@@ -1,19 +1,6 @@
 {
   "name": "@scottystack/web",
   "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "vite build",
-    "check": "biome check && tsc -b",
-    "dev": "vite --port 3000",
-    "format": "biome format",
-    "lint": "biome lint",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "tsc": "tsc -b",
-    "tsc:clean": "tsc -b -clean"
-  },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
     "@fontsource-variable/geist": "^5.2.8",
@@ -58,5 +45,18 @@
     "vite": "^7.1.7",
     "vitest": "^4.0.18",
     "web-vitals": "^5.1.0"
-  }
+  },
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "check": "biome check && tsc -b",
+    "dev": "vite --port 3000",
+    "format": "biome format",
+    "lint": "biome lint",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "tsc": "tsc -b",
+    "tsc:clean": "tsc -b -clean"
+  },
+  "type": "module"
 }
