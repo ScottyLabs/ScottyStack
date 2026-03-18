@@ -39,12 +39,12 @@
   "private": true,
   "scripts": {
     "build": "bun build src/server.ts --outdir=dist --target=bun --sourcemap",
+    "build:api": "bun run tsoa && bun run openapi",
     "db:generate": "dotenv -e .env.local -- bunx drizzle-kit generate",
     "db:migrate": "dotenv -e .env.local -- bunx drizzle-kit migrate",
     "db:seed": "bun run src/db/seed.ts",
     "db:studio": "dotenv -e .env.local -- bunx drizzle-kit studio",
     "dev": "concurrently 'bun run server' 'bun run tsoa:watch' 'bun run openapi:watch'",
-    "generate": "bun run tsoa && bun run openapi",
     "openapi": "openapi-typescript ./build/swagger.yaml -o ./build/swagger.d.ts",
     "openapi:watch": "onchange './build/swagger.yaml' -- bun run openapi",
     "server": "bun run --preload ./src/instrument.ts --watch src/server.ts",

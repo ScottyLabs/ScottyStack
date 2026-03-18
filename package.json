@@ -26,10 +26,10 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:api": "cd apps/server && bun run build:api",
     "dev": "turbo run dev",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
-    "generate": "cd apps/server && bun run generate",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix",
     "preinstall": "bunx only-allow bun",

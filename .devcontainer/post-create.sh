@@ -15,8 +15,8 @@ fi
 # Install Bun dependencies
 bun install
 
-# Generate dependencies
-bun run generate
+# Build API
+bun run build:api
 
 # Run db migrations
 cd apps/server && bun run db:migrate
