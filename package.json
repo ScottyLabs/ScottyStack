@@ -26,7 +26,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "quality": "turbo run check",
     "dev": "turbo run dev",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
