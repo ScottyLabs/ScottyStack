@@ -12,6 +12,7 @@ import {
   Security,
   SuccessResponse,
 } from "tsoa";
+
 import { getAcUserFromRequest } from "../lib/accessControl.ts";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { postService } from "../services/postService.ts";
@@ -52,17 +53,9 @@ export class PostController {
   @Security(OIDC_AUTH)
   @Security(BEARER_AUTH)
   @SuccessResponse(201)
-  async createPost(
-    @Request() req: ExpressRequest,
-    @Body() body: CreatePostRequest,
-  ) {
+  async createPost(@Request() req: ExpressRequest, @Body() body: CreatePostRequest) {
     const user = await getAcUserFromRequest(req);
-    return postService.createPost(
-      user,
-      body.title,
-      body.content,
-      body.anonymous ?? false,
-    );
+    return postService.createPost(user, body.title, body.content, body.anonymous ?? false);
   }
 
   @Patch("{postId}")
@@ -75,13 +68,7 @@ export class PostController {
     @Body() body: UpdatePostRequest,
   ) {
     const user = await getAcUserFromRequest(req);
-    return postService.updatePost(
-      user,
-      postId,
-      body.title,
-      body.content,
-      body.anonymous ?? false,
-    );
+    return postService.updatePost(user, postId, body.title, body.content, body.anonymous ?? false);
   }
 
   @Delete("{postId}")

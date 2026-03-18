@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "react-toastify";
+
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 
@@ -77,11 +78,7 @@ export function NewPostForm() {
           Post anonymously
         </label>
         <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate({ to: "/" })}
-          >
+          <Button type="button" variant="outline" onClick={() => navigate({ to: "/" })}>
             Cancel
           </Button>
           <Button type="submit" disabled={createPost.isPending}>

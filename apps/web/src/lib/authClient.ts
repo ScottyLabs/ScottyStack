@@ -1,6 +1,7 @@
 import type { auth } from "@scottystack/server/src/lib/auth";
 import { customSessionClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+
 import { env } from "@/env.ts";
 
 // https://www.better-auth.com/docs/installation#create-client-instance

@@ -5,6 +5,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import type * as express from "express";
 import jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
+
 import { env } from "../env.ts";
 import type { HttpError } from "../middlewares/errorHandler.ts";
 import {
@@ -63,9 +64,7 @@ export function expressAuthentication(
   });
 }
 
-export async function verifyOidc(
-  request: express.Request,
-): Promise<jwt.JwtPayload | null> {
+export async function verifyOidc(request: express.Request): Promise<jwt.JwtPayload | null> {
   try {
     // Check if the user is authenticated
     // Reference: https://www.better-auth.com/docs/integrations/express
@@ -86,9 +85,7 @@ export async function verifyOidc(
 }
 
 const client = jwksClient({ jwksUri: env.AUTH_JWKS_URI });
-export function verifyBearer(
-  request: express.Request,
-): Promise<jwt.JwtPayload | null> {
+export function verifyBearer(request: express.Request): Promise<jwt.JwtPayload | null> {
   return new Promise((resolve) => {
     const token = request.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -149,9 +146,7 @@ const verifyScope = (
 
   if (!hasAnyScope(decoded?.["groups"], scopes)) {
     request.authErrors?.push(
-      new AuthorizationError(
-        "Insufficient permissions to access this resource.",
-      ),
+      new AuthorizationError("Insufficient permissions to access this resource."),
     );
     return reject({});
   }

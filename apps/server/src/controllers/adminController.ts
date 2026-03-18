@@ -1,4 +1,5 @@
 import { Get, Query, Route, Security, SuccessResponse } from "tsoa";
+
 import { ADMIN_SCOPE, BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { userService } from "../services/userService.ts";
 

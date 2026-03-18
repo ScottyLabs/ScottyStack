@@ -3,6 +3,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+
 import { NavBar } from "@/components/NavBar.tsx";
 import { PostHogIdentify } from "@/components/PostHogIdentify";
 import { PostList } from "@/components/posts/PostList";

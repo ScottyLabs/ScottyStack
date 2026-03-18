@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -49,9 +50,7 @@ function DashboardPage() {
   if (!isAdmin) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
-        <p className="text-sm text-muted-foreground">
-          You do not have access to this page.
-        </p>
+        <p className="text-sm text-muted-foreground">You do not have access to this page.</p>
         <Link to="/" className="text-sm text-primary underline">
           Go home
         </Link>
@@ -82,9 +81,7 @@ function DashboardPage() {
   return (
     <div className="flex flex-col p-6">
       <h1 className="mb-4 text-2xl font-semibold">Admin Dashboard</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        All users with post and reply counts.
-      </p>
+      <p className="mb-6 text-sm text-muted-foreground">All users with post and reply counts.</p>
       <Table>
         <TableHeader>
           <TableRow>
@@ -97,10 +94,7 @@ function DashboardPage() {
         <TableBody>
           {list.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={4}
-                className="text-center text-sm text-muted-foreground"
-              >
+              <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
                 No users found.
               </TableCell>
             </TableRow>

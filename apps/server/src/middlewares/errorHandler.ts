@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/bun";
 import type { NextFunction, Request, Response } from "express";
 import { ValidateError } from "tsoa";
+
 import { env } from "../env";
 
 export class HttpError extends Error {
@@ -34,12 +35,7 @@ export class InternalServerError extends HttpError {
 }
 
 // From https://tsoa-community.github.io/docs/error-handling.html
-export function errorHandler(
-  err: unknown,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction) {
   // The authentication errors takes the highest priority
   //
   // Since we authenticated with both OIDC and Bearer, even if the request was
@@ -70,9 +66,7 @@ export function errorHandler(
 
   if (err instanceof Error) {
     captureUnexpectedError(`Unexpected error in ${req.path}: ${err}`);
-    return res
-      .status(500)
-      .json({ message: `Internal Server Error: ${err.message}` });
+    return res.status(500).json({ message: `Internal Server Error: ${err.message}` });
   }
 
   return next();

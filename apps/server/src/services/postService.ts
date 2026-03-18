@@ -1,16 +1,13 @@
 import type { User } from "@scottystack/access-control";
 import { hasPermission } from "@scottystack/access-control";
 import { and, asc, desc, eq, lt, or } from "drizzle-orm";
+
 import { db } from "../db/index.ts";
 import { user } from "../db/schema/auth.ts";
 import { post, reply } from "../db/schema/posts.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
 
-function maskAuthor(
-  anonymous: boolean,
-  authorName: string | null,
-  canViewName: boolean,
-) {
+function maskAuthor(anonymous: boolean, authorName: string | null, canViewName: boolean) {
   if (canViewName || !anonymous) return authorName ?? "User";
   return "Anonymous";
 }
@@ -135,10 +132,7 @@ export const postService = {
         .where(
           or(
             lt(post.createdAt, cursorPost.createdAt),
-            and(
-              eq(post.createdAt, cursorPost.createdAt),
-              lt(post.id, cursorPost.id),
-            ),
+            and(eq(post.createdAt, cursorPost.createdAt), lt(post.id, cursorPost.id)),
           ),
         )
         .orderBy(desc(post.createdAt), desc(post.id))
@@ -183,12 +177,7 @@ export const postService = {
     return { posts, nextCursor };
   },
 
-  createPost: async (
-    acUser: User,
-    title: string,
-    content: string,
-    anonymous: boolean = false,
-  ) => {
+  createPost: async (acUser: User, title: string, content: string, anonymous: boolean = false) => {
     const now = new Date();
     const [created] = await db
       .insert(post)

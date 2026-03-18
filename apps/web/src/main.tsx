@@ -1,13 +1,16 @@
-import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { StrictMode } from "react";
-import ReactDom from "react-dom/client";
-import { reportWebVitals } from "./reportWebVitals.ts";
-import "./styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
+
+import "./styles.css";
+import { StrictMode } from "react";
+import ReactDom from "react-dom/client";
+
 import { env } from "@/env.ts";
+
 import { getQueryClient } from "./lib/queryClient.ts";
+import { reportWebVitals } from "./reportWebVitals.ts";
 import { routeTree } from "./routeTree.gen.ts";
 
 // Create a new router instance

@@ -1,6 +1,7 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import InfiniteScroll from "react-infinite-scroll-component";
+
 import { buttonVariants } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 import { useSession } from "@/lib/authClient";
@@ -21,9 +22,7 @@ type PostItem = {
 function groupPostsByDate(posts: PostItem[]) {
   const groups: Record<string, PostItem[]> = {};
   for (const post of posts) {
-    const dateKey = new Date(
-      post.createdAt ?? post.updatedAt,
-    ).toLocaleDateString("en-US", {
+    const dateKey = new Date(post.createdAt ?? post.updatedAt).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -39,24 +38,17 @@ export function PostList() {
   const params = useParams({ strict: false });
   const activePostId = params?.postId;
 
-  const {
-    data,
-    isLoading,
-    error,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = $api.useInfiniteQuery(
-    "get",
-    "/posts",
-    { params: { query: { limit: PAGE_SIZE } } },
-    {
-      pageParamName: "cursor",
-      initialPageParam: "",
-      getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    },
-  );
+  const { data, isLoading, error, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    $api.useInfiniteQuery(
+      "get",
+      "/posts",
+      { params: { query: { limit: PAGE_SIZE } } },
+      {
+        pageParamName: "cursor",
+        initialPageParam: "",
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+      },
+    );
 
   const posts = data?.pages.flatMap((p) => p.posts) ?? [];
 
@@ -69,11 +61,7 @@ export function PostList() {
   }
 
   if (isError) {
-    return (
-      <div className="p-4 text-sm text-destructive">
-        Error loading posts: {String(error)}
-      </div>
-    );
+    return <div className="p-4 text-sm text-destructive">Error loading posts: {String(error)}</div>;
   }
 
   const groupedPosts = groupPostsByDate(posts);
@@ -83,17 +71,12 @@ export function PostList() {
       {/* New Thread Button */}
       <div className="border-b p-3">
         {auth?.user ? (
-          <Link
-            to="/new"
-            className={cn(buttonVariants(), "w-full gap-2 bg-primary")}
-          >
+          <Link to="/new" className={cn(buttonVariants(), "w-full gap-2 bg-primary")}>
             <Pencil className="size-4" />
             Stack!
           </Link>
         ) : (
-          <p className="text-center text-sm text-muted-foreground">
-            Sign in to create posts
-          </p>
+          <p className="text-center text-sm text-muted-foreground">Sign in to create posts</p>
         )}
       </div>
 
@@ -121,9 +104,7 @@ export function PostList() {
           >
             {Object.entries(groupedPosts).map(([dateKey, datePosts]) => (
               <div key={dateKey} className="border-b">
-                <div className="px-4 py-2 text-sm font-medium text-muted-foreground">
-                  {dateKey}
-                </div>
+                <div className="px-4 py-2 text-sm font-medium text-muted-foreground">{dateKey}</div>
                 {datePosts.map((post) => {
                   const isSelected = activePostId === post.id;
                   return (
@@ -138,14 +119,10 @@ export function PostList() {
                       <div className="flex items-start gap-2">
                         <span className="mt-1.5 size-2 shrink-0 rounded-full bg-emerald-500" />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">
-                            {post.title}
-                          </p>
+                          <p className="truncate text-sm font-medium">{post.title}</p>
                           <p className="text-sm text-muted-foreground">
                             {post.authorName ?? "User"} ·{" "}
-                            {new Date(
-                              post.createdAt ?? post.updatedAt,
-                            ).toLocaleString(undefined, {
+                            {new Date(post.createdAt ?? post.updatedAt).toLocaleString(undefined, {
                               dateStyle: "medium",
                               timeStyle: "short",
                             })}

@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
 import { useSession } from "@/lib/authClient";
+
 import { SignInButton } from "./SignInButton";
 import { SignOutButton } from "./SignOutButton";
 
@@ -15,10 +17,7 @@ export function UserProfile() {
   // Close the dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     }
@@ -46,12 +45,8 @@ export function UserProfile() {
       {open && (
         <div className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-white/20 bg-gray-800 py-2 shadow-xl">
           <div className="px-4 py-3">
-            <p className="truncate text-sm font-medium text-white">
-              {user.name}
-            </p>
-            <p className="mt-0.5 truncate text-sm text-gray-300">
-              {user.email}
-            </p>
+            <p className="truncate text-sm font-medium text-white">{user.name}</p>
+            <p className="mt-0.5 truncate text-sm text-gray-300">{user.email}</p>
             {user.roles.includes("admin") && (
               <Link
                 to="/dashboard"

@@ -1,6 +1,7 @@
 import type { User } from "@scottystack/access-control";
 import { hasPermission } from "@scottystack/access-control";
 import { eq } from "drizzle-orm";
+
 import { db } from "../db/index.ts";
 import { post, reply } from "../db/schema/posts.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
@@ -12,10 +13,7 @@ export const replyService = {
     content: string,
     anonymous: boolean = false,
   ) => {
-    const [existingPost] = await db
-      .select({ id: post.id })
-      .from(post)
-      .where(eq(post.id, postId));
+    const [existingPost] = await db.select({ id: post.id }).from(post).where(eq(post.id, postId));
     if (!existingPost) {
       throw new HttpError(404, "Post not found");
     }

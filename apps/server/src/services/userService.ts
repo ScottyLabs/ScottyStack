@@ -1,4 +1,5 @@
 import { count, desc, inArray } from "drizzle-orm";
+
 import { db } from "../db/index.ts";
 import { user } from "../db/schema/index.ts";
 import { post, reply } from "../db/schema/posts.ts";
@@ -42,12 +43,8 @@ export const userService = {
       .where(inArray(reply.userId, userIds))
       .groupBy(reply.userId);
 
-    const postCountMap = new Map(
-      postCountRows.map((r) => [r.userId, Number(r.postCount)]),
-    );
-    const replyCountMap = new Map(
-      replyCountRows.map((r) => [r.userId, Number(r.replyCount)]),
-    );
+    const postCountMap = new Map(postCountRows.map((r) => [r.userId, Number(r.postCount)]));
+    const replyCountMap = new Map(replyCountRows.map((r) => [r.userId, Number(r.replyCount)]));
 
     return users.map((u) => ({
       id: u.id,

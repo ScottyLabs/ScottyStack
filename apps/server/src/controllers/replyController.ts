@@ -1,15 +1,6 @@
 import type { Request as ExpressRequest } from "express";
-import {
-  Body,
-  Delete,
-  Patch,
-  Path,
-  Post,
-  Request,
-  Route,
-  Security,
-  SuccessResponse,
-} from "tsoa";
+import { Body, Delete, Patch, Path, Post, Request, Route, Security, SuccessResponse } from "tsoa";
+
 import { getAcUserFromRequest } from "../lib/accessControl.ts";
 import { BEARER_AUTH, OIDC_AUTH } from "../lib/authentication.ts";
 import { replyService } from "../services/replyService.ts";
@@ -36,12 +27,7 @@ export class ReplyController {
     @Body() body: CreateReplyRequest,
   ) {
     const user = await getAcUserFromRequest(req);
-    return replyService.createReply(
-      user,
-      postId,
-      body.content,
-      body.anonymous ?? false,
-    );
+    return replyService.createReply(user, postId, body.content, body.anonymous ?? false);
   }
 
   @Patch("{replyId}")
@@ -55,13 +41,7 @@ export class ReplyController {
     @Body() body: UpdateReplyRequest,
   ) {
     const user = await getAcUserFromRequest(req);
-    return replyService.updateReply(
-      user,
-      postId,
-      replyId,
-      body.content,
-      body.anonymous ?? false,
-    );
+    return replyService.updateReply(user, postId, replyId, body.content, body.anonymous ?? false);
   }
 
   @Delete("{replyId}")

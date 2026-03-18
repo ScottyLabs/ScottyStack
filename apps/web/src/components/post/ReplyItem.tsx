@@ -3,6 +3,7 @@ import { hasPermission } from "@scottystack/access-control";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
+
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 
@@ -38,37 +39,29 @@ export function ReplyItem({
   const canUpdate = hasPermission(user, "replies", "update", reply);
   const canDelete = hasPermission(user, "replies", "delete", reply);
 
-  const updateReply = $api.useMutation(
-    "patch",
-    "/posts/{postId}/replies/{replyId}",
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: $api.queryOptions("get", "/posts/{postId}", {
-            params: { path: { postId } },
-          }).queryKey,
-        });
-        toast.success("Reply updated");
-        onEndEdit();
-      },
+  const updateReply = $api.useMutation("patch", "/posts/{postId}/replies/{replyId}", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: $api.queryOptions("get", "/posts/{postId}", {
+          params: { path: { postId } },
+        }).queryKey,
+      });
+      toast.success("Reply updated");
+      onEndEdit();
     },
-  );
+  });
 
-  const deleteReply = $api.useMutation(
-    "delete",
-    "/posts/{postId}/replies/{replyId}",
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: $api.queryOptions("get", "/posts/{postId}", {
-            params: { path: { postId } },
-          }).queryKey,
-        });
-        toast.success("Reply deleted");
-        onEndEdit();
-      },
+  const deleteReply = $api.useMutation("delete", "/posts/{postId}/replies/{replyId}", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: $api.queryOptions("get", "/posts/{postId}", {
+          params: { path: { postId } },
+        }).queryKey,
+      });
+      toast.success("Reply deleted");
+      onEndEdit();
     },
-  );
+  });
 
   const handleSave = () => {
     if (!editContent.trim()) return;
@@ -125,12 +118,7 @@ export function ReplyItem({
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              size="sm"
-              onClick={handleSave}
-              disabled={updateReply.isPending}
-            >
+            <Button type="button" size="sm" onClick={handleSave} disabled={updateReply.isPending}>
               {updateReply.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
@@ -149,12 +137,7 @@ export function ReplyItem({
         </p>
         <div className="flex shrink-0 gap-2">
           {canUpdate && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={onStartEdit}
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={onStartEdit}>
               Edit
             </Button>
           )}

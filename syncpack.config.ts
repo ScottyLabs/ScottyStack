@@ -25,13 +25,7 @@ export default {
       range: "",
     },
     {
-      dependencyTypes: [
-        "prod",
-        "resolutions",
-        "overrides",
-        "pnpmOverrides",
-        "local",
-      ],
+      dependencyTypes: ["prod", "resolutions", "overrides", "pnpmOverrides", "local"],
       range: "^",
     },
     {

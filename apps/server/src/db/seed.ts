@@ -9,6 +9,7 @@
  */
 import { eq } from "drizzle-orm";
 import { getGeneratorsFunctions, reset, seed } from "drizzle-seed";
+
 import { db } from "./index.ts";
 import { user } from "./schema/auth.ts";
 import { post, reply } from "./schema/posts.ts";

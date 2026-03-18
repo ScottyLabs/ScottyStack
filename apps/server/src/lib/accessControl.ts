@@ -3,6 +3,7 @@ import type { Role } from "@scottystack/access-control/src/types.ts";
 import { eq } from "drizzle-orm";
 import type { Request as ExpressRequest } from "express";
 import type jwt from "jsonwebtoken";
+
 import { db } from "../db/index.ts";
 import { account, user } from "../db/schema/index.ts";
 import { env } from "../env.ts";
@@ -42,9 +43,7 @@ export async function getAcUserFromRequest(req: ExpressRequest): Promise<User> {
   };
 }
 
-export function getRolesFromJwt(
-  jwtPayload: jwt.JwtPayload | null | undefined | string,
-): Role[] {
+export function getRolesFromJwt(jwtPayload: jwt.JwtPayload | null | undefined | string): Role[] {
   // When the user is not authenticated, return a guest role.
   if (!jwtPayload || typeof jwtPayload !== "object") {
     return ["guest"];

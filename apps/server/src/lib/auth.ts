@@ -3,6 +3,7 @@ import type { Session, User } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession, genericOAuth } from "better-auth/plugins";
+
 import { db } from "../db/index.ts";
 import * as schema from "../db/schema/index.ts";
 import { env } from "../env.ts";

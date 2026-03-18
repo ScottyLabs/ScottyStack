@@ -3,38 +3,38 @@
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": true,
   },
   "files": {
-    "includes": ["**", "!**/src/routeTree.gen.ts", "!**/apps/server/drizzle"]
+    "includes": ["**", "!**/src/routeTree.gen.ts", "!**/apps/server/drizzle"],
   },
   "css": {
     "parser": {
-      "tailwindDirectives": true
-    }
+      "tailwindDirectives": true,
+    },
   },
   "javascript": {
     "parser": {
-      "unsafeParameterDecoratorsEnabled": true
-    }
+      "unsafeParameterDecoratorsEnabled": true,
+    },
   },
   "formatter": {
-    "useEditorconfig": true
+    "useEditorconfig": true,
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "complexity": {
-        "useLiteralKeys": "off" // Conflicts with tsc noPropertyAccessFromIndexSignature.
-      }
+        "useLiteralKeys": "off", // Conflicts with tsc noPropertyAccessFromIndexSignature.
+      },
     },
     "domains": {
       "project": "recommended",
       "react": "recommended",
       "turborepo": "recommended",
       "types": "recommended",
-      "tailwind": "recommended"
-    }
-  }
+      "tailwind": "recommended",
+    },
+  },
 }

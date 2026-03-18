@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import { useUser } from "@/hooks/useUser";
+
 import { ReplyItem } from "./ReplyItem";
 
 interface Reply {
@@ -23,9 +25,7 @@ export function ReplyList({ replies, postId }: ReplyListProps) {
 
   return (
     <div className="mt-8 space-y-4">
-      <h2 className="text-sm font-medium text-muted-foreground">
-        Replies ({replies.length})
-      </h2>
+      <h2 className="text-sm font-medium text-muted-foreground">Replies ({replies.length})</h2>
       <div className="space-y-4">
         {replies.map((reply) => (
           <ReplyItem
