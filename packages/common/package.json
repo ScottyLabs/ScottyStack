@@ -2,12 +2,5 @@
   "name": "@scottystack/common",
   "version": "0.0.0",
   "main": "src/index.ts",
-  "scripts": {
-    "check": "biome check && tsc -b",
-    "format": "biome format",
-    "lint": "biome lint",
-    "tsc": "tsc -b",
-    "tsc:clean": "tsc -b -clean"
-  },
   "type": "module"
 }

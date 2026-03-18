@@ -12,19 +12,20 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
-    "format": {},
-    "transit": {
-      "dependsOn": ["^transit"]
+    "//#quality": {
+      "dependsOn": ["//#lint", "//#format"]
     },
-    "lint": {
-      "dependsOn": ["transit"]
+    "//#quality:fix": {
+      "dependsOn": ["//#lint:fix", "//#format:fix"]
     },
-    "tsc": {
-      "dependsOn": ["transit"]
+    "//#lint": {},
+    "//#lint:fix": {
+      "cache": false
     },
-    "check": {
-      "dependsOn": ["transit"]
-    },
-    "tsc:clean": {}
+    "//#format": {},
+    "//#format:fix": {
+      "dependsOn": ["//#lint:fix"],
+      "cache": false
+    }
   }
 }
