@@ -48,7 +48,7 @@ jobs:
         run: bun run syncpack
 
   bun-check:
-    name: Bun Check
+    name: Bun Quality Checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,4 +63,4 @@ jobs:
         run: bun run generate
 
       - name: Run checks
-        run: bun run check
+        run: bun run quality
