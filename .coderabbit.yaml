@@ -7,7 +7,3 @@ reviews:
     base_branches:
       - "staging"
       - "main"
-
-issue_enrichment:
-  planning:
-    enabled: false
