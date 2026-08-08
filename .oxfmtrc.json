@@ -4,7 +4,7 @@
   "ignorePatterns": [
     "/apps/web/src/routeTree.gen.ts",
     "/apps/server/drizzle",
-    "/.cursor/skills",
+    "/.agents/skills",
     // We use syncpack to format package.json since it also orders the scripts alphabetically.
     "**/package.json"
   ],
