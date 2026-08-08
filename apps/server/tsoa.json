@@ -6,7 +6,7 @@
     "securityDefinitions": {
       "oidc": {
         "type": "openIdConnect",
-        "openIdConnectUrl": "https://idp.scottylabs.org/realms/scottylabs/.well-known/openid-configuration"
+        "openIdConnectUrl": "https://idp.scottylabs.org/realms/labrador/.well-known/openid-configuration"
       },
       "bearerAuth": {
         "type": "http",
