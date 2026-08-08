@@ -33,11 +33,7 @@
     "lint:fix": "oxlint --fix",
     "preinstall": "bunx only-allow bun",
     "prepare": "husky",
-    "secrets:apply": "./scripts/apply.sh",
-    "secrets:deploy": "./scripts/deploy/secrets.sh",
-    "secrets:pull": "./scripts/secrets/pull.sh",
-    "secrets:push": "./scripts/secrets/push.sh",
-    "secrets:setup": "./scripts/secrets/setup.sh",
+    "secrets": "BAO_ADDR=https://bao.scottylabs.org bao login -method=oidc",
     "syncpack": "syncpack lint",
     "syncpack:fix": "syncpack format && syncpack fix-mismatches",
     "syncpack:update": "syncpack update"
