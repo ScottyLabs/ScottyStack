@@ -50,8 +50,8 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "dev": "vite --port 3000",
-    "preview": "vite preview"
+    "dev": "secretspec run -P local -- vite --port 3000",
+    "preview": "secretspec run -P prod -- vite preview"
   },
   "type": "module"
 }
