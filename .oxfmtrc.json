@@ -3,7 +3,7 @@
   "sortImports": {},
   "ignorePatterns": [
     "/apps/web/src/routeTree.gen.ts",
-    "/apps/server/drizzle",
+    "/packages/db/drizzle",
     "/.agents/skills",
     // We use syncpack to format package.json since it also orders the scripts alphabetically.
     "**/package.json"

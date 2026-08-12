@@ -1,9 +1,9 @@
 import type { User } from "@scottystack/access-control";
-import { hasPermission } from "@scottystack/access-control";
+import { canDeleteReply, canUpdateReply } from "@scottystack/access-control";
+import { post, reply } from "@scottystack/db/schema";
 import { eq } from "drizzle-orm";
 
-import { db } from "../db/index.ts";
-import { post, reply } from "../db/schema/posts.ts";
+import { db } from "../lib/db.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
 
 export const replyService = {
@@ -46,7 +46,7 @@ export const replyService = {
       throw new HttpError(404, "Reply not found");
     }
 
-    if (!hasPermission(acUser, "replies", "delete", existing)) {
+    if (!canDeleteReply({ user: acUser, reply: existing })) {
       throw new HttpError(403, "You are not allowed to delete this reply");
     }
 
@@ -71,7 +71,7 @@ export const replyService = {
       throw new HttpError(404, "Reply not found");
     }
 
-    if (!hasPermission(acUser, "replies", "update", existing)) {
+    if (!canUpdateReply({ user: acUser, reply: existing })) {
       throw new HttpError(403, "You are not allowed to update this reply");
     }
 
