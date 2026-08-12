@@ -1,12 +1,13 @@
-import type { Role, User } from "@scottystack/access-control";
-import { account, user } from "@scottystack/db/schema";
+import type { User } from "@scottystack/access-control";
+import type { Role } from "@scottystack/access-control/src/types.ts";
 import { eq } from "drizzle-orm";
 import type { Request as ExpressRequest } from "express";
 import type jwt from "jsonwebtoken";
 
+import { db } from "../db/index.ts";
+import { account, user } from "../db/schema/index.ts";
 import { env } from "../env.ts";
 import { verifyBearer, verifyOidc } from "./authentication.ts";
-import { db } from "./db.ts";
 
 /**
  * Get user from the request for access control.

@@ -1,7 +1,10 @@
-import type { Post as DatabasePost, Reply as DatabaseReply } from "@scottystack/db/schema";
+export type Post = {
+  userId: string;
+};
 
-export type PostSubject = Pick<DatabasePost, "userId">;
-export type ReplySubject = Pick<DatabaseReply, "userId">;
+export type Reply = {
+  userId: string;
+};
 
 // Note that
 // - An admin is also a user.

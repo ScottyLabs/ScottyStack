@@ -1,7 +1,8 @@
-import { post, reply, user } from "@scottystack/db/schema";
 import { count, desc, inArray } from "drizzle-orm";
 
-import { db } from "../lib/db.ts";
+import { db } from "../db/index.ts";
+import { user } from "../db/schema/index.ts";
+import { post, reply } from "../db/schema/posts.ts";
 
 export const userService = {
   /**

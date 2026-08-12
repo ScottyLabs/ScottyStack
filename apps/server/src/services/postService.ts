@@ -1,14 +1,10 @@
 import type { User } from "@scottystack/access-control";
-import {
-  canDeletePost,
-  canReadPostAuthor,
-  canReadReplyAuthor,
-  canUpdatePost,
-} from "@scottystack/access-control";
-import { post, reply, user } from "@scottystack/db/schema";
+import { hasPermission } from "@scottystack/access-control";
 import { and, asc, desc, eq, lt, or } from "drizzle-orm";
 
-import { db } from "../lib/db.ts";
+import { db } from "../db/index.ts";
+import { user } from "../db/schema/auth.ts";
+import { post, reply } from "../db/schema/posts.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
 
 function maskAuthor(anonymous: boolean, authorName: string | null, canViewName: boolean) {
@@ -51,7 +47,9 @@ export const postService = {
       .where(eq(reply.postId, id))
       .orderBy(asc(reply.createdAt));
 
-    const canViewPostName = canReadPostAuthor({ user: acUser, post: row });
+    const canViewPostName = hasPermission(acUser, "posts", "viewName", {
+      userId: row.userId,
+    });
     return {
       id: row.id,
       userId: row.userId,
@@ -62,7 +60,9 @@ export const postService = {
       updatedAt: row.updatedAt,
       authorName: maskAuthor(row.anonymous, row.authorName, canViewPostName),
       replies: replies.map((r) => {
-        const canViewReplyName = canReadReplyAuthor({ user: acUser, reply: r });
+        const canViewReplyName = hasPermission(acUser, "replies", "viewName", {
+          userId: r.userId,
+        });
         return {
           id: r.id,
           userId: r.userId,
@@ -159,7 +159,9 @@ export const postService = {
     const slice = hasMore ? rows.slice(0, pageSize) : rows;
     const lastRow = slice[slice.length - 1];
     const posts = slice.map((row) => {
-      const canViewName = canReadPostAuthor({ user: acUser, post: row });
+      const canViewName = hasPermission(acUser, "posts", "viewName", {
+        userId: row.userId,
+      });
       return {
         id: row.id,
         userId: row.userId,
@@ -207,7 +209,7 @@ export const postService = {
       throw new HttpError(404, "Post not found");
     }
 
-    if (!canUpdatePost({ user: acUser, post: existing })) {
+    if (!hasPermission(acUser, "posts", "update", existing)) {
       throw new HttpError(403, "You are not allowed to update this post");
     }
 
@@ -230,7 +232,7 @@ export const postService = {
       throw new HttpError(404, "Post not found");
     }
 
-    if (!canDeletePost({ user: acUser, post: existing })) {
+    if (!hasPermission(acUser, "posts", "delete", existing)) {
       throw new HttpError(403, "You are not allowed to delete this post");
     }
 

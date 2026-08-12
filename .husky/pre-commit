@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 set -e
-editorconfig-checker --exclude '(^LICENSE|^packages/db/drizzle/.*$)'
+editorconfig-checker --exclude '(^LICENSE|^apps/server/drizzle/.*$)'
 bun run syncpack
 bunx markdownlint-cli2
 bunx turbo run quality

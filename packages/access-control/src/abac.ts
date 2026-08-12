@@ -1,37 +1,88 @@
+// This file implements a type-safe ABAC (Attribute-Based Access Control) system.
+//
 // References:
-// - https://github.com/WebDevSimplified/casl-crash-course/blob/main/src/lib/permissions/getUserPermissions.ts
+// - https://github.com/WebDevSimplified/permission-system/blob/main/auth-abac.ts
+// - https://www.youtube.com/watch?v=5GG-VUvruzE&t=24m18s
 
-import { AbilityBuilder, createMongoAbility, type MongoAbility } from "@casl/ability";
+import type { Post, Reply, Role, User } from "./types.ts";
 
-import type { PostSubject, ReplySubject, User } from "./types.ts";
+type PermissionCheck<Key extends keyof Permissions> =
+  | boolean
+  | ((user: User, data: Permissions[Key]["dataType"]) => boolean);
 
-export type Action = "read" | "readAuthor" | "create" | "update" | "delete";
-export type SubjectName = "Post" | "Reply";
-export type Permission = [Action, PostSubject | "Post"] | [Action, ReplySubject | "Reply"];
-export type AppAbility = MongoAbility<Permission>;
+type RolesWithPermissions = {
+  [R in Role]: Partial<{
+    [Key in keyof Permissions]: Partial<{
+      [Action in Permissions[Key]["action"]]: PermissionCheck<Key>;
+    }>;
+  }>;
+};
 
-export function getUserAbility(user: User): AppAbility {
-  const { build, can: allow } = new AbilityBuilder<AppAbility>(createMongoAbility);
+type Permissions = {
+  posts: {
+    dataType: Post;
+    action: "view" | "viewName" | "create" | "update" | "delete";
+  };
+  replies: {
+    dataType: Reply;
+    action: "view" | "viewName" | "create" | "update" | "delete";
+  };
+};
 
-  allow("read", "Post");
-  allow("read", "Reply");
+const ROLES = {
+  admin: {
+    posts: {
+      view: true,
+      viewName: true,
+      create: true,
+      update: false,
+      delete: true,
+    },
+    replies: {
+      view: true,
+      viewName: true,
+      create: true,
+      update: false,
+      delete: true,
+    },
+  },
+  user: {
+    posts: {
+      view: true,
+      viewName: false,
+      create: true,
+      update: (user, post) => user.id === post.userId,
+      delete: false,
+    },
+    replies: {
+      view: true,
+      viewName: false,
+      create: true,
+      update: (user, reply) => user.id === reply.userId,
+      delete: false,
+    },
+  },
+  guest: {
+    posts: {
+      view: true,
+    },
+    replies: {
+      view: true,
+    },
+  },
+} as const satisfies RolesWithPermissions;
 
-  if (user.roles.includes("admin") || user.roles.includes("user")) {
-    allow("create", "Post");
-    allow("create", "Reply");
-  }
+export function hasPermission<Resource extends keyof Permissions>(
+  user: User,
+  resource: Resource,
+  action: Permissions[Resource]["action"],
+  data?: Permissions[Resource]["dataType"],
+) {
+  return user.roles.some((role) => {
+    const permission = (ROLES as RolesWithPermissions)[role][resource]?.[action];
+    if (permission == null) return false;
 
-  if (user.roles.includes("user")) {
-    allow("update", "Post", { userId: user.id });
-    allow("update", "Reply", { userId: user.id });
-  }
-
-  if (user.roles.includes("admin")) {
-    allow("readAuthor", "Post");
-    allow("readAuthor", "Reply");
-    allow("delete", "Post");
-    allow("delete", "Reply");
-  }
-
-  return build();
+    if (typeof permission === "boolean") return permission;
+    return data != null && permission(user, data);
+  });
 }

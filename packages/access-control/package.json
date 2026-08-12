@@ -1,15 +1,6 @@
 {
   "name": "@scottystack/access-control",
   "version": "0.0.0",
-  "dependencies": {
-    "@casl/ability": "^7.0.1",
-    "@scottystack/db": "workspace:*",
-    "@ucast/core": "^2.0.0",
-    "drizzle-orm": "^0.45.2"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./drizzle": "./src/drizzle.ts"
-  },
+  "main": "src/index.ts",
   "type": "module"
 }

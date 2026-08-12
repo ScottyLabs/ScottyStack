@@ -48,18 +48,14 @@ COPY --from=builder --chown=server:server \
 # Install Sentry
 RUN bun install @sentry/bun
 
-# Copy database package artifacts to enable migrations
+# Copy db folder and Drizzle config to enable migrations
 COPY --from=builder --chown=server:server \
-  /app/packages/db/drizzle \
-  /app/packages/db/drizzle
+  /app/apps/server/drizzle \
+  /app/apps/server/drizzle
 
 COPY --from=builder --chown=server:server \
-  /app/packages/db/drizzle.config.ts \
-  /app/packages/db/drizzle.config.ts
-
-COPY --from=builder --chown=server:server \
-  /app/packages/db/package.json \
-  /app/packages/db/package.json
+  /app/apps/server/drizzle.config.ts \
+  /app/apps/server/drizzle.config.ts
 
 USER server
 EXPOSE 3000
