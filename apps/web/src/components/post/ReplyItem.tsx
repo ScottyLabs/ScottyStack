@@ -1,5 +1,5 @@
 import type { User } from "@scottystack/access-control";
-import { hasPermission } from "@scottystack/access-control";
+import { canDeleteReply, canUpdateReply } from "@scottystack/access-control";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -138,8 +138,8 @@ export function ReplyItem({
 }: ReplyItemProps) {
   const queryClient = useQueryClient();
 
-  const canUpdate = hasPermission(user, "replies", "update", reply);
-  const canDelete = hasPermission(user, "replies", "delete", reply);
+  const canUpdate = canUpdateReply({ user, reply });
+  const canDelete = canDeleteReply({ user, reply });
 
   const deleteReply = $api.useMutation("delete", "/posts/{postId}/replies/{replyId}", {
     onSuccess: () => {

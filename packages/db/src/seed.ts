@@ -10,7 +10,7 @@
 import { eq } from "drizzle-orm";
 import { getGeneratorsFunctions, reset, seed } from "drizzle-seed";
 
-import { db } from "./index.ts";
+import { createDb } from "./index.ts";
 import { user } from "./schema/auth.ts";
 import { post, reply } from "./schema/posts.ts";
 
@@ -19,6 +19,12 @@ const schema = { user, post, reply };
 const SEED = 42;
 
 async function main() {
+  const databaseUrl = process.env["DATABASE_URL"];
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is required");
+  }
+
+  const db = createDb(databaseUrl);
   await reset(db, schema);
 
   // Batch 1: 3 users with no posts

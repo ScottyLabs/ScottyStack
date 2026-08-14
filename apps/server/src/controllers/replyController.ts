@@ -15,6 +15,16 @@ export interface UpdateReplyRequest {
   anonymous?: boolean;
 }
 
+export interface ReplyRecordResponse {
+  id: string;
+  userId: string;
+  postId: string;
+  content: string;
+  anonymous: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 @Route("posts/{postId}/replies")
 export class ReplyController {
   @Post("/")
@@ -25,7 +35,7 @@ export class ReplyController {
     @Request() req: ExpressRequest,
     @Path() postId: string,
     @Body() body: CreateReplyRequest,
-  ) {
+  ): Promise<ReplyRecordResponse | undefined> {
     const user = await getAcUserFromRequest(req);
     return replyService.createReply(user, postId, body.content, body.anonymous ?? false);
   }
@@ -39,7 +49,7 @@ export class ReplyController {
     @Path() postId: string,
     @Path() replyId: string,
     @Body() body: UpdateReplyRequest,
-  ) {
+  ): Promise<ReplyRecordResponse | undefined> {
     const user = await getAcUserFromRequest(req);
     return replyService.updateReply(user, postId, replyId, body.content, body.anonymous ?? false);
   }
@@ -52,7 +62,7 @@ export class ReplyController {
     @Request() req: ExpressRequest,
     @Path() postId: string,
     @Path() replyId: string,
-  ) {
+  ): Promise<void> {
     const user = await getAcUserFromRequest(req);
     await replyService.deleteReply(user, postId, replyId);
   }

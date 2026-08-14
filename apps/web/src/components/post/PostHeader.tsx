@@ -1,4 +1,4 @@
-import { hasPermission } from "@scottystack/access-control";
+import { canDeletePost, canUpdatePost } from "@scottystack/access-control";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
@@ -25,8 +25,8 @@ export function PostHeader({ post, onEdit }: PostHeaderProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const canUpdate = hasPermission(user, "posts", "update", post);
-  const canDelete = hasPermission(user, "posts", "delete", post);
+  const canUpdate = canUpdatePost({ user, post });
+  const canDelete = canDeletePost({ user, post });
 
   const createdAt = new Date(post.createdAt).toLocaleString(undefined, {
     dateStyle: "medium",

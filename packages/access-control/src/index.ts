@@ -1,2 +1,2 @@
-export * from "./abac.ts";
-export type { User } from "./types.ts";
+export * from "./permissions.ts";
+export type { Role, User } from "./types.ts";

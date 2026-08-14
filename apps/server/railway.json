@@ -4,7 +4,12 @@
     "builder": "DOCKERFILE",
     "dockerfilePath": "apps/server/Dockerfile",
     "buildCommand": null,
-    "watchPatterns": ["/apps/server/**", "/packages/common/**", "/packages/access-control/**"]
+    "watchPatterns": [
+      "/apps/server/**",
+      "/packages/common/**",
+      "/packages/access-control/**",
+      "/packages/db/**"
+    ]
   },
   "deploy": {
     "startCommand": null
