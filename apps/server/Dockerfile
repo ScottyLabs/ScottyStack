@@ -45,8 +45,8 @@ COPY --from=builder --chown=server:server \
   /app/apps/server/src/instrument.ts \
   /app/apps/server/src/instrument.ts
 
-# Install Sentry
-RUN bun install @sentry/bun
+# Install Sentry and migration toolchain
+RUN bun install @sentry/bun drizzle-kit drizzle-orm pg
 
 # Copy database package artifacts to enable migrations
 COPY --from=builder --chown=server:server \
