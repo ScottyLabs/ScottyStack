@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 /** Seeds env vars before app modules that validate process.env are imported. */
 process.env["ADMIN_GROUP"] ??= "test-admins";
@@ -14,4 +14,23 @@ process.env["SERVER_URL"] ??= "https://api.example.com";
 vi.mock("../src/lib/db.ts", async () => {
   const { testDb } = await import("./harness.ts");
   return { db: testDb };
+});
+
+vi.mock("jwks-rsa", async () => {
+  const { publicKeyPem } = await import("./keys.ts");
+  return {
+    default: () => ({
+      getSigningKey: (
+        _kid: string | undefined,
+        cb: (err: Error | null, key?: { getPublicKey: () => string }) => void,
+      ) => {
+        cb(null, { getPublicKey: () => publicKeyPem });
+      },
+    }),
+  };
+});
+
+beforeEach(async () => {
+  const { resetDb } = await import("./harness.ts");
+  await resetDb();
 });

@@ -33,3 +33,4 @@ export function signOut() {
 }
 
 export const { useSession } = authClient;
+export { authClient };

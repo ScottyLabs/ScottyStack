@@ -1,6 +1,7 @@
 import type { Request as ExpressRequest } from "express";
 import {
   Body,
+  Controller,
   Delete,
   Get,
   Patch,
@@ -30,7 +31,7 @@ export interface UpdatePostRequest {
 }
 
 @Route("posts")
-export class PostController {
+export class PostController extends Controller {
   @Get("/")
   @SuccessResponse(200)
   async listPosts(
@@ -54,6 +55,7 @@ export class PostController {
   @Security(BEARER_AUTH)
   @SuccessResponse(201)
   async createPost(@Request() req: ExpressRequest, @Body() body: CreatePostRequest) {
+    this.setStatus(201);
     const user = await getAcUserFromRequest(req);
     return postService.createPost(user, body.title, body.content, body.anonymous ?? false);
   }
@@ -76,6 +78,7 @@ export class PostController {
   @Security(BEARER_AUTH)
   @SuccessResponse(204)
   async deletePost(@Request() req: ExpressRequest, @Path() postId: string): Promise<void> {
+    this.setStatus(204);
     const user = await getAcUserFromRequest(req);
     await postService.deletePost(user, postId);
   }

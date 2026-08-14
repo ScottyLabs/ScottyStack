@@ -104,8 +104,9 @@ export function verifyBearer(request: express.Request): Promise<jwt.JwtPayload |
               : `No signing key found for kid: ${header.kid}`;
             captureUnexpectedError(message);
             request.authErrors?.push(new AuthenticationError());
-            return callback(err);
+            return callback(err ?? new Error(message));
           }
+          return callback(null, key.getPublicKey());
         });
       },
       { issuer: env.AUTH_ISSUER, audience: env.AUTH_CLIENT_ID },
