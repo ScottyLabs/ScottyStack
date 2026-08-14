@@ -84,7 +84,7 @@ jobs:
         run: bun run test
 
   e2e:
-    name: Userflow
+    name: End-to-end Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,7 +101,5 @@ jobs:
       - name: Install Playwright Chromium
         run: bunx playwright install chromium --with-deps
 
-      - name: Run userflow tests
+      - name: Run end-to-end tests
         run: bun run test:e2e
-        env:
-          CI: true

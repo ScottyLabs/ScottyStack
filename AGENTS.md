@@ -39,4 +39,4 @@ Behavior is covered at four seams. Put a new test at the seam that observes that
 - **web** (`apps/web/tests/`) — Vitest + Testing Library. MSW at `VITE_SERVER_URL`, including `GET /api/auth/get-session`. Use `renderApp` (QueryClient + router).
 - **userflow** (`e2e/`) — Playwright through the browser against a local stack (PGlite socket, real server, `vite preview`). Signed-in flows inject a Better Auth session cookie; they do not talk to Keycloak.
 
-`bun run test` is Turbo Vitest only. Userflow is `bun run test:e2e`, which GitHub Actions runs as the Userflow job.
+`bun run test` is Turbo Vitest only. Userflow is `bun run test:e2e`, which GitHub Actions runs as the End-to-end Test job.
