@@ -14,9 +14,6 @@
     ".": "./src/index.ts",
     "./schema": "./src/schema/index.ts"
   },
-  "peerDependencies": {
-    "typescript": "^5.9.2"
-  },
   "private": true,
   "scripts": {
     "db:generate": "secretspec run -P local -- bunx drizzle-kit generate",
