@@ -2,6 +2,13 @@
   "entryFile": "src/server.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
   "controllerPathGlobs": ["src/controllers/*.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@scottystack/db": ["../../packages/db/src/index.ts"],
+      "@scottystack/db/*": ["../../packages/db/src/*"]
+    }
+  },
   "spec": {
     "securityDefinitions": {
       "oidc": {
