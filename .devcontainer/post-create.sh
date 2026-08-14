@@ -15,11 +15,15 @@ fi
 # Install Bun dependencies
 bun install
 
+# Install Playwright Chromium and OS libraries for end-to-end tests.
+# https://playwright.dev/docs/browsers
+bunx playwright install chromium --with-deps
+
 # Build API
 bun run build:api
 
 # Run db migrations
-cd apps/server && bun run db:migrate
+bun --cwd packages/db run db:migrate
 
 # Install shfmt for shell script formatting
 # https://formulae.brew.sh/formula/shfmt
@@ -34,6 +38,6 @@ brew install editorconfig-checker
 # https://openbao.org/docs/install/
 brew install openbao
 
-# Set up environment variables
-bun run secrets:setup
-bun run secrets:pull all all
+# Install Node.js (e.g. Vitest need a Node runtime).
+# https://nodejs.org/
+brew install node
