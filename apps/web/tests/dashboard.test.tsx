@@ -9,19 +9,17 @@ describe("dashboard", () => {
   it("redirects guests home", async () => {
     await renderApp("/dashboard");
 
-    expect(await screen.findByText("Select a post to view")).toBeDefined();
+    expect(await screen.findByText("Home")).toBeDefined();
   });
 
   it("shows the user table for an admin", async () => {
     setSession(userSession("admin"));
-    setAdminUsers([{ id: "alice", name: "Alice", postCount: 2, replyCount: 1 }]);
+    setAdminUsers([{ id: "alice", name: "Alice" }]);
     await renderApp("/dashboard");
 
     expect(await screen.findByRole("heading", { name: "Admin Dashboard" })).toBeDefined();
     await waitFor(() => {
       expect(screen.getByText("Alice")).toBeDefined();
     });
-    expect(screen.getByText("2")).toBeDefined();
-    expect(screen.getByText("1")).toBeDefined();
   });
 });

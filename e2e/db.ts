@@ -23,9 +23,7 @@ export const adminUser = {
 };
 
 export async function resetDb() {
-  await db.execute(
-    sql`TRUNCATE TABLE "reply", "post", "session", "account", "verification", "user" CASCADE`,
-  );
+  await db.execute(sql`TRUNCATE TABLE "session", "account", "verification", "user" CASCADE`);
 }
 
 function accessToken(sub: string, groups: string[] = []) {

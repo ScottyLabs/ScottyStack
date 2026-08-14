@@ -74,20 +74,18 @@ function DashboardPage() {
   return (
     <div className="flex flex-col p-6">
       <h1 className="mb-4 text-2xl font-semibold">Admin Dashboard</h1>
-      <p className="mb-6 text-sm text-muted-foreground">All users with post and reply counts.</p>
+      <p className="mb-6 text-sm text-muted-foreground">All users.</p>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>User ID</TableHead>
             <TableHead>User name</TableHead>
-            <TableHead>Number of posts</TableHead>
-            <TableHead>Number of replies</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {list.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
+              <TableCell colSpan={2} className="text-center text-sm text-muted-foreground">
                 No users found.
               </TableCell>
             </TableRow>
@@ -96,8 +94,6 @@ function DashboardPage() {
               <TableRow key={row.id}>
                 <TableCell className="font-mono text-sm">{row.id}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.postCount}</TableCell>
-                <TableCell>{row.replyCount}</TableCell>
               </TableRow>
             ))
           )}

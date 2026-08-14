@@ -1,1 +1,0 @@
-ALTER TABLE "reply" ADD COLUMN "anonymous" boolean DEFAULT false NOT NULL;

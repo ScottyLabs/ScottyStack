@@ -6,7 +6,6 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { NavBar } from "@/components/NavBar.tsx";
 import { PostHogIdentify } from "@/components/PostHogIdentify";
-import { PostList } from "@/components/posts/PostList";
 import { MyToastContainer } from "@/components/ToastContainer";
 
 // https://tanstack.com/router/v1/docs/framework/react/guide/router-context#how-about-an-external-data-fetching-library
@@ -19,13 +18,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <div className="flex min-h-screen flex-col">
       <PostHogIdentify />
       <NavBar />
-      <main className="flex h-full flex-1 overflow-hidden">
-        <section className="flex w-80 flex-col border-r">
-          <PostList />
-        </section>
-        <div className="flex min-h-0 flex-1 flex-col overflow-auto">
-          <Outlet />
-        </div>
+      <main className="flex min-h-0 flex-1 flex-col overflow-auto">
+        <Outlet />
       </main>
       <MyToastContainer />
       <TanStackDevtools

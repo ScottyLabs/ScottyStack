@@ -8,62 +8,6 @@
       "when": 1772916777231,
       "tag": "0000_aromatic_zeigeist",
       "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1772928814131,
-      "tag": "0001_solid_micromax",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1772929435878,
-      "tag": "0002_cute_invaders",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1772929518608,
-      "tag": "0003_broken_speed",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1772934163406,
-      "tag": "0004_friendly_luke_cage",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1772940940496,
-      "tag": "0005_panoramic_firestar",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1772940982361,
-      "tag": "0006_nice_ender_wiggin",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1773004865915,
-      "tag": "0007_normal_fallen_one",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1786743858689,
-      "tag": "0008_grey_gunslinger",
-      "breakpoints": true
     }
   ]
 }

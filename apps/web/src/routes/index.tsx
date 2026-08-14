@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 function IndexComponent() {
   return (
     <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-      Select a post to view
+      Home
     </div>
   );
 }

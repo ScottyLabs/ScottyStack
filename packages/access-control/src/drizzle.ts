@@ -1,4 +1,4 @@
-import { ForbiddenError } from "@casl/ability";
+import { ForbiddenError, type MongoAbility } from "@casl/ability";
 import { rulesToAST } from "@casl/ability/extra";
 import { CompoundCondition, type Condition, FieldCondition } from "@ucast/core";
 import {
@@ -21,29 +21,19 @@ import {
 } from "drizzle-orm";
 import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 
-import { getUserAbility, type Action, type SubjectName } from "./abac.ts";
-import type { User } from "./types.ts";
-
 export function drizzleWhere<T extends TableConfig>(
-  action: Action,
-  subject: SubjectName,
-  user: User,
+  ability: MongoAbility,
+  action: string,
+  subject: string,
   table: PgTableWithColumns<T>,
 ): SQL | undefined {
-  const ability = getUserAbility(user);
   const condition = rulesToAST(ability, action, subject);
 
   if (!condition) {
-    const allowed = subject === "Post" ? ability.can(action, "Post") : ability.can(action, "Reply");
-    if (allowed) {
+    if (ability.can(action, subject)) {
       return undefined;
     }
-    const error = ForbiddenError.from(ability);
-    if (subject === "Post") {
-      error.throwUnlessCan(action, "Post");
-    } else {
-      error.throwUnlessCan(action, "Reply");
-    }
+    ForbiddenError.from(ability).throwUnlessCan(action, subject);
     throw new Error("CASL did not throw for a forbidden query");
   }
 

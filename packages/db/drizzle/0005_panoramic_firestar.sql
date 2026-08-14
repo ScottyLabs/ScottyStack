@@ -1,1 +1,0 @@
-ALTER TABLE "post" ADD COLUMN "anonymous" boolean DEFAULT false NOT NULL;

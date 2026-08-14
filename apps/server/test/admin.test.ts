@@ -20,16 +20,9 @@ describe("GET /admin/users", () => {
     expect(res.status).toBe(403);
   });
 
-  it("returns 200 with post and reply counts for an admin", async () => {
+  it("returns 200 with users for an admin", async () => {
     await seedAlice();
     await seedAdmin();
-    const post = await request(app).post("/posts").set(aliceAuth()).send({
-      title: "Hello",
-      content: "World",
-    });
-    await request(app).post(`/posts/${post.body.id}/replies`).set(aliceAuth()).send({
-      content: "Hi",
-    });
 
     const res = await request(app).get("/admin/users").set(adminAuth());
 
@@ -39,10 +32,10 @@ describe("GET /admin/users", () => {
         expect.objectContaining({
           id: alice.id,
           name: alice.name,
-          postCount: 1,
-          replyCount: 1,
         }),
       ]),
     );
+    expect(res.body[0]).not.toHaveProperty("postCount");
+    expect(res.body[0]).not.toHaveProperty("replyCount");
   });
 });
