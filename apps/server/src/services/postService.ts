@@ -6,6 +6,7 @@ import {
   canReadReplyAuthor,
   canUpdatePost,
 } from "@scottystack/access-control";
+import { drizzleWhere } from "@scottystack/access-control/drizzle";
 import { post, reply, user } from "@scottystack/db/schema";
 import { and, asc, desc, eq, lt, or } from "drizzle-orm";
 
@@ -17,6 +18,10 @@ function maskAuthor(anonymous: boolean, authorName: string | null, canViewName: 
   return "Anonymous";
 }
 
+function postReadWhere(acUser: User) {
+  return drizzleWhere("read", "Post", acUser, post);
+}
+
 export const postService = {
   getPostById: async (acUser: User, id: string) => {
     const [row] = await db
@@ -26,13 +31,14 @@ export const postService = {
         title: post.title,
         content: post.content,
         anonymous: post.anonymous,
+        private: post.private,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         authorName: user.name,
       })
       .from(post)
       .innerJoin(user, eq(post.userId, user.id))
-      .where(eq(post.id, id));
+      .where(and(eq(post.id, id), postReadWhere(acUser)));
     if (!row) {
       throw new HttpError(404, "Post not found");
     }
@@ -59,6 +65,7 @@ export const postService = {
       title: row.title,
       content: row.content,
       anonymous: row.anonymous,
+      private: row.private,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       authorName: maskAuthor(row.anonymous, row.authorName, canViewPostName),
@@ -87,6 +94,7 @@ export const postService = {
       userId: string;
       title: string;
       content: string;
+      private: boolean;
       createdAt: Date;
       updatedAt: Date;
       authorName: string;
@@ -94,6 +102,7 @@ export const postService = {
     nextCursor: string | null;
   }> => {
     const pageSize = Math.min(Math.max(1, limit), 100);
+    const readFilter = postReadWhere(acUser);
 
     type Row = {
       id: string;
@@ -104,6 +113,7 @@ export const postService = {
       updatedAt: Date;
       authorName: string | null;
       anonymous: boolean;
+      private: boolean;
     };
 
     let rows: Row[];
@@ -113,7 +123,7 @@ export const postService = {
       const [cursorPost] = await db
         .select({ id: post.id, createdAt: post.createdAt })
         .from(post)
-        .where(eq(post.id, cursor));
+        .where(and(eq(post.id, cursor), readFilter));
       if (!cursorPost) {
         throw new HttpError(400, "Invalid cursor");
       }
@@ -124,6 +134,7 @@ export const postService = {
           title: post.title,
           content: post.content,
           anonymous: post.anonymous,
+          private: post.private,
           createdAt: post.createdAt,
           updatedAt: post.updatedAt,
           authorName: user.name,
@@ -131,9 +142,12 @@ export const postService = {
         .from(post)
         .innerJoin(user, eq(post.userId, user.id))
         .where(
-          or(
-            lt(post.createdAt, cursorPost.createdAt),
-            and(eq(post.createdAt, cursorPost.createdAt), lt(post.id, cursorPost.id)),
+          and(
+            or(
+              lt(post.createdAt, cursorPost.createdAt),
+              and(eq(post.createdAt, cursorPost.createdAt), lt(post.id, cursorPost.id)),
+            ),
+            readFilter,
           ),
         )
         .orderBy(desc(post.createdAt), desc(post.id))
@@ -146,12 +160,14 @@ export const postService = {
           title: post.title,
           content: post.content,
           anonymous: post.anonymous,
+          private: post.private,
           createdAt: post.createdAt,
           updatedAt: post.updatedAt,
           authorName: user.name,
         })
         .from(post)
         .innerJoin(user, eq(post.userId, user.id))
+        .where(readFilter)
         .orderBy(desc(post.createdAt), desc(post.id))
         .limit(pageSize + 1);
     }
@@ -166,6 +182,7 @@ export const postService = {
         userId: row.userId,
         title: row.title,
         content: row.content,
+        private: row.private,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
         authorName: maskAuthor(row.anonymous, row.authorName, canViewName),
@@ -176,7 +193,13 @@ export const postService = {
     return { posts, nextCursor };
   },
 
-  createPost: async (acUser: User, title: string, content: string, anonymous: boolean = false) => {
+  createPost: async (
+    acUser: User,
+    title: string,
+    content: string,
+    anonymous: boolean = false,
+    isPrivate: boolean = false,
+  ) => {
     if (!canCreatePost({ user: acUser })) {
       throw new HttpError(403, "You are not allowed to create a post");
     }
@@ -189,6 +212,7 @@ export const postService = {
         title,
         content,
         anonymous,
+        private: isPrivate,
         createdAt: now,
         updatedAt: now,
       })
@@ -203,11 +227,12 @@ export const postService = {
     title: string,
     content: string,
     anonymous: boolean,
+    isPrivate: boolean,
   ) => {
     const [existing] = await db
-      .select({ id: post.id, userId: post.userId })
+      .select({ id: post.id, userId: post.userId, private: post.private })
       .from(post)
-      .where(eq(post.id, postId));
+      .where(and(eq(post.id, postId), postReadWhere(acUser)));
     if (!existing) {
       throw new HttpError(404, "Post not found");
     }
@@ -219,7 +244,7 @@ export const postService = {
     const now = new Date();
     const [updated] = await db
       .update(post)
-      .set({ title, content, anonymous, updatedAt: now })
+      .set({ title, content, anonymous, private: isPrivate, updatedAt: now })
       .where(eq(post.id, postId))
       .returning();
 
@@ -228,9 +253,9 @@ export const postService = {
 
   deletePost: async (acUser: User, postId: string) => {
     const [existing] = await db
-      .select({ id: post.id, userId: post.userId })
+      .select({ id: post.id, userId: post.userId, private: post.private })
       .from(post)
-      .where(eq(post.id, postId));
+      .where(and(eq(post.id, postId), postReadWhere(acUser)));
     if (!existing) {
       throw new HttpError(404, "Post not found");
     }

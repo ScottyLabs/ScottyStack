@@ -17,4 +17,11 @@ describe("NewPostForm", () => {
 
     expect(await screen.findByText("Title is required")).toBeDefined();
   });
+
+  it("shows the Post privately checkbox", async () => {
+    setSession(userSession("user"));
+    await renderApp("/new");
+
+    expect(await screen.findByRole("checkbox", { name: "Post privately" })).toBeDefined();
+  });
 });

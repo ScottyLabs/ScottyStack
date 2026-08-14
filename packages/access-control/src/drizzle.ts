@@ -34,6 +34,10 @@ export function drizzleWhere<T extends TableConfig>(
   const condition = rulesToAST(ability, action, subject);
 
   if (!condition) {
+    const allowed = subject === "Post" ? ability.can(action, "Post") : ability.can(action, "Reply");
+    if (allowed) {
+      return undefined;
+    }
     const error = ForbiddenError.from(ability);
     if (subject === "Post") {
       error.throwUnlessCan(action, "Post");

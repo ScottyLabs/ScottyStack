@@ -16,6 +16,7 @@ interface PostHeaderProps {
     updatedAt: string;
     content: string;
     userId: string;
+    private: boolean;
   };
   onEdit: () => void;
 }
@@ -54,7 +55,12 @@ export function PostHeader({ post, onEdit }: PostHeaderProps) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-xl font-semibold">{post.title}</h1>
+        <h1 className="text-xl font-semibold">
+          {post.title}
+          {post.private && (
+            <span className="ml-2 text-sm font-normal text-muted-foreground">Private</span>
+          )}
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {post.authorName} · Created {createdAt}
           {updatedAt !== createdAt && <> · Updated {updatedAt}</>}

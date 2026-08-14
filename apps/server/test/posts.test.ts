@@ -225,3 +225,79 @@ describe("DELETE /posts/:postId", () => {
     expect(fetched.status).toBe(404);
   });
 });
+
+describe("private posts", () => {
+  async function createPrivatePost() {
+    await seedAlice();
+    const created = await request(app).post("/posts").set(aliceAuth()).send({
+      title: "Secret",
+      content: "Only me",
+      private: true,
+    });
+    expect(created.status).toBe(201);
+    expect(created.body.private).toBe(true);
+    return created.body.id as string;
+  }
+
+  it("omits another user's private post from the list for guests and strangers", async () => {
+    const postId = await createPrivatePost();
+    await seedBob();
+
+    const guestList = await request(app).get("/posts");
+    expect(guestList.status).toBe(200);
+    expect(guestList.body.posts.map((p: { id: string }) => p.id)).not.toContain(postId);
+
+    const strangerList = await request(app).get("/posts").set(bobAuth());
+    expect(strangerList.status).toBe(200);
+    expect(strangerList.body.posts.map((p: { id: string }) => p.id)).not.toContain(postId);
+  });
+
+  it("includes the author's private post in the list and returns private on detail", async () => {
+    const postId = await createPrivatePost();
+
+    const list = await request(app).get("/posts").set(aliceAuth());
+    expect(list.status).toBe(200);
+    expect(list.body.posts).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: postId, private: true })]),
+    );
+
+    const detail = await request(app).get(`/posts/${postId}`).set(aliceAuth());
+    expect(detail.status).toBe(200);
+    expect(detail.body).toMatchObject({ title: "Secret", private: true });
+  });
+
+  it("lets an admin list and get another user's private post", async () => {
+    const postId = await createPrivatePost();
+    await seedAdmin();
+
+    const list = await request(app).get("/posts").set(adminAuth());
+    expect(list.status).toBe(200);
+    expect(list.body.posts.map((p: { id: string }) => p.id)).toContain(postId);
+
+    const detail = await request(app).get(`/posts/${postId}`).set(adminAuth());
+    expect(detail.status).toBe(200);
+    expect(detail.body).toMatchObject({ title: "Secret", private: true });
+  });
+
+  it("returns 404 when a stranger or guest gets, patches, or deletes a private post", async () => {
+    const postId = await createPrivatePost();
+    await seedBob();
+
+    const guestGet = await request(app).get(`/posts/${postId}`);
+    expect(guestGet.status).toBe(404);
+
+    const strangerGet = await request(app).get(`/posts/${postId}`).set(bobAuth());
+    expect(strangerGet.status).toBe(404);
+
+    const strangerPatch = await request(app).patch(`/posts/${postId}`).set(bobAuth()).send({
+      title: "Hijack",
+      content: "No",
+      anonymous: false,
+      private: false,
+    });
+    expect(strangerPatch.status).toBe(404);
+
+    const strangerDelete = await request(app).delete(`/posts/${postId}`).set(bobAuth());
+    expect(strangerDelete.status).toBe(404);
+  });
+});

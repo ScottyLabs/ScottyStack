@@ -22,12 +22,14 @@ export interface CreatePostRequest {
   title: string;
   content: string;
   anonymous?: boolean;
+  private?: boolean;
 }
 
 export interface UpdatePostRequest {
   title: string;
   content: string;
   anonymous?: boolean;
+  private?: boolean;
 }
 
 @Route("posts")
@@ -57,7 +59,13 @@ export class PostController extends Controller {
   async createPost(@Request() req: ExpressRequest, @Body() body: CreatePostRequest) {
     this.setStatus(201);
     const user = await getAcUserFromRequest(req);
-    return postService.createPost(user, body.title, body.content, body.anonymous ?? false);
+    return postService.createPost(
+      user,
+      body.title,
+      body.content,
+      body.anonymous ?? false,
+      body.private ?? false,
+    );
   }
 
   @Patch("{postId}")
@@ -70,7 +78,14 @@ export class PostController extends Controller {
     @Body() body: UpdatePostRequest,
   ) {
     const user = await getAcUserFromRequest(req);
-    return postService.updatePost(user, postId, body.title, body.content, body.anonymous ?? false);
+    return postService.updatePost(
+      user,
+      postId,
+      body.title,
+      body.content,
+      body.anonymous ?? false,
+      body.private ?? false,
+    );
   }
 
   @Delete("{postId}")

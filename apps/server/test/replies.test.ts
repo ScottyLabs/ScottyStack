@@ -124,3 +124,23 @@ describe("DELETE /posts/:postId/replies/:replyId", () => {
     expect(res.status).toBe(204);
   });
 });
+
+describe("replies on private posts", () => {
+  it("returns 404 when a stranger replies to another user's private post", async () => {
+    await seedAlice();
+    await seedBob();
+    const created = await request(app).post("/posts").set(aliceAuth()).send({
+      title: "Secret",
+      content: "Only me",
+      private: true,
+    });
+
+    const res = await request(app)
+      .post(`/posts/${created.body.id}/replies`)
+      .set(bobAuth())
+      .send({ content: "Hi" });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toMatchObject({ message: "Post not found" });
+  });
+});

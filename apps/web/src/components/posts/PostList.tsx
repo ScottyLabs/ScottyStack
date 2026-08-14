@@ -18,6 +18,7 @@ type PostItem = {
   createdAt?: string;
   updatedAt: string;
   authorName?: string;
+  private?: boolean;
 };
 
 function groupPostsByDate(posts: PostItem[]) {
@@ -118,7 +119,14 @@ export function PostList() {
                       <div className="flex items-start gap-2">
                         <span className="mt-1.5 size-2 shrink-0 rounded-full bg-emerald-500" />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">{post.title}</p>
+                          <p className="truncate text-sm font-medium">
+                            {post.title}
+                            {post.private && (
+                              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                                Private
+                              </span>
+                            )}
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             {post.authorName ?? "User"} ·{" "}
                             {new Date(post.createdAt ?? post.updatedAt).toLocaleString(undefined, {

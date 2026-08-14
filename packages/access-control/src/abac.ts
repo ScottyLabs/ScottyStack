@@ -13,10 +13,11 @@ export type AppAbility = MongoAbility<Permission>;
 export function getUserAbility(user: User): AppAbility {
   const { build, can: allow } = new AbilityBuilder<AppAbility>(createMongoAbility);
 
-  allow("read", "Post");
+  allow("read", "Post", { private: false });
   allow("read", "Reply");
 
   if (user.role === "user" || user.role === "admin") {
+    allow("read", "Post", { userId: user.id });
     allow("create", "Post");
     allow("create", "Reply");
     allow("update", "Post", { userId: user.id });
@@ -24,6 +25,7 @@ export function getUserAbility(user: User): AppAbility {
   }
 
   if (user.role === "admin") {
+    allow("read", "Post");
     allow("readAuthor", "Post");
     allow("readAuthor", "Reply");
     allow("delete", "Post");

@@ -9,7 +9,7 @@ import { FieldError } from "@/lib/FieldError";
 import { postFormSchema } from "@/lib/formSchemas";
 
 interface PostEditFormProps {
-  post: { id: string; title: string; content: string; anonymous?: boolean };
+  post: { id: string; title: string; content: string; anonymous?: boolean; private?: boolean };
   onCancel: () => void;
   onSuccess: () => void;
 }
@@ -36,6 +36,7 @@ export function PostEditForm({ post, onCancel, onSuccess }: PostEditFormProps) {
       title: post.title,
       content: post.content,
       anonymous: post.anonymous ?? false,
+      private: post.private ?? false,
     },
     validators: {
       onChange: postFormSchema,
@@ -47,6 +48,7 @@ export function PostEditForm({ post, onCancel, onSuccess }: PostEditFormProps) {
           title: value.title,
           content: value.content,
           anonymous: value.anonymous,
+          private: value.private,
         },
       });
     },
@@ -101,6 +103,21 @@ export function PostEditForm({ post, onCancel, onSuccess }: PostEditFormProps) {
                 className="rounded border-input"
               />
               Post anonymously
+            </label>
+          )}
+        />
+        <form.Field
+          name="private"
+          children={(field) => (
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.checked)}
+                className="rounded border-input"
+              />
+              Post privately
             </label>
           )}
         />

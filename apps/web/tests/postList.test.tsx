@@ -34,4 +34,11 @@ describe("PostList", () => {
     await renderApp("/");
     expect(await screen.findByRole("link", { name: /Stack!/ })).toBeDefined();
   });
+
+  it("shows a Private label for a private post", async () => {
+    setPosts([{ ...samplePost, private: true }]);
+    await renderApp("/");
+
+    expect(await screen.findByText("Private")).toBeDefined();
+  });
 });

@@ -1,10 +1,15 @@
 import type { User } from "@scottystack/access-control";
 import { canCreateReply, canDeleteReply, canUpdateReply } from "@scottystack/access-control";
+import { drizzleWhere } from "@scottystack/access-control/drizzle";
 import { post, reply } from "@scottystack/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { db } from "../lib/db.ts";
 import { HttpError } from "../middlewares/errorHandler.ts";
+
+function readablePostWhere(acUser: User, postId: string) {
+  return and(eq(post.id, postId), drizzleWhere("read", "Post", acUser, post));
+}
 
 export const replyService = {
   createReply: async (
@@ -17,7 +22,10 @@ export const replyService = {
       throw new HttpError(403, "You are not allowed to create a reply");
     }
 
-    const [existingPost] = await db.select({ id: post.id }).from(post).where(eq(post.id, postId));
+    const [existingPost] = await db
+      .select({ id: post.id })
+      .from(post)
+      .where(readablePostWhere(acUser, postId));
     if (!existingPost) {
       throw new HttpError(404, "Post not found");
     }
@@ -39,6 +47,14 @@ export const replyService = {
   },
 
   deleteReply: async (acUser: User, postId: string, replyId: string) => {
+    const [parent] = await db
+      .select({ id: post.id })
+      .from(post)
+      .where(readablePostWhere(acUser, postId));
+    if (!parent) {
+      throw new HttpError(404, "Post not found");
+    }
+
     const [existing] = await db
       .select({ id: reply.id, userId: reply.userId, postId: reply.postId })
       .from(reply)
@@ -64,6 +80,14 @@ export const replyService = {
     content: string,
     anonymous: boolean,
   ) => {
+    const [parent] = await db
+      .select({ id: post.id })
+      .from(post)
+      .where(readablePostWhere(acUser, postId));
+    if (!parent) {
+      throw new HttpError(404, "Post not found");
+    }
+
     const [existing] = await db
       .select({ id: reply.id, userId: reply.userId, postId: reply.postId })
       .from(reply)

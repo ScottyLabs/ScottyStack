@@ -17,6 +17,7 @@ export const post = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
     anonymous: boolean().notNull().default(false),
+    private: boolean().notNull().default(false),
   },
   (table) => [index("post_userId_idx").on(table.userId)],
 );

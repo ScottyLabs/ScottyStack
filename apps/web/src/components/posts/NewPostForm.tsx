@@ -26,6 +26,7 @@ export function NewPostForm() {
       title: "",
       content: "",
       anonymous: false,
+      private: false,
     },
     validators: {
       onChange: postFormSchema,
@@ -36,6 +37,7 @@ export function NewPostForm() {
           title: value.title,
           content: value.content,
           anonymous: value.anonymous,
+          private: value.private,
         },
       });
     },
@@ -92,21 +94,38 @@ export function NewPostForm() {
       />
 
       <div className="flex items-center justify-between">
-        <form.Field
-          name="anonymous"
-          children={(field) => (
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.checked)}
-                className="rounded border-input"
-              />
-              Post anonymously
-            </label>
-          )}
-        />
+        <div className="flex items-center gap-4">
+          <form.Field
+            name="anonymous"
+            children={(field) => (
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.checked)}
+                  className="rounded border-input"
+                />
+                Post anonymously
+              </label>
+            )}
+          />
+          <form.Field
+            name="private"
+            children={(field) => (
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.checked)}
+                  className="rounded border-input"
+                />
+                Post privately
+              </label>
+            )}
+          />
+        </div>
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={() => navigate({ to: "/" })}>
             Cancel

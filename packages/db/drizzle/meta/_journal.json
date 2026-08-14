@@ -57,6 +57,13 @@
       "when": 1773004865915,
       "tag": "0007_normal_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1786743858689,
+      "tag": "0008_grey_gunslinger",
+      "breakpoints": true
     }
   ]
 }
