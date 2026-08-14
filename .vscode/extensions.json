@@ -4,6 +4,7 @@
     "bradlc.vscode-tailwindcss",
     "vscode-icons-team.vscode-icons",
     "mkhl.shfmt",
-    "davidanson.vscode-markdownlint"
+    "davidanson.vscode-markdownlint",
+    "tamasfe.even-better-toml"
   ]
 }

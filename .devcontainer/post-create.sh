@@ -19,11 +19,23 @@ bun install
 # https://playwright.dev/docs/browsers
 bunx playwright install chromium --with-deps
 
+# Install OpenBao for secret management.
+# Removes the `brew info openbao` command due to errors.
+# https://openbao.org/docs/install/
+brew install openbao
+
+# Install Secretspec for secret management.
+# https://secretspec.dev/docs/installation/
+brew install secretspec
+
+# Login to OpenBao to have access to secrets.
+bun run secrets
+
 # Build API
 bun run build:api
 
 # Run db migrations
-bun --cwd packages/db run db:migrate
+cd packages/db && bun run db:migrate
 
 # Install shfmt for shell script formatting
 # https://formulae.brew.sh/formula/shfmt
@@ -32,11 +44,6 @@ brew install shfmt
 # Install editorconfig-checker for linting with EditorConfig
 # https://github.com/editorconfig-checker/editorconfig-checker?tab=readme-ov-file#6-using-homebrew
 brew install editorconfig-checker
-
-# Install OpenBao for secret management.
-# Removes the `brew info openbao` command due to errors.
-# https://openbao.org/docs/install/
-brew install openbao
 
 # Install Node.js (e.g. Vitest need a Node runtime).
 # https://nodejs.org/
