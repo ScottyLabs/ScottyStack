@@ -26,7 +26,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:api": "cd apps/server && bun run build:api",
-    "check": "turbo run quality test",
+    "check": "bun run quality && turbo run test",
     "dev": "turbo run dev",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",
@@ -34,10 +34,13 @@
     "lint:fix": "oxlint --fix",
     "preinstall": "bunx only-allow bun",
     "prepare": "husky",
+    "quality": "bun run format && bun run lint",
+    "quality:fix": "bun run format:fix && bun run lint:fix",
     "secrets": "BAO_ADDR=https://bao.scottylabs.org bao login -method=oidc",
     "syncpack": "syncpack lint && syncpack format --check",
     "syncpack:fix": "syncpack format && syncpack fix",
-    "syncpack:update": "syncpack update"
+    "syncpack:update": "syncpack update",
+    "test": "turbo run test"
   },
   "workspaces": [
     "apps/*",
