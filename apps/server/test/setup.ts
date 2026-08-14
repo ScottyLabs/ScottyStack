@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 /** Seeds env vars before app modules that validate process.env are imported. */
 process.env["ADMIN_GROUP"] ??= "test-admins";
 process.env["ALLOWED_ORIGINS_REGEX"] ??= ".*";
@@ -9,4 +11,7 @@ process.env["BETTER_AUTH_URL"] ??= "https://auth.example.com";
 process.env["DATABASE_URL"] ??= "postgres://localhost:5432/test";
 process.env["SERVER_URL"] ??= "https://api.example.com";
 
-export {};
+vi.mock("../src/lib/db.ts", async () => {
+  const { testDb } = await import("./harness.ts");
+  return { db: testDb };
+});
