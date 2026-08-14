@@ -14,9 +14,9 @@
     "oxfmt": "^0.41.0",
     "oxlint": "~1.71.0",
     "oxlint-tsgolint": "^0.17.0",
-    "syncpack": "^13.0.4",
+    "syncpack": "^14.3.1",
     "turbo": "^2.7.4",
-    "typescript": "^5.9.2"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=18"
@@ -34,8 +34,8 @@
     "preinstall": "bunx only-allow bun",
     "prepare": "husky",
     "secrets": "BAO_ADDR=https://bao.scottylabs.org bao login -method=oidc",
-    "syncpack": "syncpack lint",
-    "syncpack:fix": "syncpack format && syncpack fix-mismatches",
+    "syncpack": "syncpack lint && syncpack format --check",
+    "syncpack:fix": "syncpack format && syncpack fix",
     "syncpack:update": "syncpack update"
   },
   "workspaces": [
