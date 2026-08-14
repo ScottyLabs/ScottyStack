@@ -26,6 +26,10 @@
     "//#format:fix": {
       "dependsOn": ["//#lint:fix"],
       "cache": false
+    },
+    "test": {
+      "dependsOn": ["@scottystack/server#build:api"],
+      "inputs": ["$TURBO_DEFAULT$"]
     }
   }
 }

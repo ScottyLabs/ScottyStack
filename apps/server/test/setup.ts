@@ -1,0 +1,12 @@
+/** Seeds env vars before app modules that validate process.env are imported. */
+process.env["ADMIN_GROUP"] ??= "test-admins";
+process.env["ALLOWED_ORIGINS_REGEX"] ??= ".*";
+process.env["AUTH_ISSUER"] ??= "https://auth.example.com";
+process.env["AUTH_CLIENT_ID"] ??= "test-client-id";
+process.env["AUTH_CLIENT_SECRET"] ??= "test-client-secret";
+process.env["AUTH_JWKS_URI"] ??= "https://auth.example.com/.well-known/jwks.json";
+process.env["BETTER_AUTH_URL"] ??= "https://auth.example.com";
+process.env["DATABASE_URL"] ??= "postgres://localhost:5432/test";
+process.env["SERVER_URL"] ??= "https://api.example.com";
+
+export {};

@@ -26,6 +26,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:api": "cd apps/server && bun run build:api",
+    "check": "turbo run quality test",
     "dev": "turbo run dev",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt .",

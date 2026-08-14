@@ -53,7 +53,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "secretspec run -P local -- vite --port 3000",
-    "preview": "secretspec run -P prod -- vite preview"
+    "preview": "secretspec run -P prod -- vite preview",
+    "test": "vitest run"
   },
   "type": "module"
 }
