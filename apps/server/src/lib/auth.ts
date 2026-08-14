@@ -6,7 +6,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession, genericOAuth } from "better-auth/plugins";
 
 import { env } from "../env.ts";
-import { getRolesFromJwt } from "./accessControl.ts";
+import { getRoleFromJwt } from "./accessControl.ts";
 import { getJwtPayloadFromHeaders } from "./authUtils.ts";
 import { db } from "./db.ts";
 
@@ -18,7 +18,7 @@ import { db } from "./db.ts";
  */
 interface Auth {
   session: Session;
-  user: User & { roles: Role[] };
+  user: User & { role: Role };
 }
 
 // https://www.better-auth.com/docs/installation#create-a-better-auth-instance
@@ -70,7 +70,7 @@ export const auth = betterAuth({
       const jwtPayload = await getJwtPayloadFromHeaders(ctx.headers);
       return {
         session,
-        user: { ...user, roles: getRolesFromJwt(jwtPayload) },
+        user: { ...user, role: getRoleFromJwt(jwtPayload) },
       };
     }),
   ],

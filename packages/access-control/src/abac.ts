@@ -16,17 +16,14 @@ export function getUserAbility(user: User): AppAbility {
   allow("read", "Post");
   allow("read", "Reply");
 
-  if (user.roles.includes("admin") || user.roles.includes("user")) {
+  if (user.role === "user" || user.role === "admin") {
     allow("create", "Post");
     allow("create", "Reply");
-  }
-
-  if (user.roles.includes("user")) {
     allow("update", "Post", { userId: user.id });
     allow("update", "Reply", { userId: user.id });
   }
 
-  if (user.roles.includes("admin")) {
+  if (user.role === "admin") {
     allow("readAuthor", "Post");
     allow("readAuthor", "Reply");
     allow("delete", "Post");

@@ -43,7 +43,7 @@ function DashboardPage() {
     return null;
   }
 
-  const isAdmin = auth.user.roles.includes("admin");
+  const isAdmin = auth.user.role === "admin";
   if (!isAdmin) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6">

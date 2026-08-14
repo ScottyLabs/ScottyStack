@@ -47,7 +47,7 @@ export function UserProfile() {
           <div className="px-4 py-3">
             <p className="truncate text-sm font-medium text-white">{user.name}</p>
             <p className="mt-0.5 truncate text-sm text-gray-300">{user.email}</p>
-            {user.roles.includes("admin") && (
+            {user.role === "admin" && (
               <Link
                 to="/dashboard"
                 onClick={() => setOpen(false)}
