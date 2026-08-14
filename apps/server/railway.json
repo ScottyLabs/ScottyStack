@@ -13,6 +13,6 @@
   },
   "deploy": {
     "startCommand": null,
-    "preDeployCommand": ["bunx drizzle-kit migrate --config=/app/packages/db/drizzle.config.ts"]
+    "preDeployCommand": ["bunx drizzle-kit migrate --config=/app/apps/server/drizzle.config.ts"]
   }
 }

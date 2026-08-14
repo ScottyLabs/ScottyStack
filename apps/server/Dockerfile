@@ -50,18 +50,14 @@ COPY --from=builder --chown=server:server \
 # Pin 0.30.5: https://github.com/drizzle-team/drizzle-orm/issues/4451#issuecomment-4468994792
 RUN bun install @sentry/bun drizzle-kit@0.30.5 drizzle-orm pg
 
-# Copy database package artifacts to enable migrations
+# Copy database package artifacts to enable migrations.
 COPY --from=builder --chown=server:server \
   /app/packages/db/drizzle \
-  /app/packages/db/drizzle
+  /app/apps/server/drizzle
 
 COPY --from=builder --chown=server:server \
   /app/packages/db/drizzle.config.ts \
-  /app/packages/db/drizzle.config.ts
-
-COPY --from=builder --chown=server:server \
-  /app/packages/db/package.json \
-  /app/packages/db/package.json
+  /app/apps/server/drizzle.config.ts
 
 USER server
 EXPOSE 3000
