@@ -13,7 +13,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   SENTRY_DSN: z.string().optional(),
   SERVER_URL: z.url(),
-  SERVER_PORT: z.number().default(80),
+  SERVER_PORT: z.coerce.number().default(80),
 });
 
 // Validate `process.env` against our schema and return the result

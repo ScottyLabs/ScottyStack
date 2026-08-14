@@ -7,6 +7,11 @@
       "devDependencies": {
         "@commitlint/cli": "^20.3.1",
         "@commitlint/config-conventional": "^21.2.0",
+        "@electric-sql/pglite": "^0.5.5",
+        "@electric-sql/pglite-socket": "^0.2.8",
+        "@playwright/test": "^1.62.1",
+        "@scottystack/db": "workspace:*",
+        "drizzle-orm": "^0.45.2",
         "husky": "^9.1.7",
         "markdownlint-cli2": "^0.22.1",
         "oxfmt": "^0.41.0",
@@ -302,6 +307,22 @@
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 
     "@electric-sql/pglite": ["@electric-sql/pglite@0.5.5", "", {}, "sha512-QeZ+oB7QaU4EJj2awrB8hwFZ5TXxLRBQ9Gfq0dQauYDdWsRtuWRCERgtri35vRfL07KQHlVlc/4Qxvn7a5AXeA=="],
+
+    "@electric-sql/pglite-age": ["@electric-sql/pglite-age@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-cnj+KxJUgx6WdwFgIbu2wQSu5NKNOf1TNfLAwVTHZZGkTTyA8FW8FrFZ06jKUkKoW7Fad8X0O4FPb/I+u5n5Rw=="],
+
+    "@electric-sql/pglite-pg_hashids": ["@electric-sql/pglite-pg_hashids@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-723NvdqXz70rTjC5OKQHmmNNogTcZxPLAJf0NRDanz3zz77nBOCSlTL/UKkah90UVk5kqnbrwIcHqDVGmmONDA=="],
+
+    "@electric-sql/pglite-pg_ivm": ["@electric-sql/pglite-pg_ivm@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-LroA6kGyIEeB1/P7RbAaDHDCgu6+0scXzNe4ahN73f/PfexVN4h1k7HXOUS2su7tAHVMOBRlfenaWl3J/KhSmg=="],
+
+    "@electric-sql/pglite-pg_textsearch": ["@electric-sql/pglite-pg_textsearch@0.0.7", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-gBWaCxBcFPrmecgnycTXVJrAM39qEsXqZEuQZg1itlnIti1233htFYkOg9xp+FFE8R0Z7XmjbSJxjFoG60LD7w=="],
+
+    "@electric-sql/pglite-pg_uuidv7": ["@electric-sql/pglite-pg_uuidv7@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-ffQARR67C9gFIhoaqSF/J0IUM6STJASrmcRvhlOokv414WBkl+wiNHBslw7hc3tYSZmg41Y7L1tjxNPNZn1wPA=="],
+
+    "@electric-sql/pglite-pgtap": ["@electric-sql/pglite-pgtap@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-2Xn9xevILlNHTAeLZJnrB7DtOoB2qEiXm+tPaP0cm4n1a9zsAb4HQBRgsQhWKF7PJn9qMGJYFMuWWoMaxLTXwA=="],
+
+    "@electric-sql/pglite-pgvector": ["@electric-sql/pglite-pgvector@0.0.6", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5" } }, "sha512-KiPeiS/BMmjO71igzgexJAu5aPb3Y2yUjNTSMdti4ZL3zlqZFl4eLgbzLBGyG5Cxr9xFwYFmHh61ZTq6w6hUJA=="],
+
+    "@electric-sql/pglite-socket": ["@electric-sql/pglite-socket@0.2.8", "", { "peerDependencies": { "@electric-sql/pglite": "0.5.5", "@electric-sql/pglite-age": "0.0.6", "@electric-sql/pglite-pg_hashids": "0.0.6", "@electric-sql/pglite-pg_ivm": "0.0.6", "@electric-sql/pglite-pg_textsearch": "0.0.7", "@electric-sql/pglite-pg_uuidv7": "0.0.6", "@electric-sql/pglite-pgtap": "0.0.6", "@electric-sql/pglite-pgvector": "0.0.6" }, "bin": { "pglite-server": "dist/scripts/server.js" } }, "sha512-s/hDC799oT1YLrQoyfiBKqwFcIn0m6OUEuU2ENdzr3uxW5rJBM73hpQeiBmSs+pqDD2A3PH4a8839ExqoROVmQ=="],
 
     "@emnapi/core": ["@emnapi/core@1.11.3", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.3", "tslib": "^2.4.0" } }, "sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg=="],
 
@@ -630,6 +651,8 @@
     "@paralleldrive/cuid2": ["@paralleldrive/cuid2@2.3.1", "", { "dependencies": { "@noble/hashes": "^1.1.5" } }, "sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw=="],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
+
+    "@playwright/test": ["@playwright/test@1.62.1", "", { "dependencies": { "playwright": "1.62.1" }, "bin": { "playwright": "cli.js" } }, "sha512-DTcUc8qii+cpHvtOwggMtBRMjKZHXYWdw8syRYu2vtzuq4Wxphqq4NfCs5Zt44L6mA8rfDfj+PHnxFc/FeK6mQ=="],
 
     "@posthog/browser-common": ["@posthog/browser-common@0.5.0", "", { "dependencies": { "@posthog/core": "^1.47.0", "@posthog/types": "^1.402.2" } }, "sha512-8DaxVZS1bQPbA514RePurLNbYjei3P4jhnC206DwVv5XThmZM3QdlsXenI2ujE3pLbgQ79hYn9o1Kda8I3WK/Q=="],
 
@@ -1789,6 +1812,10 @@
 
     "pkg-up": ["pkg-up@3.1.0", "", { "dependencies": { "find-up": "^3.0.0" } }, "sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA=="],
 
+    "playwright": ["playwright@1.62.1", "", { "dependencies": { "playwright-core": "1.62.1" }, "optionalDependencies": { "fsevents": "2.3.2" }, "bin": { "playwright": "cli.js" } }, "sha512-0M+L3LAD8/nm554LOla9Ayx0j0tmFZ0FBcoQ7F1VuVHpM/XpiC8RcDzBQB8W5+hA8L22THxELzeF+2WcUzvcLg=="],
+
+    "playwright-core": ["playwright-core@1.62.1", "", { "bin": { "playwright-core": "cli.js" } }, "sha512-wPYSwEBJY9GHraISXqyqtx0na0LpO3XEX7jNDhntbex7tzUS7kLnZsOlFruFJB4Hi/rhDMjXGqHewDZ68nYZVw=="],
+
     "pluralize": ["pluralize@8.0.0", "", {}, "sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA=="],
 
     "postcss": ["postcss@8.5.26", "", { "dependencies": { "nanoid": "^3.3.17", "picocolors": "^1.1.1", "source-map-js": "^1.2.1" } }, "sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ=="],
@@ -2374,6 +2401,8 @@
     "parse5/entities": ["entities@8.0.0", "", {}, "sha512-zwfzJecQ/Uej6tusMqwAqU/6KL2XaB2VZ2Jg54Je6ahNBGNH6Ek6g3jjNCF0fG9EWQKGZNddNjU5F1ZQn/sBnA=="],
 
     "path-scurry/lru-cache": ["lru-cache@10.4.3", "", {}, "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ=="],
+
+    "playwright/fsevents": ["fsevents@2.3.2", "", { "os": "darwin" }, "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="],
 
     "prompts/kleur": ["kleur@3.0.3", "", {}, "sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w=="],
 
