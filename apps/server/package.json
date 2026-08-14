@@ -7,7 +7,7 @@
     "@scottystack/db": "workspace:*",
     "@sentry/bun": "^10.42.0",
     "@tsoa/runtime": "^7.0.0-alpha.0",
-    "better-auth": "^1.4.18",
+    "better-auth": "^1.6.26",
     "cors": "^2.8.6",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
