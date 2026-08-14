@@ -1,5 +1,5 @@
 import type { User } from "@scottystack/access-control";
-import { canDeleteReply, canUpdateReply } from "@scottystack/access-control";
+import { canCreateReply, canDeleteReply, canUpdateReply } from "@scottystack/access-control";
 import { post, reply } from "@scottystack/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -13,6 +13,10 @@ export const replyService = {
     content: string,
     anonymous: boolean = false,
   ) => {
+    if (!canCreateReply({ user: acUser })) {
+      throw new HttpError(403, "You are not allowed to create a reply");
+    }
+
     const [existingPost] = await db.select({ id: post.id }).from(post).where(eq(post.id, postId));
     if (!existingPost) {
       throw new HttpError(404, "Post not found");

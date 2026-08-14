@@ -1,5 +1,6 @@
 import type { User } from "@scottystack/access-control";
 import {
+  canCreatePost,
   canDeletePost,
   canReadPostAuthor,
   canReadReplyAuthor,
@@ -176,6 +177,10 @@ export const postService = {
   },
 
   createPost: async (acUser: User, title: string, content: string, anonymous: boolean = false) => {
+    if (!canCreatePost({ user: acUser })) {
+      throw new HttpError(403, "You are not allowed to create a post");
+    }
+
     const now = new Date();
     const [created] = await db
       .insert(post)

@@ -2,6 +2,9 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 
 import { app } from "../src/app.ts";
+import { postService } from "../src/services/postService.ts";
+
+const guest = { id: "", role: "guest" as const };
 
 describe("POST /posts", () => {
   it("returns 401 when unauthenticated", async () => {
@@ -12,6 +15,14 @@ describe("POST /posts", () => {
 
     expect(res.status).toBe(401);
     expect(res.body).toMatchObject({ name: "Unauthenticated" });
+  });
+});
+
+describe("createPost", () => {
+  it("rejects a guest", async () => {
+    await expect(postService.createPost(guest, "Hello", "World")).rejects.toMatchObject({
+      status: 403,
+    });
   });
 });
 
