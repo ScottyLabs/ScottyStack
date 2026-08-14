@@ -45,8 +45,10 @@ COPY --from=builder --chown=server:server \
   /app/apps/server/src/instrument.ts \
   /app/apps/server/src/instrument.ts
 
-# Install Sentry and migration toolchain
-RUN bun install @sentry/bun drizzle-kit drizzle-orm pg
+# Install Sentry and migration toolchain.
+# drizzle-kit@0.31 hangs after "Using 'pg' driver" and never exits 0.
+# Pin 0.30.5: https://github.com/drizzle-team/drizzle-orm/issues/4451#issuecomment-4468994792
+RUN bun install @sentry/bun drizzle-kit@0.30.5 drizzle-orm pg
 
 # Copy database package artifacts to enable migrations
 COPY --from=builder --chown=server:server \
