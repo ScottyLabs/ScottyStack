@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
+import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 import { FieldError } from "@/lib/FieldError";
@@ -78,12 +79,10 @@ export function PostEditForm({ post, onCancel, onSuccess }: PostEditFormProps) {
         name="content"
         children={(field) => (
           <div className="space-y-2">
-            <textarea
+            <MarkdownEditor
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              rows={8}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onChange={field.handleChange}
             />
             <FieldError field={field} />
           </div>

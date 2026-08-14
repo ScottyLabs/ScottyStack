@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
+import { MarkdownContent } from "@/components/MarkdownContent";
 import { PostDetailSkeleton } from "@/components/post/PostDetailSkeleton";
 import { PostEditForm } from "@/components/post/PostEditForm";
 import { PostHeader } from "@/components/post/PostHeader";
@@ -46,7 +47,7 @@ function PostPage() {
       ) : (
         <>
           <PostHeader post={post} onEdit={() => setEditing(true)} />
-          <div className="mt-4 whitespace-pre-wrap text-sm">{post.content}</div>
+          <MarkdownContent className="mt-4 text-sm" source={post.content} />
         </>
       )}
 

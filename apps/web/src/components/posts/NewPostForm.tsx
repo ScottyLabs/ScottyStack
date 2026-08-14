@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-toastify";
 
+import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 import { FieldError } from "@/lib/FieldError";
@@ -78,14 +79,12 @@ export function NewPostForm() {
             <label htmlFor="post-content" className="block text-sm font-medium">
               Content
             </label>
-            <textarea
+            <MarkdownEditor
               id="post-content"
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
+              onChange={field.handleChange}
               placeholder="Write your post..."
-              rows={8}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
             <FieldError field={field} />
           </div>

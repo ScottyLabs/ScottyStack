@@ -4,6 +4,8 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
+import { MarkdownContent } from "@/components/MarkdownContent";
+import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { Button } from "@/components/ui/button";
 import { $api } from "@/lib/apiClient";
 import { FieldError } from "@/lib/FieldError";
@@ -75,12 +77,11 @@ function ReplyEditForm({ reply, postId, onEndEdit }: ReplyEditFormProps) {
         name="content"
         children={(field) => (
           <div className="space-y-2">
-            <textarea
+            <MarkdownEditor
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
-              rows={4}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onChange={field.handleChange}
+              height={160}
             />
             <FieldError field={field} />
           </div>
@@ -174,7 +175,7 @@ export function ReplyItem({
 
   return (
     <div className="rounded-lg border p-4">
-      <p className="text-sm">{reply.content}</p>
+      <MarkdownContent className="text-sm" source={reply.content} />
       <div className="mt-2 flex items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">
           {reply.authorName} · {createdAt}
