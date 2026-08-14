@@ -6,7 +6,7 @@ import process from "node:process";
 import { toNodeHandler } from "better-auth/node";
 import { YAML } from "bun";
 import cors, { type CorsOptions } from "cors";
-import type { ErrorRequestHandler } from "express";
+import type { ErrorRequestHandler, RequestHandler } from "express";
 import express from "express";
 import swaggerUi, { type JsonObject } from "swagger-ui-express";
 
@@ -17,7 +17,6 @@ import { errorHandler } from "./middlewares/errorHandler.ts";
 import { notFoundHandler } from "./middlewares/notFoundHandler.ts";
 
 const app = express();
-app.use(express.json({ limit: "1mb" }));
 
 // Define CORS options
 const corsOptions: CorsOptions = {
@@ -30,7 +29,10 @@ app.use(cors(corsOptions));
 const server = http.createServer(app);
 
 // Setup Authentication: https://www.better-auth.com/docs/integrations/express
-app.all("/api/auth/*splat", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth) as unknown as RequestHandler);
+
+// Mount after Better Auth so it can read the raw request body.
+app.use(express.json({ limit: "1mb" }));
 
 // Swagger and OpenAPI JSON
 const swaggerYaml = fs.readFileSync("./build/swagger.yaml", "utf8");
