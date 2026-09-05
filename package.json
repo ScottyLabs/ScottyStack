@@ -15,7 +15,7 @@
     "@scottystack/db": "workspace:*",
     "drizzle-orm": "^0.45.2",
     "husky": "^9.1.7",
-    "markdownlint-cli2": "^0.22.1",
+    "markdownlint-cli2": "^0.23.2",
     "oxfmt": "^0.41.0",
     "oxlint": "~1.71.0",
     "oxlint-tsgolint": "^0.17.0",
