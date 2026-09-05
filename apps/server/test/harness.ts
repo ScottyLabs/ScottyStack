@@ -36,6 +36,7 @@ export async function seedUser(opts: {
     id: opts.id,
     name: opts.name,
     email: opts.email,
+    full_email: opts.email,
     emailVerified: true,
     createdAt: now,
     updatedAt: now,

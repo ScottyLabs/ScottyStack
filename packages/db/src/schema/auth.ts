@@ -13,6 +13,7 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .$onUpdate(() => new Date())
     .notNull(),
+  full_email: text("full_email").notNull().unique(),
 });
 
 export const session = pgTable(
