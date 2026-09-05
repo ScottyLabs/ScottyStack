@@ -32,6 +32,7 @@ async function main() {
         id: f.uuid(),
         name: f.fullName(),
         email: f.valuesFromArray({ values: emails, isUnique: true }),
+        full_email: f.valuesFromArray({ values: emails, isUnique: true }),
         emailVerified: f.default({ defaultValue: false }),
         image: f.default({ defaultValue: null }),
         createdAt: f.timestamp(),
