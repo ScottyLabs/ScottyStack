@@ -26,7 +26,7 @@ export default defineRailway(() => {
     env: {
       VITE_PUBLIC_POSTHOG_HOST: preserve(),
       VITE_PUBLIC_POSTHOG_KEY: preserve(),
-      VITE_SERVER_URL: preserve(),
+      VITE_SERVER_URL: "${{@scottystack/server.SERVER_URL}}",
     },
   });
   const _scottystackserver = service("@scottystack/server", {
@@ -47,16 +47,16 @@ export default defineRailway(() => {
     },
     networking: { privateNetworkEndpoint: "scottystackserver" },
     env: {
-      ADMIN_GROUP: preserve(),
-      ALLOWED_ORIGINS_REGEX: preserve(),
-      AUTH_CLIENT_ID: preserve(),
+      ADMIN_GROUP: "scottystack-admins",
+      ALLOWED_ORIGINS_REGEX: "https://stack.scottylabs.org",
+      AUTH_CLIENT_ID: "scottystack-prod",
       AUTH_CLIENT_SECRET: preserve(),
-      AUTH_ISSUER: preserve(),
-      AUTH_JWKS_URI: preserve(),
-      BETTER_AUTH_URL: preserve(),
-      DATABASE_URL: preserve(),
+      AUTH_ISSUER: "https://idp.scottylabs.org/realms/labrador",
+      AUTH_JWKS_URI: "https://idp.scottylabs.org/realms/labrador/protocol/openid-connect/certs",
+      BETTER_AUTH_URL: "https://stack.scottylabs.org",
+      DATABASE_URL: "${{Postgres.DATABASE_URL}}",
       SENTRY_DSN: preserve(),
-      SERVER_URL: preserve(),
+      SERVER_URL: "https://api.stack.scottylabs.org",
     },
   });
 
