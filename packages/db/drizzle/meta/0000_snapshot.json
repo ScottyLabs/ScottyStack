@@ -1,5 +1,5 @@
 {
-  "id": "e3cbf60b-8f7c-434a-9925-33dfd0d89c1e",
+  "id": "94e1e403-196a-45e3-86c8-6a160da5da99",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -270,6 +270,12 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "full_email": {
+          "name": "full_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -281,6 +287,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "user_full_email_unique": {
+          "name": "user_full_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "full_email"
           ]
         }
       },
