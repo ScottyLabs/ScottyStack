@@ -27,6 +27,15 @@ export const auth = betterAuth({
   trustedOrigins: [env.BETTER_AUTH_URL],
   database: drizzleAdapter(db, { schema, provider: "pg" }),
 
+  user: {
+    additionalFields: {
+      full_email: {
+        type: "string",
+        required: true,
+      },
+    },
+  },
+
   // Override the user id to Andrew ID when creating a new user.
   // Note that we have to use the `full_email` field since the `email` field
   // in the JWT payload defaults to CMU alias emails if the user sets one.
@@ -42,7 +51,7 @@ export const auth = betterAuth({
         before: async (user) => ({
           data: {
             ...user,
-            // @ts-expect-error The user here actually has all the JWT fields
+            // @ts-expect-error full_email is an additional field on the user object
             id: user["full_email"].split("@")[0],
           },
         }),
